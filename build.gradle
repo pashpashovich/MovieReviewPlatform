@@ -30,8 +30,17 @@ tasks.withType(JavaCompile) {
 
 dependencies {
     compileOnly('jakarta.servlet:jakarta.servlet-api:5.0.0')
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
     implementation('org.hibernate:hibernate-core:6.0.2.Final')
     implementation('org.glassfish.jaxb:jaxb-runtime:3.0.2')
+    implementation 'org.postgresql:postgresql:42.7.4'
+    implementation 'org.projectlombok:lombok:1.18.36'
+    implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")

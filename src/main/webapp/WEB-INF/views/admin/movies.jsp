@@ -4,134 +4,167 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление фильмами</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body>
-<h1>Управление фильмами</h1>
+<body class="bg-light">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/movieForm.js" defer></script>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Управление фильмами</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+            <tr class="text-center">
+                <th>Постер</th>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Жанры</th>
+                <th>Актеры</th>
+                <th>Режиссеры</th>
+                <th>Продюсеры</th>
+                <th>Год выпуска</th>
+                <th>Продолжительность</th>
+                <th>Язык</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="movie" items="${movies}">
+                <tr class="text-center align-middle">
+                    <td>
+                        <img src="data:image/jpeg;base64,${movie.posterBase64}" alt="Постер ${movie.title}"
+                             class="img-thumbnail" style="max-width: 100px; max-height: 150px;">
+                    </td>
+                    <td>${movie.id}</td>
+                    <td>${movie.title}</td>
+                    <td>
+                        <c:forEach var="genre" items="${movie.genres}">
+                            <span class="badge bg-primary">${genre}</span>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="actor" items="${movie.actors}">
+                            <span class="badge bg-info">${actor}</span>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="director" items="${movie.directors}">
+                            <span class="badge bg-warning text-dark">${director}</span>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="producer" items="${movie.producers}">
+                            <span class="badge bg-success">${producer}</span>
+                        </c:forEach>
+                    </td>
+                    <td>${movie.releaseYear}</td>
+                    <td>${movie.duration} мин</td>
+                    <td>${movie.language}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary mb-1"
+                                onclick="editMovie(${movie.id}, '${movie.title}', '${movie.description}', ${movie.releaseYear}, ${movie.duration}, '${movie.language}')">
+                            Редактировать
+                        </button>
+                        <form method="post" action="${pageContext.request.contextPath}/admin/movies" style="display:inline;">
+                            <input type="hidden" name="id" value="${movie.id}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+    </div>
 
-<table border="1" style="width: 100%; text-align: center;">
-    <thead>
-    <tr>
-        <th>Постер</th>
-        <th>ID</th>
-        <th>Название</th>
-        <th>Жанры</th>
-        <th>Актеры</th>
-        <th>Режиссеры</th>
-        <th>Продюсеры</th>
-        <th>Год выпуска</th>
-        <th>Продолжительность</th>
-        <th>Язык</th>
-        <th>Действия</th>
-    </tr>
-    </thead>
-    <tbody>
-    <c:forEach var="movie" items="${movies}">
-        <tr>
-            <td>
-                <img src="data:image/jpeg;base64,${movie.posterBase64}"
-                     alt="Постер ${movie.title}"
-                     style="max-width: 100px; max-height: 150px;">
-            </td>
-            <td>${movie.id}</td>
-            <td>${movie.title}</td>
-            <td>
-                <c:forEach var="genre" items="${movie.genres}">
-                    <span>${genre}</span><br>
-                </c:forEach>
-            </td>
-            <td>
-                <c:forEach var="actor" items="${movie.actors}">
-                    <span>${actor}</span><br>
-                </c:forEach>
-            </td>
-            <td>
-                <c:forEach var="director" items="${movie.directors}">
-                    <span>${director}</span><br>
-                </c:forEach>
-            </td>
-            <td>
-                <c:forEach var="producer" items="${movie.producers}">
-                    <span>${producer}</span><br>
-                </c:forEach>
-            </td>
-            <td>${movie.releaseYear}</td>
-            <td>${movie.duration}</td>
-            <td>${movie.language}</td>
-            <td>
-                <button onclick="editMovie(${movie.id}, '${movie.title}', '${movie.description}', ${movie.releaseYear}, ${movie.duration}, '${movie.language}')">
-                    Редактировать
-                </button>
-                <form method="post" action="${pageContext.request.contextPath}/admin/movies" style="display:inline;">
-                    <input type="hidden" name="id" value="${movie.id}">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit">Удалить</button>
-                </form>
-            </td>
-        </tr>
-    </c:forEach>
-    </tbody>
-</table>
+    <hr class="my-5">
 
-<hr>
+    <!-- Форма добавления/редактирования -->
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h2 class="text-center mb-0">Добавить/Редактировать фильм</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" action="${pageContext.request.contextPath}/admin/movies" enctype="multipart/form-data" id="movieForm">
+                <input type="hidden" id="id" name="id">
+                <input type="hidden" name="_method" id="method" value="POST">
 
-<h2>Добавить/Редактировать фильм</h2>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Название</label>
+                    <input type="text" id="title" name="title" class="form-control" required>
+                </div>
 
-<form method="post" action="${pageContext.request.contextPath}/admin/movies" enctype="multipart/form-data" id="movieForm">
-    <input type="hidden" id="id" name="id">
-    <input type="hidden" name="_method" id="method" value="POST">
+                <div class="mb-3">
+                    <label for="description" class="form-label">Описание</label>
+                    <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+                </div>
 
-    <label>Название: <input type="text" id="title" name="title" required></label><br><br>
-    <label>Описание: <textarea id="description" name="description"></textarea></label><br><br>
-    <label>Год выпуска: <input type="number" id="releaseYear" name="releaseYear" required></label><br><br>
-    <label>Продолжительность: <input type="number" id="duration" name="duration" required></label><br><br>
-    <label>Язык: <input type="text" id="language" name="language" required></label><br><br>
-    <label>Постер: <input type="file" id="posterFile" name="posterFile" accept="image/*"></label><br><br>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="releaseYear" class="form-label">Год выпуска</label>
+                        <input type="number" id="releaseYear" name="releaseYear" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="duration" class="form-label">Продолжительность (мин)</label>
+                        <input type="number" id="duration" name="duration" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="language" class="form-label">Язык</label>
+                        <input type="text" id="language" name="language" class="form-control" required>
+                    </div>
+                </div>
 
-    <label>Жанры:</label>
-    <select name="genreIds" multiple>
-        <c:forEach var="genre" items="${genres}">
-            <option value="${genre.id}">${genre.name}</option>
-        </c:forEach>
-    </select><br><br>
+                <div class="mb-3">
+                    <label for="posterFile" class="form-label">Постер</label>
+                    <input type="file" id="posterFile" name="posterFile" class="form-control" accept="image/*">
+                </div>
 
-    <label>Актеры:</label>
-    <select name="actorIds" multiple>
-        <c:forEach var="actor" items="${actors}">
-            <option value="${actor.id}">${actor.fullName}</option>
-        </c:forEach>
-    </select><br><br>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="genres" class="form-label">Жанры</label>
+                        <select name="genreIds" id="genres" class="form-select" multiple>
+                            <c:forEach var="genre" items="${genres}">
+                                <option value="${genre.id}">${genre.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="actors" class="form-label">Актеры</label>
+                        <select name="actorIds" id="actors" class="form-select" multiple>
+                            <c:forEach var="actor" items="${actors}">
+                                <option value="${actor.id}">${actor.fullName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
 
-    <label>Режиссеры:</label>
-    <select name="directorIds" multiple>
-        <c:forEach var="director" items="${directors}">
-            <option value="${director.id}">${director.fullName}</option>
-        </c:forEach>
-    </select><br><br>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="directors" class="form-label">Режиссеры</label>
+                        <select name="directorIds" id="directors" class="form-select" multiple>
+                            <c:forEach var="director" items="${directors}">
+                                <option value="${director.id}">${director.fullName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="producers" class="form-label">Продюсеры</label>
+                        <select name="producerIds" id="producers" class="form-select" multiple>
+                            <c:forEach var="producer" items="${producers}">
+                                <option value="${producer.id}">${producer.fullName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
 
-    <label>Продюсеры:</label>
-    <select name="producerIds" multiple>
-        <c:forEach var="producer" items="${producers}">
-            <option value="${producer.id}">${producer.fullName}</option>
-        </c:forEach>
-    </select><br><br>
-
-    <button type="submit">Сохранить</button>
-</form>
-
-<script>
-    function editMovie(id, title, description, releaseYear, duration, language) {
-        document.getElementById('id').value = id;
-        document.getElementById('title').value = title;
-        document.getElementById('description').value = description;
-        document.getElementById('releaseYear').value = releaseYear;
-        document.getElementById('duration').value = duration;
-        document.getElementById('language').value = language;
-
-        document.getElementById('method').value = 'PUT';
-    }
-</script>
-
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

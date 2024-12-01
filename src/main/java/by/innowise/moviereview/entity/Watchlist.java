@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Watchlist {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

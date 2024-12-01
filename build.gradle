@@ -48,7 +48,7 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.3'
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.2'
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
-
+    implementation 'ch.qos.logback:logback-classic:1.5.12'
 
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")

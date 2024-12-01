@@ -2,6 +2,7 @@ package by.innowise.moviereview.util;
 
 import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.entity.Movie;
+import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.entity.Rating;
 import by.innowise.moviereview.entity.Review;
 import by.innowise.moviereview.entity.User;
@@ -11,8 +12,6 @@ import lombok.experimental.UtilityClass;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
-import java.time.Period;
 
 
 @UtilityClass
@@ -27,10 +26,10 @@ public class HibernateUtil {
                     .addAnnotatedClass(User.class)
                     .addAnnotatedClass(Genre.class)
                     .addAnnotatedClass(Movie.class)
-                    .addAnnotatedClass(Period.class)
                     .addAnnotatedClass(Rating.class)
                     .addAnnotatedClass(Review.class)
                     .addAnnotatedClass(Watchlist.class)
+                    .addAnnotatedClass(Person.class)
                     .buildSessionFactory();
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);

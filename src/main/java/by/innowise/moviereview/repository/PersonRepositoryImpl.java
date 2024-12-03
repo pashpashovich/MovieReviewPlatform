@@ -57,7 +57,7 @@ public class PersonRepositoryImpl implements PersonRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-            session.save(person);
+            session.persist(person);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

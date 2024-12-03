@@ -63,11 +63,24 @@
                     <td>${movie.duration} мин</td>
                     <td>${movie.language}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary mb-1"
-                                onclick="editMovie(${movie.id}, '${movie.title}', '${movie.description}', ${movie.releaseYear}, ${movie.duration}, '${movie.language}')">
+                        <button
+                                class="btn btn-sm btn-primary mb-1"
+                                onclick="editMovie(
+                                    ${movie.id},
+                                        '${movie.title}',
+                                        '${movie.description}',
+                                    ${movie.releaseYear},
+                                    ${movie.duration},
+                                        '${movie.language}',
+                                        ['<c:forEach var="genre" items="${movie.genres}">${genre},</c:forEach>'.slice(0, -1)],
+                                        ['<c:forEach var="actor" items="${movie.actors}">${actor},</c:forEach>'.slice(0, -1)],
+                                        ['<c:forEach var="director" items="${movie.directors}">${director},</c:forEach>'.slice(0, -1)],
+                                        ['<c:forEach var="producer" items="${movie.producers}">${producer},</c:forEach>'.slice(0, -1)]
+                                        )">
                             Редактировать
                         </button>
-                        <form method="post" action="${pageContext.request.contextPath}/admin/movies" style="display:inline;">
+                        <form method="post" action="${pageContext.request.contextPath}/admin/movies"
+                              style="display:inline;">
                             <input type="hidden" name="id" value="${movie.id}">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
@@ -80,27 +93,23 @@
     </div>
 
     <hr class="my-5">
-
-    <!-- Форма добавления/редактирования -->
     <div class="card">
         <div class="card-header bg-dark text-white">
-            <h2 class="text-center mb-0">Добавить/Редактировать фильм</h2>
+            <h2 class="text-center mb-0" id="formTitle">Добавление фильма</h2>
         </div>
         <div class="card-body">
-            <form method="post" action="${pageContext.request.contextPath}/admin/movies" enctype="multipart/form-data" id="movieForm">
+            <form method="post" action="${pageContext.request.contextPath}/admin/movies" enctype="multipart/form-data"
+                  id="movieForm">
                 <input type="hidden" id="id" name="id">
                 <input type="hidden" name="_method" id="method" value="POST">
-
                 <div class="mb-3">
                     <label for="title" class="form-label">Название</label>
                     <input type="text" id="title" name="title" class="form-control" required>
                 </div>
-
                 <div class="mb-3">
                     <label for="description" class="form-label">Описание</label>
                     <textarea id="description" name="description" class="form-control" rows="3"></textarea>
                 </div>
-
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="releaseYear" class="form-label">Год выпуска</label>
@@ -115,12 +124,10 @@
                         <input type="text" id="language" name="language" class="form-control" required>
                     </div>
                 </div>
-
                 <div class="mb-3">
                     <label for="posterFile" class="form-label">Постер</label>
                     <input type="file" id="posterFile" name="posterFile" class="form-control" accept="image/*">
                 </div>
-
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="genres" class="form-label">Жанры</label>
@@ -139,7 +146,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="directors" class="form-label">Режиссеры</label>
@@ -158,9 +164,9 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="text-center">
                     <button type="submit" class="btn btn-success">Сохранить</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Сброс</button>
                 </div>
             </form>
         </div>

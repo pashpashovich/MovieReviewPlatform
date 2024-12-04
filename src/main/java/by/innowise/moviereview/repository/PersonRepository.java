@@ -10,7 +10,7 @@ public interface PersonRepository {
     List<Person> findAll();
     List<Person> findAllByRole(MovieRole role);
     List<Person> findAllById(List<Long> ids);
-    List<Person> findAllByIdAndRole(List<Long> ids, MovieRole role);
+    List<Person> findAllByNameAndRole(List<String> names, MovieRole role);
     void save(Person person);
     void update(Person person);
     void delete(Person person);

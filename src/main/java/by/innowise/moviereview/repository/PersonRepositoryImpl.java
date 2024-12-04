@@ -43,10 +43,10 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public List<Person> findAllByIdAndRole(List<Long> ids, MovieRole role) {
+    public List<Person> findAllByNameAndRole(List<String> names, MovieRole role) {
         try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Person p WHERE p.id IN :ids AND p.role = :role", Person.class)
-                    .setParameter("ids", ids)
+            return session.createQuery("FROM Person p WHERE p.fullName IN :names AND p.role = :role", Person.class)
+                    .setParameter("names", names)
                     .setParameter("role", role)
                     .list();
         }

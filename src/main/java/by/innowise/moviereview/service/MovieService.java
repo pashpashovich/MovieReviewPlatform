@@ -1,6 +1,5 @@
 package by.innowise.moviereview.service;
 
-import by.innowise.moviereview.dto.MovieCreateDto;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Person;
@@ -46,14 +45,14 @@ public class MovieService {
         return movieMapper.toDto(movie);
     }
 
-    public void createMovie(MovieCreateDto movieDto) {
-        Movie movie = movieMapper.toEntityFromCreateDto(movieDto);
-        movie.setGenres(genreRepository.findAllById(movieDto.getGenreIds()));
+    public void createMovie(MovieDto movieDto) {
+        Movie movie = movieMapper.toEntityFromDto(movieDto);
+        movie.setGenres(genreRepository.findAllByName(movieDto.getGenres()));
         movie.setPeople(getPeopleByRoles(movieDto));
         movieRepository.save(movie);
     }
 
-    public void updateMovie(Long id, MovieCreateDto movieDto) {
+    public void updateMovie(Long id, MovieDto movieDto) {
         Movie existingMovie = movieRepository.findById(id);
         if (existingMovie == null) {
             throw new UpdatingException("Фильм с ID " + id + " не найден.");
@@ -64,7 +63,7 @@ public class MovieService {
         existingMovie.setReleaseYear(movieDto.getReleaseYear());
         existingMovie.setDuration(movieDto.getDuration());
         existingMovie.setLanguage(movieDto.getLanguage());
-        existingMovie.setGenres(genreRepository.findAllById(movieDto.getGenreIds()));
+        existingMovie.setGenres(genreRepository.findAllByName(movieDto.getGenres()));
         existingMovie.setPeople(getPeopleByRoles(movieDto));
 
         movieRepository.update(existingMovie);
@@ -78,11 +77,11 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
-    private List<Person> getPeopleByRoles(MovieCreateDto movieDto) {
+    private List<Person> getPeopleByRoles(MovieDto movieDto) {
         List<Person> people = new ArrayList<>();
-        people.addAll(personRepository.findAllByIdAndRole(movieDto.getActorIds(), MovieRole.ACTOR));
-        people.addAll(personRepository.findAllByIdAndRole(movieDto.getDirectorIds(), MovieRole.DIRECTOR));
-        people.addAll(personRepository.findAllByIdAndRole(movieDto.getProducerIds(), MovieRole.PRODUCER));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
         return people;
     }
 }

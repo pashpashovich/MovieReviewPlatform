@@ -26,10 +26,10 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public List<Genre> findAllById(List<Long> ids) {
+    public List<Genre> findAllByName(List<String> names) {
         try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Genre g WHERE g.id IN :ids", Genre.class)
-                    .setParameter("ids", ids)
+            return session.createQuery("FROM Genre g WHERE g.name IN :names", Genre.class)
+                    .setParameter("names", names)
                     .list();
         }
     }

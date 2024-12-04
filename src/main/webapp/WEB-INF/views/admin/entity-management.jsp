@@ -10,10 +10,38 @@
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/admin/movies">
+            <strong>КиноАдмин</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/admin/movies">
+                        <i class="bi bi-film"></i> Управление фильмами
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="${pageContext.request.contextPath}/admin/genres">
+                        <i class="bi bi-tags"></i> Жанры
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/admin/people">
+                        <i class="bi bi-person-stars"></i> Звезды
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <div class="container my-5">
     <h1 class="text-center">Управление ${entityType}</h1>
-
     <div class="table-responsive my-4">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">

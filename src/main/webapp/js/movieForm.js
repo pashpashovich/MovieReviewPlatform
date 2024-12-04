@@ -16,10 +16,9 @@ function editMovie(id, title, description, releaseYear, duration, language, sele
 }
 
 function updateSelect(selectElement, selectedValues) {
-    const selectedSet = new Set(selectedValues.map(value => value.toString()));
-
+    const selectedSet = new Set(selectedValues);
     Array.from(selectElement.options).forEach(option => {
-        option.selected = selectedSet.has(option.value.toString());
+        option.selected = selectedSet.has(option.value);
     });
 }
 
@@ -44,4 +43,13 @@ function resetSelect(selectElement) {
     Array.from(selectElement.options).forEach(option => {
         option.selected = false;
     });
+}
+
+function validateForm() {
+    const language = document.getElementById("language").value;
+    if (!language) {
+        alert("Пожалуйста, выберите язык.");
+        return false;
+    }
+    return true;
 }

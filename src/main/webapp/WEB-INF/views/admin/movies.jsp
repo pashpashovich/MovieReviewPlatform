@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,36 @@
 <body class="bg-light">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/movieForm.js" defer></script>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/admin/movies">
+            <strong>КиноАдмин</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/movies">
+                        <i class="bi bi-film"></i> Управление фильмами
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/admin/genres">
+                        <i class="bi bi-tags"></i> Жанры
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/admin/people">
+                        <i class="bi bi-person-stars"></i> Звезды
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <div class="container my-5">
     <h1 class="text-center mb-4">Управление фильмами</h1>
     <div class="table-responsive">
@@ -72,10 +103,14 @@
                                     ${movie.releaseYear},
                                     ${movie.duration},
                                         '${movie.language}',
-                                        ['<c:forEach var="genre" items="${movie.genres}">${genre},</c:forEach>'.slice(0, -1)],
-                                        ['<c:forEach var="actor" items="${movie.actors}">${actor},</c:forEach>'.slice(0, -1)],
-                                        ['<c:forEach var="director" items="${movie.directors}">${director},</c:forEach>'.slice(0, -1)],
-                                        ['<c:forEach var="producer" items="${movie.producers}">${producer},</c:forEach>'.slice(0, -1)]
+                                        ['<c:forEach var="genre"
+                                                     items="${movie.genres}">${genre},</c:forEach>'.slice(0, -1)],
+                                        ['<c:forEach var="actor"
+                                                     items="${movie.actors}">${actor},</c:forEach>'.slice(0, -1)],
+                                        ['<c:forEach var="director"
+                                                     items="${movie.directors}">${director},</c:forEach>'.slice(0, -1)],
+                                        ['<c:forEach var="producer"
+                                                     items="${movie.producers}">${producer},</c:forEach>'.slice(0, -1)]
                                         )">
                             Редактировать
                         </button>
@@ -99,7 +134,7 @@
         </div>
         <div class="card-body">
             <form method="post" action="${pageContext.request.contextPath}/admin/movies" enctype="multipart/form-data"
-                  id="movieForm">
+                  id="movieForm" onsubmit="return validateForm()">
                 <input type="hidden" id="id" name="id">
                 <input type="hidden" name="_method" id="method" value="POST">
                 <div class="mb-3">
@@ -113,15 +148,23 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="releaseYear" class="form-label">Год выпуска</label>
-                        <input type="number" id="releaseYear" name="releaseYear" class="form-control" required>
+                        <input type="number" id="releaseYear" name="releaseYear" min="1895"
+                               max="<%= java.time.Year.now().getValue() %>" class="form-control" required>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="duration" class="form-label">Продолжительность (мин)</label>
-                        <input type="number" id="duration" name="duration" class="form-control" required>
+                        <input type="number" id="duration" name="duration" min="1" class="form-control" required>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="language" class="form-label">Язык</label>
-                        <input type="text" id="language" name="language" class="form-control" required>
+                        <select id="language" name="language" class="form-select" required>
+                            <option value="" disabled selected>Выберите язык</option>
+                            <option value="Русский">Русский</option>
+                            <option value="Английский">Английский</option>
+                            <option value="Французский">Французский</option>
+                            <option value="Испанский">Испанский</option>
+                            <option value="Белорусский">Белорусский</option>
+                        </select>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -131,17 +174,17 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="genres" class="form-label">Жанры</label>
-                        <select name="genreIds" id="genres" class="form-select" multiple>
+                        <select name="genres" id="genres" class="form-select" multiple required>
                             <c:forEach var="genre" items="${genres}">
-                                <option value="${genre.id}">${genre.name}</option>
+                                <option value="${genre.name}">${genre.name}</option>
                             </c:forEach>
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="actors" class="form-label">Актеры</label>
-                        <select name="actorIds" id="actors" class="form-select" multiple>
+                        <select name="actors" id="actors" class="form-select" multiple required>
                             <c:forEach var="actor" items="${actors}">
-                                <option value="${actor.id}">${actor.fullName}</option>
+                                <option value="${actor.fullName}">${actor.fullName}</option>
                             </c:forEach>
                         </select>
                     </div>
@@ -149,17 +192,17 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="directors" class="form-label">Режиссеры</label>
-                        <select name="directorIds" id="directors" class="form-select" multiple>
+                        <select name="directors" id="directors" class="form-select" multiple required>
                             <c:forEach var="director" items="${directors}">
-                                <option value="${director.id}">${director.fullName}</option>
+                                <option value="${director.fullName}">${director.fullName}</option>
                             </c:forEach>
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="producers" class="form-label">Продюсеры</label>
-                        <select name="producerIds" id="producers" class="form-select" multiple>
+                        <select name="producers" id="producers" class="form-select" multiple required>
                             <c:forEach var="producer" items="${producers}">
-                                <option value="${producer.id}">${producer.fullName}</option>
+                                <option value="${producer.fullName}">${producer.fullName}</option>
                             </c:forEach>
                         </select>
                     </div>

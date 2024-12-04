@@ -9,8 +9,11 @@ import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.repository.GenreRepository;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.PersonRepository;
+import by.innowise.moviereview.util.HibernateUtil;
 import by.innowise.moviereview.util.enums.MovieRole;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import java.lang.module.FindException;
 import java.util.ArrayList;
@@ -84,5 +87,53 @@ public class MovieService {
         people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
         return people;
     }
+
+    public List<MovieDto> filterMovies(String searchQuery, String genreId, String language, String year, String duration) {
+        String hql = "SELECT DISTINCT m FROM Movie m LEFT JOIN m.genres g WHERE 1=1";
+
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            hql += " AND LOWER(m.title) LIKE :searchQuery";
+        }
+        if (genreId != null && !genreId.isEmpty()) {
+            hql += " AND g.id = :genreId";
+        }
+        if (language != null && !language.isEmpty()) {
+            hql += " AND m.language = :language";
+        }
+        if (year != null && !year.isEmpty()) {
+            hql += " AND m.releaseYear = :year";
+        }
+        if (duration != null && !duration.isEmpty()) {
+            hql += " AND m.duration = :duration";
+        }
+
+        try (Session session = HibernateUtil.getSession()) {
+            Query<Movie> query = session.createQuery(hql, Movie.class);
+
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                query.setParameter("searchQuery", "%" + searchQuery.toLowerCase() + "%");
+            }
+            if (genreId != null && !genreId.isEmpty()) {
+                query.setParameter("genreId", Long.valueOf(genreId));
+            }
+            if (language != null && !language.isEmpty()) {
+                query.setParameter("language", language);
+            }
+            if (year != null && !year.isEmpty()) {
+                query.setParameter("year", Integer.valueOf(year));
+            }
+            if (duration != null && !duration.isEmpty()) {
+                query.setParameter("duration", Integer.valueOf(duration));
+            }
+
+            List<Movie> movies = query.list();
+            return movies.stream()
+                    .map(movie -> movieMapper.toDto(movie)) // Преобразуем в DTO
+                    .collect(Collectors.toList());
+        }
+    }
+
 }
+
+
 

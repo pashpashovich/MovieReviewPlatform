@@ -6,9 +6,9 @@ import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.exception.EntityNotFoundException;
 import by.innowise.moviereview.exception.UpdatingException;
 import by.innowise.moviereview.mapper.MovieMapper;
-import by.innowise.moviereview.repository.GenreRepository;
-import by.innowise.moviereview.repository.MovieRepository;
-import by.innowise.moviereview.repository.PersonRepository;
+import by.innowise.moviereview.repository.GenreRepositoryImpl;
+import by.innowise.moviereview.repository.PersonRepositoryImpl;
+import by.innowise.moviereview.repository.Repository;
 import by.innowise.moviereview.util.HibernateUtil;
 import by.innowise.moviereview.util.enums.MovieRole;
 import lombok.extern.slf4j.Slf4j;
@@ -16,18 +16,18 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.lang.module.FindException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Slf4j
 public class MovieService {
-    private final MovieRepository movieRepository;
+    private final Repository<Movie> movieRepository;
     private final MovieMapper movieMapper;
-    private final PersonRepository personRepository;
-    private final GenreRepository genreRepository;
+    private final PersonRepositoryImpl personRepository;
+    private final GenreRepositoryImpl genreRepository;
 
-    public MovieService(MovieRepository movieRepository, MovieMapper movieMapper, PersonRepository personRepository, GenreRepository genreRepository) {
+    public MovieService(Repository<Movie> movieRepository, MovieMapper movieMapper, PersonRepositoryImpl personRepository, GenreRepositoryImpl genreRepository) {
         this.movieRepository = movieRepository;
         this.movieMapper = movieMapper;
         this.personRepository = personRepository;
@@ -37,7 +37,7 @@ public class MovieService {
     public List<MovieDto> getAllMovies() {
         return movieRepository.findAll().stream()
                 .map(movieMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public MovieDto getMovieById(Long id) {
@@ -80,8 +80,8 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
-    private List<Person> getPeopleByRoles(MovieDto movieDto) {
-        List<Person> people = new ArrayList<>();
+    private Set<Person> getPeopleByRoles(MovieDto movieDto) {
+        Set<Person> people = new HashSet<>();
         people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
         people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
         people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
@@ -128,11 +128,20 @@ public class MovieService {
 
             List<Movie> movies = query.list();
             return movies.stream()
-                    .map(movie -> movieMapper.toDto(movie)) // Преобразуем в DTO
-                    .collect(Collectors.toList());
+                    .map(movieMapper::toDto)
+                    .toList();
         }
     }
 
+    public MovieDto findMovieById(Long id) {
+        try (Session session = HibernateUtil.getSession()) {
+            Movie movie = session.get(Movie.class, id);
+            if (movie == null) {
+                return null;
+            }
+            return movieMapper.toDto(movie);
+        }
+    }
 }
 
 

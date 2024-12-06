@@ -1,8 +1,8 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.entity.Person;
-import by.innowise.moviereview.repository.PersonRepository;
 import by.innowise.moviereview.repository.PersonRepositoryImpl;
+import by.innowise.moviereview.repository.Repository;
 import by.innowise.moviereview.service.PersonService;
 import by.innowise.moviereview.util.enums.MovieRole;
 
@@ -17,11 +17,10 @@ import java.util.List;
 
 @WebServlet("/admin/people")
 public class PersonServlet extends HttpServlet {
-    private PersonService personService;
-    private PersonRepository personRepository;
+    private final PersonService personService;
 
     public PersonServlet() {
-        this.personRepository=new PersonRepositoryImpl();
+        Repository<Person> personRepository = new PersonRepositoryImpl();
         this.personService = new PersonService(personRepository);
     }
 

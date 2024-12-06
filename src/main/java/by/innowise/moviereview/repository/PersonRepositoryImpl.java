@@ -6,9 +6,11 @@ import by.innowise.moviereview.util.enums.MovieRole;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class PersonRepositoryImpl implements PersonRepository {
+public class PersonRepositoryImpl implements Repository<Person> {
 
     @Override
     public Person findById(Long id) {
@@ -21,34 +23,6 @@ public class PersonRepositoryImpl implements PersonRepository {
     public List<Person> findAll() {
         try (Session session = HibernateUtil.getSession()) {
             return session.createQuery("FROM Person", Person.class).list();
-        }
-    }
-
-    @Override
-    public List<Person> findAllByRole(MovieRole role) {
-        try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Person p WHERE p.role = :role", Person.class)
-                    .setParameter("role", role)
-                    .list();
-        }
-    }
-
-    @Override
-    public List<Person> findAllById(List<Long> ids) {
-        try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Person p WHERE p.id IN :ids", Person.class)
-                    .setParameter("ids", ids)
-                    .list();
-        }
-    }
-
-    @Override
-    public List<Person> findAllByNameAndRole(List<String> names, MovieRole role) {
-        try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Person p WHERE p.fullName IN :names AND p.role = :role", Person.class)
-                    .setParameter("names", names)
-                    .setParameter("role", role)
-                    .list();
         }
     }
 
@@ -83,11 +57,41 @@ public class PersonRepositoryImpl implements PersonRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
+            session.createNativeQuery("DELETE FROM movie_person WHERE person_id = :personId")
+                    .setParameter("personId", person.getId())
+                    .executeUpdate();
             session.remove(session.contains(person) ? person : session.merge(person));
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException("Ошибка удаления персоны: " + person, e);
+        }
+    }
+
+
+    public List<Person> findAllByRole(MovieRole role) {
+        try (Session session = HibernateUtil.getSession()) {
+            return session.createQuery("FROM Person p WHERE p.role = :role", Person.class)
+                    .setParameter("role", role)
+                    .list();
+        }
+    }
+
+    public List<Person> findAllById(List<Long> ids) {
+        try (Session session = HibernateUtil.getSession()) {
+            return session.createQuery("FROM Person p WHERE p.id IN :ids", Person.class)
+                    .setParameter("ids", ids)
+                    .list();
+        }
+    }
+
+    public Set<Person> findAllByNameAndRole(Set<String> names, MovieRole role) {
+        try (Session session = HibernateUtil.getSession()) {
+            List<Person> people = session.createQuery("FROM Person p WHERE p.fullName IN :names AND p.role = :role", Person.class)
+                    .setParameter("names", names)
+                    .setParameter("role", role)
+                    .list();
+            return new HashSet<>(people);
         }
     }
 }

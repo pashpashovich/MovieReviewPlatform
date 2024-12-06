@@ -5,6 +5,7 @@ import by.innowise.moviereview.exception.DeletingException;
 import by.innowise.moviereview.exception.SavingException;
 import by.innowise.moviereview.exception.UpdatingException;
 import by.innowise.moviereview.util.HibernateUtil;
+import jakarta.persistence.EntityGraph;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -13,18 +14,17 @@ import org.hibernate.Transaction;
 import java.util.List;
 
 @Slf4j
-public class MovieRepositoryImpl implements MovieRepository {
+public class MovieRepositoryImpl implements Repository<Movie> {
 
     @Override
     public List<Movie> findAll() {
         try (Session session = HibernateUtil.getSession()) {
+            EntityGraph<Movie> graph = session.createEntityGraph(Movie.class);
+            graph.addAttributeNodes("genres", "people");
             String hql = "SELECT m FROM Movie m";
-            List<Movie> movies = session.createQuery(hql, Movie.class).getResultList();
-            movies.forEach(movie -> {
-                Hibernate.initialize(movie.getGenres());
-                Hibernate.initialize(movie.getPeople());
-            });
-            return movies;
+            return session.createQuery(hql, Movie.class)
+                    .setHint("javax.persistence.loadgraph", graph)
+                    .getResultList();
         }
     }
 
@@ -32,20 +32,16 @@ public class MovieRepositoryImpl implements MovieRepository {
     @Override
     public Movie findById(Long id) {
         try (Session session = HibernateUtil.getSession()) {
+            EntityGraph<Movie> graph = session.createEntityGraph(Movie.class);
+            graph.addAttributeNodes("genres", "people", "watchlist", "ratings", "reviews");
             String hql = "SELECT m FROM Movie m WHERE m.id = :id";
-            Movie movie = session.createQuery(hql, Movie.class)
+            return session.createQuery(hql, Movie.class)
                     .setParameter("id", id)
+                    .setHint("javax.persistence.loadgraph", graph)
                     .uniqueResult();
-            if (movie != null) {
-                Hibernate.initialize(movie.getGenres());
-                Hibernate.initialize(movie.getPeople());
-                Hibernate.initialize(movie.getWatchlist());
-                Hibernate.initialize(movie.getRatings());
-                Hibernate.initialize(movie.getReviews());
-            }
-            return movie;
         }
     }
+
 
     @Override
     public void save(Movie movie) {
@@ -78,14 +74,17 @@ public class MovieRepositoryImpl implements MovieRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-
-            Hibernate.initialize(movie.getGenres());
-            Hibernate.initialize(movie.getPeople());
-            Hibernate.initialize(movie.getWatchlist());
-            Hibernate.initialize(movie.getRatings());
-            Hibernate.initialize(movie.getReviews());
-
-            session.remove(session.contains(movie) ? movie : session.merge(movie));
+            EntityGraph<Movie> graph = session.createEntityGraph(Movie.class);
+            graph.addAttributeNodes("genres", "people", "watchlist", "ratings", "reviews");
+            Movie managedMovie = session.createQuery("SELECT m FROM Movie m WHERE m.id = :id", Movie.class)
+                    .setParameter("id", movie.getId())
+                    .setHint("javax.persistence.loadgraph", graph)
+                    .uniqueResult();
+            if (managedMovie != null) {
+                session.remove(managedMovie);
+            } else {
+                throw new DeletingException("Фильм с ID " + movie.getId() + " не найден.");
+            }
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

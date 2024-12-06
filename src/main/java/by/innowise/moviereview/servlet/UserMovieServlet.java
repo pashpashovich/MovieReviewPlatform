@@ -4,11 +4,8 @@ import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.mapper.MovieMapperImpl;
-import by.innowise.moviereview.repository.GenreRepository;
 import by.innowise.moviereview.repository.GenreRepositoryImpl;
-import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.MovieRepositoryImpl;
-import by.innowise.moviereview.repository.PersonRepository;
 import by.innowise.moviereview.repository.PersonRepositoryImpl;
 import by.innowise.moviereview.service.MovieService;
 import jakarta.servlet.ServletException;
@@ -23,11 +20,11 @@ import java.util.List;
 @WebServlet("/movies")
 public class UserMovieServlet extends HttpServlet {
     private final MovieService movieService;
-    private final GenreRepository genreRepository;
-    private final PersonRepository personRepository;
+    private final GenreRepositoryImpl genreRepository;
+    private final PersonRepositoryImpl personRepository;
 
     public UserMovieServlet() {
-        MovieRepository movieRepository = new MovieRepositoryImpl();
+        MovieRepositoryImpl movieRepository = new MovieRepositoryImpl();
         MovieMapper movieMapper = new MovieMapperImpl();
         this.genreRepository = new GenreRepositoryImpl();
         this.personRepository = new PersonRepositoryImpl();

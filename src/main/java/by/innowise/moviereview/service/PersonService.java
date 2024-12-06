@@ -1,15 +1,15 @@
 package by.innowise.moviereview.service;
 
 import by.innowise.moviereview.entity.Person;
-import by.innowise.moviereview.repository.PersonRepository;
+import by.innowise.moviereview.repository.Repository;
 
 import java.util.List;
 
 public class PersonService {
 
-    private final PersonRepository personRepository;
+    private final Repository<Person> personRepository;
 
-    public PersonService(PersonRepository personRepository) {
+    public PersonService(Repository<Person> personRepository) {
         this.personRepository = personRepository;
     }
 

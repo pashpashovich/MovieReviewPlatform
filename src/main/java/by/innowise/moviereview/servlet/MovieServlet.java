@@ -1,14 +1,13 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.MovieDto;
+import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.mapper.MovieMapperImpl;
-import by.innowise.moviereview.repository.GenreRepository;
 import by.innowise.moviereview.repository.GenreRepositoryImpl;
-import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.MovieRepositoryImpl;
-import by.innowise.moviereview.repository.PersonRepository;
 import by.innowise.moviereview.repository.PersonRepositoryImpl;
+import by.innowise.moviereview.repository.Repository;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.util.enums.MovieRole;
 import jakarta.servlet.ServletException;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet("/admin/movies")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2,
@@ -30,11 +30,11 @@ import java.util.List;
         maxRequestSize = 1024 * 1024 * 50)
 public class MovieServlet extends HttpServlet {
     private final MovieService movieService;
-    private final GenreRepository genreRepository;
-    private final PersonRepository personRepository;
+    private final GenreRepositoryImpl genreRepository;
+    private final PersonRepositoryImpl personRepository;
 
     public MovieServlet() {
-        MovieRepository movieRepository = new MovieRepositoryImpl();
+        Repository<Movie> movieRepository = new MovieRepositoryImpl();
         MovieMapper movieMapper = new MovieMapperImpl();
         this.genreRepository = new GenreRepositoryImpl();
         this.personRepository = new PersonRepositoryImpl();
@@ -93,19 +93,19 @@ public class MovieServlet extends HttpServlet {
         }
         String[] genres = req.getParameterValues("genres");
         if (genres != null) {
-            movieDto.setGenres(Arrays.stream(genres).toList());
+            movieDto.setGenres(Arrays.stream(genres).collect(Collectors.toSet()));
         }
         String[] actors = req.getParameterValues("actors");
         if (actors != null) {
-            movieDto.setActors(Arrays.stream(actors).toList());
+            movieDto.setActors(Arrays.stream(actors).collect(Collectors.toSet()));
         }
         String[] directors = req.getParameterValues("directors");
         if (directors != null) {
-            movieDto.setDirectors(Arrays.stream(directors).toList());
+            movieDto.setDirectors(Arrays.stream(directors).collect(Collectors.toSet()));
         }
         String[] producers = req.getParameterValues("producers");
         if (producers != null) {
-            movieDto.setProducers(Arrays.stream(producers).toList());
+            movieDto.setProducers(Arrays.stream(producers).collect(Collectors.toSet()));
         }
         return movieDto;
     }

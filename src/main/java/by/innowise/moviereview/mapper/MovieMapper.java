@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(imports = {MovieRole.class})
@@ -21,12 +22,12 @@ public interface MovieMapper {
     MovieDto toDto(Movie movie);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "people", ignore = true) // Люди обрабатываются отдельно
-    @Mapping(target = "genres", ignore = true) // Жанры обрабатываются отдельно
-    @Mapping(target = "createdAt", ignore = true) // Игнорируем поле
-    @Mapping(target = "reviews", ignore = true) // Игнорируем поле
-    @Mapping(target = "ratings", ignore = true) // Игнорируем поле
-    @Mapping(target = "watchlist", ignore = true) // Игнорируем поле
+    @Mapping(target = "people", ignore = true)
+    @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "reviews", ignore = true)
+    @Mapping(target = "ratings", ignore = true)
+    @Mapping(target = "watchlist", ignore = true)
     Movie toEntityFromDto(MovieDto movieDto);
 
     @Mapping(target = "id", ignore = true)
@@ -39,18 +40,18 @@ public interface MovieMapper {
     @Mapping(target = "watchlist", ignore = true)
     Movie toEntityFromCreateDto(MovieDto movieDto);
 
-    default List<String> mapGenresToNames(List<Genre> genres) {
+    default Set<String> mapGenresToNames(Set<Genre> genres) {
         if (genres == null) return null;
         return genres.stream()
                 .map(Genre::getName)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    default List<String> mapPeopleByRole(List<Person> people, MovieRole role) {
+    default Set<String> mapPeopleByRole(Set<Person> people, MovieRole role) {
         if (people == null) return null;
         return people.stream()
                 .filter(person -> person.getRole() == role)
                 .map(Person::getFullName)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -20,8 +22,18 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
+@NamedEntityGraph(
+        name = "Movie.full",
+        attributeNodes = {
+                @NamedAttributeNode("genres"),
+                @NamedAttributeNode("people"),
+                @NamedAttributeNode("watchlist"),
+                @NamedAttributeNode("ratings"),
+                @NamedAttributeNode("reviews")
+        }
+)
 @Entity
 @Table(name = "movies")
 @Getter
@@ -64,16 +76,16 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<Genre> genres;
+    private Set<Genre> genres;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews;
+    private Set<Review> reviews;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Rating> ratings;
+    private Set<Rating> ratings;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Watchlist> watchlist;
+    private Set<Watchlist> watchlist;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -81,7 +93,7 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
-    private List<Person> people;
+    private Set<Person> people;
 
     @Override
     public String toString() {

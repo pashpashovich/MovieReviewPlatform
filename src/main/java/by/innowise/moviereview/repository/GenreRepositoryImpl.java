@@ -6,10 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
-public class GenreRepositoryImpl implements GenreRepository {
+public class GenreRepositoryImpl implements Repository<Genre> {
 
     @Override
     public Genre findById(Long id) {
@@ -22,15 +24,6 @@ public class GenreRepositoryImpl implements GenreRepository {
     public List<Genre> findAll() {
         try (Session session = HibernateUtil.getSession()) {
             return session.createQuery("FROM Genre", Genre.class).list();
-        }
-    }
-
-    @Override
-    public List<Genre> findAllByName(List<String> names) {
-        try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Genre g WHERE g.name IN :names", Genre.class)
-                    .setParameter("names", names)
-                    .list();
         }
     }
 
@@ -84,4 +77,12 @@ public class GenreRepositoryImpl implements GenreRepository {
         }
     }
 
+    public Set<Genre> findAllByName(Set<String> names) {
+        try (Session session = HibernateUtil.getSession()) {
+            List<Genre> genres = session.createQuery("FROM Genre g WHERE g.name IN :names", Genre.class)
+                    .setParameter("names", names)
+                    .list();
+            return new HashSet<>(genres);
+        }
+    }
 }

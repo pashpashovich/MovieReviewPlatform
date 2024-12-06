@@ -2,7 +2,7 @@ package by.innowise.moviereview.dto;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class MovieDto {
@@ -14,8 +14,8 @@ public class MovieDto {
     private String language;
     private Double avgRating;
     private String posterBase64;
-    private List<String> genres;
-    private List<String> actors;
-    private List<String> directors;
-    private List<String> producers;
+    private Set<String> genres;
+    private Set<String> actors;
+    private Set<String> directors;
+    private Set<String> producers;
 }

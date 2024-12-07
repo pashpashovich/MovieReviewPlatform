@@ -6,7 +6,10 @@ import by.innowise.moviereview.mapper.MovieMapperImpl;
 import by.innowise.moviereview.repository.GenreRepositoryImpl;
 import by.innowise.moviereview.repository.MovieRepositoryImpl;
 import by.innowise.moviereview.repository.PersonRepositoryImpl;
+import by.innowise.moviereview.repository.RatingRepositoryImpl;
+import by.innowise.moviereview.repository.UserRepositoryImpl;
 import by.innowise.moviereview.service.MovieService;
+import by.innowise.moviereview.service.RatingService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,34 +25,43 @@ public class MovieDetailsServlet extends HttpServlet {
     private final MovieMapper movieMapper;
     private final PersonRepositoryImpl personRepository;
     private final GenreRepositoryImpl genreRepository;
+    private final RatingService ratingService;
 
     public MovieDetailsServlet() {
-        this.personRepository=new PersonRepositoryImpl();
-        this.movieMapper=new MovieMapperImpl();
-        this.movieRepository=new MovieRepositoryImpl();
-        this.genreRepository=new GenreRepositoryImpl();
-        this.movieService = new MovieService(movieRepository,movieMapper,personRepository,genreRepository);
+        this.personRepository = new PersonRepositoryImpl();
+        this.movieMapper = new MovieMapperImpl();
+        this.movieRepository = new MovieRepositoryImpl();
+        this.genreRepository = new GenreRepositoryImpl();
+        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), movieRepository);
+        this.movieService = new MovieService(movieRepository, movieMapper, personRepository, genreRepository);
     }
 
-
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String movieIdParam = req.getPathInfo().substring(1);
-        if (movieIdParam == null || movieIdParam.isEmpty()) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Не указан ID фильма");
-            return;
-        }
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         try {
+            String movieIdParam = req.getPathInfo().substring(1);
+            if (movieIdParam == null || movieIdParam.isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Не указан ID фильма");
+                return;
+            }
             Long movieId = Long.valueOf(movieIdParam);
             MovieDto movie = movieService.findMovieById(movieId);
             if (movie == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Фильм с ID " + movieId + " не найден");
                 return;
             }
+            Double averageRating = ratingService.getAverageRatingForMovie(movieId);
             req.setAttribute("movie", movie);
+            req.setAttribute("averageRating", averageRating);
             req.getRequestDispatcher("/WEB-INF/views/user/movie-details.jsp").forward(req, resp);
-        } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Некорректный ID фильма");
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Произошла ошибка.");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
+
 }

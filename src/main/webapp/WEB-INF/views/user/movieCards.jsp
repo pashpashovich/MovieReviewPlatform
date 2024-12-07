@@ -18,12 +18,12 @@
         <form id="filterForm" method="POST" action="${pageContext.request.contextPath}/user/movies">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label for="searchQuery" class="form-label">Поиск по названию</label>
+                    <label class="form-label">Поиск по названию</label>
                     <input type="text" id="searchQueryInput" name="searchQuery" class="form-control"
                            placeholder="Введите название фильма">
                 </div>
                 <div class="col-md-3">
-                    <label for="genreFilter" class="form-label">Жанры</label>
+                    <label class="form-label">Жанры</label>
                     <select id="genreFilterInput" name="genre" class="form-select">
                         <option value="">Все жанры</option>
                         <c:forEach var="genre" items="${genres}">
@@ -32,7 +32,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="languageFilter" class="form-label">Язык</label>
+                    <label class="form-label">Язык</label>
                     <select id="languageFilterInput" name="language" class="form-select">
                         <option value="">Все языки</option>
                         <option value="Русский">Русский</option>
@@ -45,12 +45,12 @@
             </div>
             <div class="row g-3 mt-3">
                 <div class="col-md-3">
-                    <label for="yearFilter" class="form-label">Год выпуска</label>
+                    <label class="form-label">Год выпуска</label>
                     <input type="number" id="yearFilterInput" name="year" class="form-control"
                            placeholder="Например, 2023">
                 </div>
                 <div class="col-md-3">
-                    <label for="durationFilter" class="form-label">Продолжительность</label>
+                    <label class="form-label">Продолжительность</label>
                     <input type="number" id="durationFilterInput" name="duration" class="form-control"
                            placeholder="Минуты">
                 </div>
@@ -82,14 +82,33 @@
                         <p class="card-text"><strong>Год:</strong> ${movie.releaseYear}</p>
                         <p class="card-text"><strong>Продолжительность:</strong> ${movie.duration} мин</p>
                         <a href="${pageContext.request.contextPath}/user/movies/${movie.id}" class="btn btn-primary">Подробнее</a>
+
+
+                        <form method="POST" action="${pageContext.request.contextPath}/user/movies/rate">
+                            <input type="hidden" name="movieId" value="${movie.id}">
+                            <div class="rating">
+                                <c:forEach begin="1" end="5" var="star">
+                                    <input
+                                            type="radio"
+                                            id="star-${star}-${movie.id}"
+                                            name="rating"
+                                            value="${star}"
+                                            <c:if test="${userRatings[movie.id] == star}">checked</c:if> />
+                                    <label for="star-${star}-${movie.id}" class="star-label">
+                                        <i class="bi bi-star-fill"></i>
+                                    </label>
+                                </c:forEach>
+                            </div>
+                            <button type="submit" class="btn btn-success mt-3">Оценить</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </c:forEach>
     </div>
-</div>
 
-<script>
+
+    <script>
     function applyFilters() {
         const form = document.getElementById('filterForm');
         const searchQuery = document.getElementById('searchQueryInput').value;
@@ -98,7 +117,6 @@
         const year = document.getElementById('yearFilterInput').value;
         const duration = document.getElementById('durationFilterInput').value;
 
-        // Set hidden input values
         form.searchQuery.value = searchQuery;
         form.genre.value = genre;
         form.language.value = language;

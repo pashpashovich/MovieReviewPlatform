@@ -8,6 +8,13 @@
     <title>${movie.title}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="${pageContext.request.contextPath}/css/movie-details.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .rating i {
+            font-size: 24px;
+            margin-right: 4px;
+        }
+    </style>
 </head>
 <body class="bg-light">
 <div class="container my-5">
@@ -18,6 +25,17 @@
         </div>
         <div class="col-md-8">
             <ul class="list-group mb-4">
+                <li class="list-group-item">
+                    <strong>Средний рейтинг:</strong>
+                    <span class="text-warning rating">
+                        <!-- Отображение звездочек -->
+                        <c:forEach begin="1" end="5" var="star">
+                            <i class="bi ${star <= averageRating ? 'bi-star-fill' : 'bi-star'}" style="color: gold;"></i>
+                        </c:forEach>
+                        <!-- Текстовый рейтинг -->
+                        <span class="text-muted">(${averageRating})</span>
+                    </span>
+                </li>
                 <li class="list-group-item"><strong>Описание:</strong> ${movie.description}</li>
                 <li class="list-group-item"><strong>Жанры:</strong>
                     <c:forEach var="genre" items="${movie.genres}">

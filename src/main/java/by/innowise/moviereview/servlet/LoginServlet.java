@@ -35,6 +35,7 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("user", userDto);
 
+
             switch (userDto.getRole()) {
                 case ADMIN:
                     resp.sendRedirect(req.getContextPath() + "/admin/movies");

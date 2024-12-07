@@ -3,6 +3,7 @@ package by.innowise.moviereview.service;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Person;
+import by.innowise.moviereview.entity.Rating;
 import by.innowise.moviereview.exception.EntityNotFoundException;
 import by.innowise.moviereview.exception.UpdatingException;
 import by.innowise.moviereview.mapper.MovieMapper;
@@ -16,6 +17,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.lang.module.FindException;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -142,6 +144,7 @@ public class MovieService {
             return movieMapper.toDto(movie);
         }
     }
+
 }
 
 

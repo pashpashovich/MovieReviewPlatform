@@ -3,3 +3,21 @@
     height: 200px;
     object-fit: cover;
 }
+
+.rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.star-label {
+    cursor: pointer;
+    font-size: 24px;
+    color: lightgray;
+}
+
+input[type="radio"]:checked ~ .star-label,
+input[type="radio"]:hover ~ .star-label {
+    color: gold;
+}
+

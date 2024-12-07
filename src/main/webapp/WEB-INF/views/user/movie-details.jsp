@@ -43,7 +43,7 @@
                 <li class="list-group-item"><strong>Продолжительность:</strong> ${movie.duration} мин</li>
                 <li class="list-group-item"><strong>Язык:</strong> ${movie.language}</li>
             </ul>
-            <a href="${pageContext.request.contextPath}/movies" class="btn btn-secondary">Назад к списку фильмов</a>
+            <a href="${pageContext.request.contextPath}/user/movies" class="btn btn-secondary">Назад к списку фильмов</a>
         </div>
     </div>
 </div>

@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "MovieDetailsServlet", urlPatterns = "/movies/*")
+@WebServlet(name = "MovieDetailsServlet", urlPatterns = "/user/movies/*")
 public class MovieDetailsServlet extends HttpServlet {
     private final MovieService movieService;
     private final MovieRepositoryImpl movieRepository;

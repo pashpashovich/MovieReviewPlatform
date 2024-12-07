@@ -11,7 +11,63 @@
 </head>
 <body class="bg-light">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/movieForm.js" defer></script>
+<script>
+    function editMovie(id, title, description, releaseYear, duration, language, selectedGenres, selectedActors, selectedDirectors, selectedProducers) {
+        document.getElementById('id').value = id;
+        document.getElementById('title').value = title;
+        document.getElementById('description').value = description;
+        document.getElementById('releaseYear').value = releaseYear;
+        document.getElementById('duration').value = duration;
+        document.getElementById('language').value = language;
+        document.getElementById('method').value = 'PUT';
+
+        document.getElementById('formTitle').innerText = 'Редактирование фильма';
+
+        updateSelect(document.getElementById('genres'), selectedGenres);
+        updateSelect(document.getElementById('actors'), selectedActors);
+        updateSelect(document.getElementById('directors'), selectedDirectors);
+        updateSelect(document.getElementById('producers'), selectedProducers);
+    }
+
+    function resetForm() {
+        document.getElementById('id').value = '';
+        document.getElementById('title').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('releaseYear').value = '';
+        document.getElementById('duration').value = '';
+        document.getElementById('language').value = '';
+        document.getElementById('method').value = 'POST';
+
+        document.getElementById('formTitle').innerText = 'Добавление фильма';
+
+        resetSelect(document.getElementById('genres'));
+        resetSelect(document.getElementById('actors'));
+        resetSelect(document.getElementById('directors'));
+        resetSelect(document.getElementById('producers'));
+    }
+
+    function updateSelect(selectElement, selectedValues) {
+        const selectedSet = new Set(selectedValues);
+        Array.from(selectElement.options).forEach(option => {
+            option.selected = selectedSet.has(option.value);
+        });
+    }
+
+    function resetSelect(selectElement) {
+        Array.from(selectElement.options).forEach(option => {
+            option.selected = false;
+        });
+    }
+
+    function validateForm() {
+        const language = document.getElementById("language").value;
+        if (!language) {
+            alert("Пожалуйста, выберите язык.");
+            return false;
+        }
+        return true;
+    }
+</script>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
         <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/admin/movies">
@@ -24,7 +80,8 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/movies">
+                    <a class="nav-link active" aria-current="page"
+                       href="${pageContext.request.contextPath}/admin/movies">
                         <i class="bi bi-film"></i> Управление фильмами
                     </a>
                 </li>

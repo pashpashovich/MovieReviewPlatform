@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/movies")
+@WebServlet("/user/movies")
 public class UserMovieServlet extends HttpServlet {
     private final MovieService movieService;
     private final GenreRepositoryImpl genreRepository;
@@ -33,6 +33,15 @@ public class UserMovieServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        handleRequest(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        handleRequest(req, resp);
+    }
+
+    private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String searchQuery = req.getParameter("searchQuery");
         String genreId = req.getParameter("genre");
         String language = req.getParameter("language");
@@ -42,8 +51,6 @@ public class UserMovieServlet extends HttpServlet {
         List<Genre> genres = genreRepository.findAll();
         req.setAttribute("movies", movies);
         req.setAttribute("genres", genres);
-
         req.getRequestDispatcher("/WEB-INF/views/user/movieCards.jsp").forward(req, resp);
     }
 }
-

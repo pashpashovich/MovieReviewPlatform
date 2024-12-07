@@ -10,7 +10,17 @@
 </head>
 <body class="bg-light">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/personForm.js" defer></script>
+<script>
+    function editPerson(id, fullName, role) {
+        document.getElementById('id').value = id;
+        document.getElementById('fullName').value = fullName;
+        document.getElementById('role').value = role;
+        document.getElementById('method').value = 'PUT';
+
+        const formTitle = document.getElementById('formTitle');
+        formTitle.textContent = 'Редактирование человека';
+    }
+</script>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
         <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/admin/movies">

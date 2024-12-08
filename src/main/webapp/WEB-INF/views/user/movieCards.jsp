@@ -64,7 +64,27 @@
             </div>
         </form>
     </div>
-
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Рекомендации для вас</h3>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <c:forEach var="recommendation" items="${recommendations}">
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="data:image/jpeg;base64,${recommendation.posterBase64}" class="card-img-top"
+                                 alt="${recommendation.title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${recommendation.title}</h5>
+                                <a href="${pageContext.request.contextPath}/user/movies/${recommendation.id}"
+                                   class="btn btn-outline-primary">Подробнее</a>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
+    <h3>Фильмы</h3>
     <div class="row row-cols-1 row-cols-md-3 g-4" id="moviesCards">
         <c:forEach var="movie" items="${movies}">
             <div class="col">
@@ -109,29 +129,29 @@
 
 
     <script>
-    function applyFilters() {
-        const form = document.getElementById('filterForm');
-        const searchQuery = document.getElementById('searchQueryInput').value;
-        const genre = document.getElementById('genreFilterInput').value;
-        const language = document.getElementById('languageFilterInput').value;
-        const year = document.getElementById('yearFilterInput').value;
-        const duration = document.getElementById('durationFilterInput').value;
+        function applyFilters() {
+            const form = document.getElementById('filterForm');
+            const searchQuery = document.getElementById('searchQueryInput').value;
+            const genre = document.getElementById('genreFilterInput').value;
+            const language = document.getElementById('languageFilterInput').value;
+            const year = document.getElementById('yearFilterInput').value;
+            const duration = document.getElementById('durationFilterInput').value;
 
-        form.searchQuery.value = searchQuery;
-        form.genre.value = genre;
-        form.language.value = language;
-        form.year.value = year;
-        form.duration.value = duration;
+            form.searchQuery.value = searchQuery;
+            form.genre.value = genre;
+            form.language.value = language;
+            form.year.value = year;
+            form.duration.value = duration;
 
-        form.submit();
-    }
+            form.submit();
+        }
 
-    function resetFilters() {
-        const form = document.getElementById('filterForm');
-        form.reset();
-        window.location.href = `${window.location.pathname}`;
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        function resetFilters() {
+            const form = document.getElementById('filterForm');
+            form.reset();
+            window.location.href = `${window.location.pathname}`;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

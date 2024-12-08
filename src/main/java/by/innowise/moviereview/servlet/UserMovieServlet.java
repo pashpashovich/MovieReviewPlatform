@@ -12,6 +12,7 @@ import by.innowise.moviereview.repository.RatingRepositoryImpl;
 import by.innowise.moviereview.repository.UserRepositoryImpl;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.service.RatingService;
+import by.innowise.moviereview.service.RecommendationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -29,6 +30,7 @@ public class UserMovieServlet extends HttpServlet {
     private final MovieService movieService;
     private final GenreRepositoryImpl genreRepository;
     private final RatingService ratingService;
+    private final RecommendationService recommendationService;
 
     public UserMovieServlet() {
         MovieRepositoryImpl movieRepository = new MovieRepositoryImpl();
@@ -37,6 +39,7 @@ public class UserMovieServlet extends HttpServlet {
         RatingRepositoryImpl ratingRepository = new RatingRepositoryImpl();
         this.ratingService = new RatingService(ratingRepository, new UserRepositoryImpl(), movieRepository);
         this.movieService = new MovieService(movieRepository, movieMapper, new PersonRepositoryImpl(), genreRepository);
+        this.recommendationService = new RecommendationService(ratingRepository, movieRepository, movieMapper);
     }
 
     @Override
@@ -70,9 +73,12 @@ public class UserMovieServlet extends HttpServlet {
             }
         }
 
+        List<MovieDto> recommendations = recommendationService.getRecommendationsForUser(userId);
+
         req.setAttribute("movies", movies);
         req.setAttribute("genres", genres);
         req.setAttribute("userRatings", userRatings);
+        req.setAttribute("recommendations", recommendations);
 
         req.getRequestDispatcher("/WEB-INF/views/user/movieCards.jsp").forward(req, resp);
     }

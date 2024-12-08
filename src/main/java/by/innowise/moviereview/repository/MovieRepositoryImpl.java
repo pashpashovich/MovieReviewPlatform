@@ -1,5 +1,6 @@
 package by.innowise.moviereview.repository;
 
+import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.exception.DeletingException;
 import by.innowise.moviereview.exception.SavingException;
@@ -92,4 +93,25 @@ public class MovieRepositoryImpl implements Repository<Movie> {
         }
     }
 
+    public List<Movie> findByGenres(List<Long> genreIds) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                            "SELECT DISTINCT m FROM Movie m JOIN FETCH m.people p JOIN m.genres g WHERE g.id IN :genreIds",
+                            Movie.class)
+                    .setParameter("genreIds", genreIds)
+                    .getResultList();
+        }
+    }
+
+    public List<Movie> findTopRatedMovies() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                            "SELECT m FROM Movie m " +
+                                    "LEFT JOIN m.ratings r " +
+                                    "GROUP BY m " +
+                                    "ORDER BY COALESCE(AVG(r.value), 0) DESC", Movie.class)
+                    .setMaxResults(10)
+                    .getResultList();
+        }
+    }
 }

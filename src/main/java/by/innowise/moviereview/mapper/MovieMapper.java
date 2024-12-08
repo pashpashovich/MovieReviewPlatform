@@ -21,6 +21,12 @@ public interface MovieMapper {
     @Mapping(target = "producers", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.PRODUCER))")
     MovieDto toDto(Movie movie);
 
+    @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "actors", ignore = true)
+    @Mapping(target = "directors", ignore = true)
+    @Mapping(target = "producers", ignore = true)
+    MovieDto toDtoForRecomendations(Movie movie);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "people", ignore = true)
     @Mapping(target = "genres", ignore = true)

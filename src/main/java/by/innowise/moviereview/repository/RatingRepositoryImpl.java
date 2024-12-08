@@ -5,6 +5,8 @@ import by.innowise.moviereview.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.List;
+
 public class RatingRepositoryImpl {
     public Rating findByUserAndMovie(Long userId, Long movieId) {
         try (Session session = HibernateUtil.getSession()) {
@@ -46,6 +48,18 @@ public class RatingRepositoryImpl {
             return (Double) session.createQuery(hql)
                     .setParameter("movieId", movieId)
                     .uniqueResult();
+        }
+    }
+
+    public List<Long> findGenresByUserPreferences(Long userId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                            "SELECT DISTINCT g.id FROM Rating r " +
+                                    "JOIN r.movie m " +
+                                    "JOIN m.genres g " +
+                                    "WHERE r.user.id = :userId AND r.rating >= 4", Long.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
         }
     }
 }

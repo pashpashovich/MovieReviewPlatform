@@ -76,7 +76,6 @@
                                 onclick="editPerson(${person.id}, '${person.fullName}', '${person.role}')">
                             Редактировать
                         </button>
-                        <!-- Удаление -->
                         <form method="post" action="${pageContext.request.contextPath}/admin/people"
                               style="display:inline;">
                             <input type="hidden" name="id" value="${person.id}">

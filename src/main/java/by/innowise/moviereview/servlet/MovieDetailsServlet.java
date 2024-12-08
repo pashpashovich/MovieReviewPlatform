@@ -1,6 +1,7 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.MovieDto;
+import by.innowise.moviereview.entity.Review;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.mapper.MovieMapperImpl;
 import by.innowise.moviereview.repository.GenreRepositoryImpl;
@@ -10,13 +11,14 @@ import by.innowise.moviereview.repository.RatingRepositoryImpl;
 import by.innowise.moviereview.repository.UserRepositoryImpl;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.service.RatingService;
-import jakarta.servlet.ServletException;
+import by.innowise.moviereview.service.ReviewService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "MovieDetailsServlet", urlPatterns = "/user/movies/*")
 public class MovieDetailsServlet extends HttpServlet {
@@ -26,8 +28,10 @@ public class MovieDetailsServlet extends HttpServlet {
     private final PersonRepositoryImpl personRepository;
     private final GenreRepositoryImpl genreRepository;
     private final RatingService ratingService;
+    private final ReviewService reviewService;
 
     public MovieDetailsServlet() {
+        this.reviewService = new ReviewService();
         this.personRepository = new PersonRepositoryImpl();
         this.movieMapper = new MovieMapperImpl();
         this.movieRepository = new MovieRepositoryImpl();
@@ -51,8 +55,11 @@ public class MovieDetailsServlet extends HttpServlet {
                 return;
             }
             Double averageRating = ratingService.getAverageRatingForMovie(movieId);
+            List<Review> approvedReviews = reviewService.findApprovedReviewsByMovieId(movieId);
             req.setAttribute("movie", movie);
             req.setAttribute("averageRating", averageRating);
+            req.setAttribute("reviews", approvedReviews);
+
             req.getRequestDispatcher("/WEB-INF/views/user/movie-details.jsp").forward(req, resp);
         } catch (Exception e) {
             e.printStackTrace();

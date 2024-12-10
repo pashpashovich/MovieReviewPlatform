@@ -25,9 +25,8 @@ public class ReviewServlet extends HttpServlet {
             Long movieId = Long.parseLong(req.getParameter("movieId"));
             String content = req.getParameter("content");
             int rating = Integer.parseInt(req.getParameter("rating"));
-
             reviewService.addReview(userId, movieId, content, rating);
-
+            req.getSession().setAttribute("successMessage", "Ваша рецензия добавлена в список обработки у администратора, ожидайте.");
             resp.sendRedirect(req.getContextPath() + "/user/movies/" + movieId);
         } catch (Exception e) {
             e.printStackTrace();

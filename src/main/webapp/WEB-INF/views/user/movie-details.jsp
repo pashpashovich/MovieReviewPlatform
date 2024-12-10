@@ -44,14 +44,16 @@
     <h1 class="text-center mb-4">${movie.title}</h1>
     <div class="row">
         <div class="col-md-4">
-            <img src="data:image/jpeg;base64,${movie.posterBase64}" class="img-fluid rounded shadow" alt="${movie.title}">
+            <img src="data:image/jpeg;base64,${movie.posterBase64}" class="img-fluid rounded shadow"
+                 alt="${movie.title}">
         </div>
         <div class="col-md-8">
             <ul class="list-group mb-4">
                 <li class="list-group-item"><strong>Средний рейтинг:</strong>
                     <span class="text-warning rating">
                         <c:forEach begin="1" end="5" var="star">
-                            <i class="bi ${star <= averageRating ? 'bi-star-fill' : 'bi-star'}" style="color: gold;"></i>
+                            <i class="bi ${star <= averageRating ? 'bi-star-fill' : 'bi-star'}"
+                               style="color: gold;"></i>
                         </c:forEach>
                         (${averageRating})
                     </span>
@@ -109,6 +111,13 @@
     <div class="card mt-4">
         <div class="card-body">
             <h3>Написать рецензию</h3>
+            <c:if test="${not empty sessionScope.successMessage}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        ${sessionScope.successMessage}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <c:remove var="successMessage" scope="session" />
+            </c:if>
             <form method="POST" action="${pageContext.request.contextPath}/user/movies/review">
                 <input type="hidden" name="movieId" value="${movie.id}">
                 <div class="mb-3">

@@ -6,17 +6,14 @@ import by.innowise.moviereview.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
     UserDto toDto(User user);
 
-
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "reviews", ignore = true)
-    @Mapping(target = "ratings", ignore = true)
-    @Mapping(target = "watchlist", ignore = true)
-    User toEntity(UserDto userDto);
+    List<UserDto> toListDto(List<User> users);
 
     @Mapping(target = "reviews", ignore = true)
     @Mapping(target = "ratings", ignore = true)

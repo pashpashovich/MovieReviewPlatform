@@ -1,6 +1,8 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
+import by.innowise.moviereview.exception.BadCredentialsException;
+import by.innowise.moviereview.exception.NoAccessException;
 import by.innowise.moviereview.mapper.UserMapperImpl;
 import by.innowise.moviereview.repository.UserRepositoryImpl;
 import by.innowise.moviereview.service.UserService;
@@ -15,9 +17,11 @@ import java.io.IOException;
 
 @WebServlet("/")
 public class LoginServlet extends HttpServlet {
-    private final UserRepositoryImpl userRepository = new UserRepositoryImpl();
-    private UserMapperImpl userMapper = new UserMapperImpl();
-    private final UserService userService = new UserService(userRepository, userMapper);
+    private final UserService userService;
+
+    public LoginServlet() {
+        userService = new UserService(new UserRepositoryImpl(), new UserMapperImpl());
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,7 +39,6 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("user", userDto);
 
-
             switch (userDto.getRole()) {
                 case ADMIN:
                     resp.sendRedirect(req.getContextPath() + "/admin/movies");
@@ -46,9 +49,14 @@ public class LoginServlet extends HttpServlet {
                 default:
                     resp.sendRedirect(req.getContextPath() + "/");
             }
-        } catch (Exception e) {
-            req.setAttribute("error", e.getMessage());
+        } catch (BadCredentialsException | NoAccessException e) {
+            String errorMessage;
+            if (e instanceof BadCredentialsException) errorMessage = "Неверный логин или пароль. Повторите попытку";
+            else
+                errorMessage = "Вас заблокировали. Если считаете, что произошла ошибка, то свяжитесь со службой поддержки";
+            req.setAttribute("error", errorMessage);
             req.getRequestDispatcher("/WEB-INF/views/common/login.jsp").forward(req, resp);
         }
     }
+
 }

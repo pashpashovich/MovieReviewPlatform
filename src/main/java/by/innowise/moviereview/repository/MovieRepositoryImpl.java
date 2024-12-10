@@ -1,6 +1,5 @@
 package by.innowise.moviereview.repository;
 
-import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.exception.DeletingException;
 import by.innowise.moviereview.exception.SavingException;
@@ -8,7 +7,6 @@ import by.innowise.moviereview.exception.UpdatingException;
 import by.innowise.moviereview.util.HibernateUtil;
 import jakarta.persistence.EntityGraph;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -94,24 +92,28 @@ public class MovieRepositoryImpl implements Repository<Movie> {
     }
 
     public List<Movie> findByGenres(List<Long> genreIds) {
+        String hql = "SELECT DISTINCT m " +
+                "FROM Movie m " +
+                "LEFT JOIN FETCH m.genres g " +
+                "WHERE g.id IN (:genreIds)";
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
-                            "SELECT DISTINCT m FROM Movie m JOIN FETCH m.people p JOIN m.genres g WHERE g.id IN :genreIds",
-                            Movie.class)
+            return session.createQuery(hql, Movie.class)
                     .setParameter("genreIds", genreIds)
                     .getResultList();
         }
     }
 
     public List<Movie> findTopRatedMovies() {
+        String sql = "SELECT m.* " +
+                "FROM movies m " +
+                "LEFT JOIN ratings r ON m.id = r.movie_id " +
+                "GROUP BY m.id, m.avg_rating, m.created_at, m.description, m.duration, m.language, m.poster, m.release_year, m.title " +
+                "ORDER BY COALESCE(AVG(r.rating), 0) DESC";
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
-                            "SELECT m FROM Movie m " +
-                                    "LEFT JOIN m.ratings r " +
-                                    "GROUP BY m " +
-                                    "ORDER BY COALESCE(AVG(r.value), 0) DESC", Movie.class)
+            return session.createNativeQuery(sql, Movie.class)
                     .setMaxResults(10)
                     .getResultList();
         }
+
     }
 }

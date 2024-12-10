@@ -22,22 +22,14 @@ import java.util.List;
 
 @WebServlet(name = "MovieDetailsServlet", urlPatterns = "/user/movies/*")
 public class MovieDetailsServlet extends HttpServlet {
-    private final MovieService movieService;
-    private final MovieRepositoryImpl movieRepository;
-    private final MovieMapper movieMapper;
-    private final PersonRepositoryImpl personRepository;
-    private final GenreRepositoryImpl genreRepository;
     private final RatingService ratingService;
+    private final MovieService movieService;
     private final ReviewService reviewService;
 
     public MovieDetailsServlet() {
-        this.reviewService = new ReviewService();
-        this.personRepository = new PersonRepositoryImpl();
-        this.movieMapper = new MovieMapperImpl();
-        this.movieRepository = new MovieRepositoryImpl();
-        this.genreRepository = new GenreRepositoryImpl();
-        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), movieRepository);
-        this.movieService = new MovieService(movieRepository, movieMapper, personRepository, genreRepository);
+        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
+        this.movieService = new MovieService(new MovieRepositoryImpl(), new MovieMapperImpl(), new PersonRepositoryImpl(), new GenreRepositoryImpl());
+        this.reviewService=new ReviewService();
     }
 
     @Override

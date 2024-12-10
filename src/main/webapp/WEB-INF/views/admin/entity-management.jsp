@@ -36,7 +36,22 @@
                         <i class="bi bi-person-stars"></i> Звезды
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/admin/users">
+                        <i class="bi bi-person-stars"></i> Пользователи
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/admin/reviews">
+                        <i class="bi bi-person-stars"></i> Рецензии
+                    </a>
+                </li>
             </ul>
+            <form method="post" action="${pageContext.request.contextPath}/logout" class="d-flex">
+                <button class="btn btn-danger btn-sm" type="submit">
+                    <i class="bi bi-box-arrow-right"></i> Выйти
+                </button>
+            </form>
         </div>
     </div>
 </nav>

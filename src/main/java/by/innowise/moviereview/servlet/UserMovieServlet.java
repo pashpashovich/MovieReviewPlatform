@@ -33,13 +33,10 @@ public class UserMovieServlet extends HttpServlet {
     private final RecommendationService recommendationService;
 
     public UserMovieServlet() {
-        MovieRepositoryImpl movieRepository = new MovieRepositoryImpl();
-        MovieMapper movieMapper = new MovieMapperImpl();
         this.genreRepository = new GenreRepositoryImpl();
-        RatingRepositoryImpl ratingRepository = new RatingRepositoryImpl();
-        this.ratingService = new RatingService(ratingRepository, new UserRepositoryImpl(), movieRepository);
-        this.movieService = new MovieService(movieRepository, movieMapper, new PersonRepositoryImpl(), genreRepository);
-        this.recommendationService = new RecommendationService(ratingRepository, movieRepository, movieMapper);
+        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
+        this.movieService = new MovieService(new MovieRepositoryImpl(), new MovieMapperImpl(), new PersonRepositoryImpl(), genreRepository);
+        this.recommendationService = new RecommendationService(new RatingRepositoryImpl(), new MovieRepositoryImpl(), new MovieMapperImpl());
     }
 
     @Override

@@ -5,6 +5,7 @@ import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.repository.MovieRepositoryImpl;
 import by.innowise.moviereview.repository.RatingRepositoryImpl;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -19,26 +20,25 @@ public class RecommendationService {
         this.movieMapper = movieMapper;
     }
 
+    @Transactional
     public List<MovieDto> getRecommendationsForUser(Long userId) {
+        List<Movie> topRatedMovies = movieRepository.findTopRatedMovies();
+        System.out.println(topRatedMovies);
+        List<MovieDto> topRatedMoviesDto = topRatedMovies.stream()
+                .map(movieMapper::toDtoForRecomendations)
+                .toList();
         if (userId == null) {
-            List<Movie> topRatedMovies = movieRepository.findTopRatedMovies();
-            return topRatedMovies.stream()
-                    .map(movieMapper::toDto)
-                    .toList();
+            return topRatedMoviesDto;
         }
         List<Long> likedGenres = ratingRepository.findGenresByUserPreferences(userId);
         if (likedGenres.isEmpty()) {
-            List<Movie> topRatedMovies = movieRepository.findTopRatedMovies();
-            return topRatedMovies.stream()
-                    .map(movieMapper::toDto)
-                    .toList();
+            return topRatedMoviesDto;
         }
-
         List<Movie> recommendedMovies = movieRepository.findByGenres(likedGenres);
-
         return recommendedMovies.stream()
                 .limit(5)
                 .map(movieMapper::toDtoForRecomendations)
                 .toList();
     }
+
 }

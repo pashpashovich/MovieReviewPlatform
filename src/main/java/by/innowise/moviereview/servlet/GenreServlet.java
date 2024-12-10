@@ -15,7 +15,11 @@ import java.util.List;
 
 @WebServlet("/admin/genres")
 public class GenreServlet extends HttpServlet {
-    private final GenreService genreService = new GenreService(new GenreRepositoryImpl(), new GenreMapperImpl());
+    private final GenreService genreService;
+
+    public GenreServlet() {
+        this.genreService= new GenreService(new GenreRepositoryImpl(), new GenreMapperImpl());
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

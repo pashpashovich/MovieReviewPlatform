@@ -14,9 +14,11 @@ import java.io.IOException;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
-    private final UserRepositoryImpl userRepository = new UserRepositoryImpl();
-    private UserMapperImpl userMapper = new UserMapperImpl();
-    private final UserService userService = new UserService(userRepository, userMapper);
+    private final UserService userService;
+
+    public RegisterServlet() {
+        this.userService = new UserService(new UserRepositoryImpl(), new UserMapperImpl());
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

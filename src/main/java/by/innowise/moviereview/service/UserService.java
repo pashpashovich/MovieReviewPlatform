@@ -4,7 +4,9 @@ package by.innowise.moviereview.service;
 import by.innowise.moviereview.dto.UserCreateDto;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.exception.BadCredentialsException;
 import by.innowise.moviereview.exception.EmailNotAvailableException;
+import by.innowise.moviereview.exception.NoAccessException;
 import by.innowise.moviereview.exception.UserNotFoundException;
 import by.innowise.moviereview.mapper.UserMapper;
 import by.innowise.moviereview.mapper.UserMapperImpl;
@@ -27,9 +29,9 @@ public class UserService {
     public UserDto authenticate(String username, String password) {
         User user = userRepository.findByEmail(username);
         if (user != null && PasswordUtils.verify(password, user.getPassword())) {
-            return userMapper.toDto(user);
-        }
-        return null;
+            if (Boolean.TRUE.equals(user.getIsBlocked())) throw new NoAccessException("Пользователь заблокирован");
+            else return userMapper.toDto(user);
+        } else throw new BadCredentialsException("Неверный логин или пароль");
     }
 
     public void register(UserCreateDto user) {
@@ -44,26 +46,9 @@ public class UserService {
         user.setPassword(PasswordUtils.hash(user.getPassword()));
         User entityCreate = userMapper.toEntityCreate(user);
         entityCreate.setRole(Role.USER);
-        log.info("Новая сущность:"+entityCreate);
+        log.info("Новая сущность:" + entityCreate);
         userRepository.save(entityCreate);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    public void updateUser(UserDto userDto) {
-        User user = userMapper.toEntity(userDto);
-        userRepository.update(user);
-    }
-
-    public void deleteUser(Long id) {
-        User user = userRepository.findById(id);
-        if (user != null) {
-            userRepository.delete(user);
-        } else {
-            throw new UserNotFoundException("Пользователь не найден");
-        }
-    }
 }
 

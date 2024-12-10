@@ -1,11 +1,10 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.entity.Person;
+import by.innowise.moviereview.mapper.PersonMapperImpl;
 import by.innowise.moviereview.repository.PersonRepositoryImpl;
-import by.innowise.moviereview.repository.Repository;
 import by.innowise.moviereview.service.PersonService;
 import by.innowise.moviereview.util.enums.MovieRole;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,8 +19,7 @@ public class PersonServlet extends HttpServlet {
     private final PersonService personService;
 
     public PersonServlet() {
-        Repository<Person> personRepository = new PersonRepositoryImpl();
-        this.personService = new PersonService(personRepository);
+        this.personService = new PersonService(new PersonRepositoryImpl(), new PersonMapperImpl());
     }
 
     @Override

@@ -1,14 +1,15 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.MovieDto;
-import by.innowise.moviereview.entity.Movie;
-import by.innowise.moviereview.mapper.MovieMapper;
+import by.innowise.moviereview.mapper.GenreMapperImpl;
 import by.innowise.moviereview.mapper.MovieMapperImpl;
+import by.innowise.moviereview.mapper.PersonMapperImpl;
 import by.innowise.moviereview.repository.GenreRepositoryImpl;
 import by.innowise.moviereview.repository.MovieRepositoryImpl;
 import by.innowise.moviereview.repository.PersonRepositoryImpl;
-import by.innowise.moviereview.repository.Repository;
+import by.innowise.moviereview.service.GenreService;
 import by.innowise.moviereview.service.MovieService;
+import by.innowise.moviereview.service.PersonService;
 import by.innowise.moviereview.util.enums.MovieRole;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -30,25 +31,23 @@ import java.util.stream.Collectors;
         maxRequestSize = 1024 * 1024 * 50)
 public class MovieServlet extends HttpServlet {
     private final MovieService movieService;
-    private final GenreRepositoryImpl genreRepository;
-    private final PersonRepositoryImpl personRepository;
+    private final GenreService genreService;
+    private final PersonService personService;
 
     public MovieServlet() {
-        Repository<Movie> movieRepository = new MovieRepositoryImpl();
-        MovieMapper movieMapper = new MovieMapperImpl();
-        this.genreRepository = new GenreRepositoryImpl();
-        this.personRepository = new PersonRepositoryImpl();
-        this.movieService = new MovieService(movieRepository, movieMapper, personRepository, genreRepository);
+        this.movieService = new MovieService(new MovieRepositoryImpl(), new MovieMapperImpl(), new PersonRepositoryImpl(), new GenreRepositoryImpl());
+        this.genreService=new GenreService(new GenreRepositoryImpl(),new GenreMapperImpl());
+        this.personService=new PersonService(new PersonRepositoryImpl(), new PersonMapperImpl());
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<MovieDto> movies = movieService.getAllMovies();
         req.setAttribute("movies", movies);
-        req.setAttribute("genres", genreRepository.findAll());
-        req.setAttribute("actors", personRepository.findAllByRole(MovieRole.ACTOR));
-        req.setAttribute("directors", personRepository.findAllByRole(MovieRole.DIRECTOR));
-        req.setAttribute("producers", personRepository.findAllByRole(MovieRole.PRODUCER));
+        req.setAttribute("genres", genreService.findAll());
+        req.setAttribute("actors", personService.getAllPeopleByRole(MovieRole.ACTOR));
+        req.setAttribute("directors", personService.getAllPeopleByRole(MovieRole.DIRECTOR));
+        req.setAttribute("producers", personService.getAllPeopleByRole(MovieRole.PRODUCER));
         req.getRequestDispatcher("/WEB-INF/views/admin/movies.jsp").forward(req, resp);
     }
 

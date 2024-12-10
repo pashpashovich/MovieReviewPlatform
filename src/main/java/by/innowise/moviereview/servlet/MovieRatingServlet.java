@@ -28,10 +28,7 @@ public class MovieRatingServlet extends HttpServlet {
     private final RatingService ratingService;
 
     public MovieRatingServlet() {
-        MovieRepositoryImpl movieRepository = new MovieRepositoryImpl();
-        RatingRepositoryImpl ratingRepository = new RatingRepositoryImpl();
-        UserRepositoryImpl userRepository = new UserRepositoryImpl();
-        this.ratingService = new RatingService(ratingRepository, userRepository, movieRepository);
+        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
     }
 
     @Override

@@ -32,7 +32,6 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-
         try {
             UserDto userDto = userService.authenticate(email, password);
 
@@ -54,6 +53,8 @@ public class LoginServlet extends HttpServlet {
             if (e instanceof BadCredentialsException) errorMessage = "Неверный логин или пароль. Повторите попытку";
             else
                 errorMessage = "Вас заблокировали. Если считаете, что произошла ошибка, то свяжитесь со службой поддержки";
+            req.setAttribute("email",email);
+            req.setAttribute("password",password);
             req.setAttribute("error", errorMessage);
             req.getRequestDispatcher("/WEB-INF/views/common/login.jsp").forward(req, resp);
         }

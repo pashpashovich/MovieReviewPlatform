@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,17 +25,17 @@
                     <h3>Вход в систему</h3>
                 </div>
                 <div class="card-body">
-                    <c:if test="${error != null && not empty error}">
+                    <c:if test="${error != null}">
                         <div class="alert alert-danger text-center">${error}</div>
                     </c:if>
                     <form method="post" action="${pageContext.request.contextPath}/login">
                         <div class="mb-3">
                             <label for="email" class="form-label">Электронная почта</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
+                            <input type="email" value="${email}" id="email" name="email" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Пароль</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                            <input type="password" value="${password}" id="password" name="password" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Войти</button>
                     </form>

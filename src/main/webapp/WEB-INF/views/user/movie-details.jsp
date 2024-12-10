@@ -70,7 +70,11 @@
             </ul>
             <form method="POST" action="${pageContext.request.contextPath}/user/watchlist/add">
                 <input type="hidden" name="movieId" value="${movie.id}">
-                <button type="submit" class="btn btn-outline-success">
+                <button
+                        type="submit"
+                        class="btn btn-outline-success"
+                        <c:if test="${isInList}">disabled</c:if>
+                >
                     <i class="bi bi-plus-circle"></i> Хочу посмотреть
                 </button>
                 <c:if test="${not empty param.error}">
@@ -84,20 +88,20 @@
 
     <div class="card mt-4">
         <div class="card-body">
-            <h3>Отзывы</h3>
+            <h3>Рецензии</h3>
             <c:if test="${not empty reviews}">
                 <ul class="list-group">
                     <c:forEach var="review" items="${reviews}">
                         <li class="list-group-item">
                             <strong>${review.user.username}</strong> (оценка: ${review.rating}/5)
-                            <p>${review.content}</p>
                             <small class="text-muted">Опубликовано: ${review.createdAt}</small>
+                            <p>${review.content}</p>
                         </li>
                     </c:forEach>
                 </ul>
             </c:if>
             <c:if test="${empty reviews}">
-                <p>Пока нет отзывов на этот фильм.</p>
+                <p>Пока нет рецензий на этот фильм.</p>
             </c:if>
         </div>
     </div>

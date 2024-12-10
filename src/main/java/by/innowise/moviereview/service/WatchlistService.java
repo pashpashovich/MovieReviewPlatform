@@ -51,4 +51,5 @@ public class WatchlistService {
     public boolean isMovieInWatchlist(Long userId, Long movieId) {
         return watchlistRepository.findByUserIdAndMovieId(userId, movieId).isPresent();
     }
+
 }

@@ -26,6 +26,11 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
+    public UserDto findById(Long id)
+    {
+        return userMapper.toDto(userRepository.findById(id));
+    }
+
     public UserDto authenticate(String username, String password) {
         User user = userRepository.findByEmail(username);
         if (user != null && PasswordUtils.verify(password, user.getPassword())) {

@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
                     resp.sendRedirect(req.getContextPath() + "/admin/movies");
                     break;
                 case USER:
-                    resp.sendRedirect(req.getContextPath() + "/user/movies");
+                    resp.sendRedirect(req.getContextPath() + "/user/profile");
                     break;
                 default:
                     resp.sendRedirect(req.getContextPath() + "/");

@@ -14,8 +14,8 @@
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/admin/movies">
-            <strong>КиноАдмин</strong>
+        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/user/profile">
+            <strong>КиноХелпер</strong>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
@@ -23,6 +23,11 @@
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/profile">
+                        <i class="bi bi-film"></i> Профиль
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/user/movies">
                         <i class="bi bi-film"></i> Поиск фильмов

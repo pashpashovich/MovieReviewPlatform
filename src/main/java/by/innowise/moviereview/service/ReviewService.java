@@ -52,4 +52,9 @@ public class ReviewService {
     public List<Review> findApprovedReviewsByMovieId(Long movieId) {
         return reviewRepository.findByMovieIdAndStatus(movieId, ReviewStatus.APPROVED);
     }
+
+    public List<Review> findRecentReviewsByUserId(Long userId) {
+        LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
+        return reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
+    }
 }

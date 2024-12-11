@@ -6,6 +6,7 @@ import by.innowise.moviereview.util.enums.ReviewStatus;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ReviewRepositoryImpl implements Repository<Review> {
@@ -108,6 +109,15 @@ public class ReviewRepositoryImpl implements Repository<Review> {
             return session.createQuery("FROM Review WHERE movie.id = :movieId AND status = :status", Review.class)
                     .setParameter("movieId", movieId)
                     .setParameter("status", reviewStatus)
+                    .getResultList();
+        }
+    }
+
+    public List<Review> findByUserIdAndCreatedAtAfter(Long userId, LocalDateTime fiveDaysAgo) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM Review WHERE user.id = :userId AND createdAt > :fiveDaysAgo", Review.class)
+                    .setParameter("userId", userId)
+                    .setParameter("fiveDaysAgo", fiveDaysAgo)
                     .getResultList();
         }
     }

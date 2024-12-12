@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +24,8 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/user/profile">
+                    <a class="nav-link active" aria-current="page"
+                       href="${pageContext.request.contextPath}/user/profile">
                         <i class="bi bi-film"></i> Профиль
                     </a>
                 </li>
@@ -69,15 +71,28 @@
                     <li class="list-group-item">
                         <div class="d-flex justify-content-between">
                             <span><strong>Фильм:</strong> ${review.movie.title}</span>
-                            <span class="badge <c:choose>
-                                <c:when test="${review.status == 'APPROVED'}">bg-success</c:when>
-                                <c:when test="${review.status == 'REJECTED'}">bg-danger</c:when>
-                                <c:otherwise>bg-warning</c:otherwise>
-                            </c:choose>">${review.status}</span>
+                            <span class="badge
+        <c:choose>
+            <c:when test="${review.status == 'APPROVED'}">bg-success</c:when>
+            <c:when test="${review.status == 'REJECTED'}">bg-danger</c:when>
+            <c:when test="${review.status == 'PENDING'}">bg-warning</c:when>
+            <c:otherwise>bg-secondary</c:otherwise>
+        </c:choose>">
+        <c:choose>
+            <c:when test="${review.status == 'APPROVED'}">Одобрено</c:when>
+            <c:when test="${review.status == 'REJECTED'}">Отклонено</c:when>
+            <c:when test="${review.status == 'PENDING'}">На рассмотрении</c:when>
+            <c:otherwise>Неизвестно</c:otherwise>
+        </c:choose>
+    </span>
                         </div>
+
                         <p><strong>Рецензия:</strong> ${review.content}</p>
                         <p><strong>Рейтинг:</strong> ${review.rating} из 5</p>
-                        <p class="text-muted"><strong>Дата:</strong> ${review.createdAt}</p>
+                        <p class="text-muted">
+                            <strong>Дата:</strong>
+                            <span class="createdAt">${review.createdAt}</span>
+                        </p>
                     </li>
                 </c:forEach>
             </ul>
@@ -90,6 +105,22 @@
 <footer class="text-center mt-5">
     <p>&copy; 2024 MovieReview</p>
 </footer>
+<script>
+    function formatDateTime(localDateTime) {
+        const date = new Date(localDateTime);
+        return date.toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    }
+    document.querySelectorAll('.createdAt').forEach((element) => {
+        const rawDate = element.textContent;
+        element.textContent = formatDateTime(rawDate);
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

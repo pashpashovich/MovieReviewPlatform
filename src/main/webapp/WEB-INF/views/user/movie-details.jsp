@@ -101,7 +101,7 @@
                     <c:forEach var="review" items="${reviews}">
                         <li class="list-group-item">
                             <strong>${review.user.username}</strong> (оценка: ${review.rating}/5)
-                            <small class="text-muted">Опубликовано: ${review.createdAt}</small>
+                            <small class="text-muted createdAt">${review.createdAt}</small>
                             <p>${review.content}</p>
                         </li>
                     </c:forEach>
@@ -112,6 +112,7 @@
             </c:if>
         </div>
     </div>
+
 
     <div class="card mt-4">
         <div class="card-body">
@@ -142,6 +143,22 @@
         </div>
     </div>
 </div>
+<script>
+    function formatDateTime(localDateTime) {
+        const date = new Date(localDateTime);
+        return date.toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    }
+    document.querySelectorAll('.createdAt').forEach((element) => {
+        const rawDate = element.textContent;
+        element.textContent = formatDateTime(rawDate);
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

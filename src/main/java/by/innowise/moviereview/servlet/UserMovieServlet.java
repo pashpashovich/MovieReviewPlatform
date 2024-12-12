@@ -3,7 +3,6 @@ package by.innowise.moviereview.servlet;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.Genre;
-import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.mapper.MovieMapperImpl;
 import by.innowise.moviereview.repository.GenreRepositoryImpl;
 import by.innowise.moviereview.repository.MovieRepositoryImpl;
@@ -53,11 +52,11 @@ public class UserMovieServlet extends HttpServlet {
         HttpSession session = req.getSession();
         Long userId = session.getAttribute("user") != null ? ((UserDto) session.getAttribute("user")).getId() : null;
 
-        String searchQuery = req.getParameter("searchQuery");
-        String genreId = req.getParameter("genre");
-        String language = req.getParameter("language");
-        String year = req.getParameter("year");
-        String duration = req.getParameter("duration");
+        String searchQuery = req.getParameter("searchQuery") != null ? req.getParameter("searchQuery") : "";
+        String genreId = req.getParameter("genre") != null ? req.getParameter("genre") : "";
+        String language = req.getParameter("language") != null ? req.getParameter("language") : "";
+        String year = req.getParameter("year") != null ? req.getParameter("year") : "";
+        String duration = req.getParameter("duration") != null ? req.getParameter("duration") : "";
 
         List<MovieDto> movies = movieService.filterMovies(searchQuery, genreId, language, year, duration);
         List<Genre> genres = genreRepository.findAll();
@@ -72,6 +71,12 @@ public class UserMovieServlet extends HttpServlet {
 
         List<MovieDto> recommendations = recommendationService.getRecommendationsForUser(userId);
 
+        req.setAttribute("searchQuery", searchQuery);
+        req.setAttribute("genre", genreId);
+        req.setAttribute("language", language);
+        req.setAttribute("year", year);
+        req.setAttribute("duration", duration);
+
         req.setAttribute("movies", movies);
         req.setAttribute("genres", genres);
         req.setAttribute("userRatings", userRatings);
@@ -80,3 +85,4 @@ public class UserMovieServlet extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/views/user/movieCards.jsp").forward(req, resp);
     }
 }
+

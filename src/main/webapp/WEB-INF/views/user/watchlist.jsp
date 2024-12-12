@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>Хочу посмотреть</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
@@ -53,7 +54,7 @@
                          alt="${watchlistItem.movieTitle}">
                     <div class="card-body">
                         <h5 class="card-title">${watchlistItem.movieTitle}</h5>
-                        <p class="card-text"><strong>Добавлено:</strong> ${watchlistItem.addedAt}</p>
+                        <p class="card-text"><strong>Добавлено:</strong> <span class="addedAt">${watchlistItem.addedAt}</span></p>
                         <form method="POST" action="${pageContext.request.contextPath}/user/watchlist">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="movieId" value="${watchlistItem.movieId}">
@@ -67,5 +68,22 @@
         </c:forEach>
     </div>
 </div>
+<script>
+    function formatDateTime(localDateTime) {
+        const date = new Date(localDateTime);
+        return date.toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    }
+    document.querySelectorAll('.addedAt').forEach((element) => {
+        const rawDate = element.textContent;
+        element.textContent = formatDateTime(rawDate);
+    });
+</script>
+
 </body>
 </html>

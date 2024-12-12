@@ -1,6 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +28,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/user/movies">
+                    <a class="nav-link active" aria-current="page"
+                       href="${pageContext.request.contextPath}/user/movies">
                         <i class="bi bi-film"></i> Поиск фильмов
                     </a>
                 </li>
@@ -55,26 +55,30 @@
                 <div class="col-md-6">
                     <label class="form-label">Поиск по названию</label>
                     <input type="text" id="searchQueryInput" name="searchQuery" class="form-control"
-                           placeholder="Введите название фильма">
+                           placeholder="Введите название фильма" value="${param.searchQuery}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Жанры</label>
                     <select id="genreFilterInput" name="genre" class="form-select">
                         <option value="">Все жанры</option>
                         <c:forEach var="genre" items="${genres}">
-                            <option value="${genre.id}">${genre.name}</option>
+                            <option value="${genre.id}"
+                                    <c:if test="${genre.id == param.genre}">selected</c:if>>${genre.name}</option>
                         </c:forEach>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Язык</label>
                     <select id="languageFilterInput" name="language" class="form-select">
-                        <option value="">Все языки</option>
-                        <option value="Русский">Русский</option>
-                        <option value="Английский">Английский</option>
-                        <option value="Французский">Французский</option>
-                        <option value="Испанский">Испанский</option>
-                        <option value="Белорусский">Белорусский</option>
+                        <option value="" disabled ${empty param.language ? 'selected' : ''}>Выберите язык</option>
+                        <option value="Русский" ${param.language == 'Русский' ? 'selected' : ''}>Русский</option>
+                        <option value="Английский" ${param.language == 'Английский' ? 'selected' : ''}>Английский
+                        </option>
+                        <option value="Французский" ${param.language == 'Французский' ? 'selected' : ''}>Французский
+                        </option>
+                        <option value="Испанский" ${param.language == 'Испанский' ? 'selected' : ''}>Испанский</option>
+                        <option value="Белорусский" ${param.language == 'Белорусский' ? 'selected' : ''}>Белорусский
+                        </option>
                     </select>
                 </div>
             </div>
@@ -82,12 +86,12 @@
                 <div class="col-md-3">
                     <label class="form-label">Год выпуска</label>
                     <input type="number" id="yearFilterInput" name="year" class="form-control"
-                           placeholder="Например, 2023">
+                           placeholder="Например, 2023" value="${param.year}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Продолжительность</label>
                     <input type="number" id="durationFilterInput" name="duration" class="form-control"
-                           placeholder="Минуты">
+                           placeholder="Минуты" value="${param.duration}">
                 </div>
                 <div class="col-md-3 align-self-end">
                     <button type="button" class="btn btn-primary w-100" onclick="applyFilters()">Применить фильтры
@@ -99,94 +103,84 @@
             </div>
         </form>
     </div>
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-12">
             <h3>Рекомендации для вас</h3>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <c:forEach var="recommendation" items="${recommendations}">
-                    <div class="col">
-                        <div class="card h-100">
-                            <img src="data:image/jpeg;base64,${recommendation.posterBase64}" class="card-img-top"
-                                 alt="${recommendation.title}">
-                            <div class="card-body">
-                                <h5 class="card-title">${recommendation.title}</h5>
-                                <a href="${pageContext.request.contextPath}/user/movies/${recommendation.id}"
-                                   class="btn btn-outline-primary">Подробнее</a>
-                            </div>
-                        </div>
+            <c:choose>
+                <c:when test="${empty recommendations}">
+                    <div class="alert alert-info text-center" role="alert">
+                        Рекомендаций пока нет. Оцените фильмы, чтобы получить рекомендации.
                     </div>
-                </c:forEach>
-            </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        <c:forEach var="recommendation" items="${recommendations}">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="data:image/jpeg;base64,${recommendation.posterBase64}"
+                                         class="card-img-top"
+                                         alt="${recommendation.title}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${recommendation.title}</h5>
+                                        <a href="${pageContext.request.contextPath}/user/movies/${recommendation.id}"
+                                           class="btn btn-outline-primary">Подробнее</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
-    <h3>Фильмы</h3>
-    <div class="row row-cols-1 row-cols-md-3 g-4" id="moviesCards">
-        <c:forEach var="movie" items="${movies}">
-            <div class="col">
-                <div class="card h-100">
-                    <img src="data:image/jpeg;base64,${movie.posterBase64}" class="card-img-top" alt="${movie.title}">
-                    <div class="card-body">
-                        <h5 class="card-title">${movie.title}</h5>
-                        <p class="card-text">
-                            <strong>Жанры:</strong>
-                            <c:forEach var="genre" items="${movie.genres}">
-                                <span class="badge bg-primary">${genre}</span>
-                            </c:forEach>
-                        </p>
-                        <p class="card-text"><strong>Язык:</strong> ${movie.language}</p>
-                        <p class="card-text"><strong>Год:</strong> ${movie.releaseYear}</p>
-                        <p class="card-text"><strong>Продолжительность:</strong> ${movie.duration} мин</p>
-                        <a href="${pageContext.request.contextPath}/user/movies/${movie.id}" class="btn btn-primary">Подробнее</a>
-
-
-                        <form method="POST" action="${pageContext.request.contextPath}/user/movies/rate">
-                            <input type="hidden" name="movieId" value="${movie.id}">
-                            <div class="rating">
-                                <c:forEach begin="1" end="5" var="star">
-                                    <input
-                                            type="radio"
-                                            id="star-${star}-${movie.id}"
-                                            name="rating"
-                                            value="${star}"
-                                            <c:if test="${userRatings[movie.id] == star}">checked</c:if> />
-                                    <label for="star-${star}-${movie.id}" class="star-label">
-                                        <i class="bi bi-star-fill"></i>
-                                    </label>
-                                </c:forEach>
-                            </div>
-                            <button type="submit" class="btn btn-success mt-3">Оценить</button>
-                        </form>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Фильмы</h3>
+            <c:choose>
+                <c:when test="${empty movies}">
+                    <div class="alert alert-warning text-center" role="alert">
+                        <strong>Ничего не найдено!</strong> Попробуйте изменить параметры фильтрации.
                     </div>
-                </div>
-            </div>
-        </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <div class="row row-cols-1 row-cols-md-3 g-4" id="moviesCards">
+                        <c:forEach var="movie" items="${movies}">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="data:image/jpeg;base64,${movie.posterBase64}" class="card-img-top"
+                                         alt="${movie.title}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${movie.title}</h5>
+                                        <p class="card-text"><strong>Жанры:</strong> ${movie.genres}</p>
+                                        <p class="card-text"><strong>Язык:</strong> ${movie.language}</p>
+                                        <p class="card-text"><strong>Год:</strong> ${movie.releaseYear}</p>
+                                        <p class="card-text"><strong>Продолжительность:</strong> ${movie.duration} мин
+                                        </p>
+                                        <a href="${pageContext.request.contextPath}/user/movies/${movie.id}"
+                                           class="btn btn-primary">Подробнее</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </div>
+</div>
 
+<script>
+    function applyFilters() {
+        const form = document.getElementById('filterForm');
+        form.submit();
+    }
 
-    <script>
-        function applyFilters() {
-            const form = document.getElementById('filterForm');
-            const searchQuery = document.getElementById('searchQueryInput').value;
-            const genre = document.getElementById('genreFilterInput').value;
-            const language = document.getElementById('languageFilterInput').value;
-            const year = document.getElementById('yearFilterInput').value;
-            const duration = document.getElementById('durationFilterInput').value;
-
-            form.searchQuery.value = searchQuery;
-            form.genre.value = genre;
-            form.language.value = language;
-            form.year.value = year;
-            form.duration.value = duration;
-
-            form.submit();
-        }
-
-        function resetFilters() {
-            const form = document.getElementById('filterForm');
-            form.reset();
-            window.location.href = `${window.location.pathname}`;
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    function resetFilters() {
+        const form = document.getElementById('filterForm');
+        form.reset();
+        window.location.href = `${window.location.pathname}`;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

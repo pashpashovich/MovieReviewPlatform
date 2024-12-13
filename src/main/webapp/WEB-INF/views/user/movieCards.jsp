@@ -158,6 +158,24 @@
                                         </p>
                                         <a href="${pageContext.request.contextPath}/user/movies/${movie.id}"
                                            class="btn btn-primary">Подробнее</a>
+
+                                        <form method="POST" action="${pageContext.request.contextPath}/user/movies/rate">
+                                            <input type="hidden" name="movieId" value="${movie.id}">
+                                            <div class="rating">
+                                                <c:forEach begin="1" end="5" var="star">
+                                                    <input
+                                                            type="radio"
+                                                            id="star-${star}-${movie.id}"
+                                                            name="rating"
+                                                            value="${star}"
+                                                            <c:if test="${userRatings[movie.id] == star}">checked</c:if> />
+                                                    <label for="star-${star}-${movie.id}" class="star-label">
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </label>
+                                                </c:forEach>
+                                            </div>
+                                            <button type="submit" class="btn btn-success mt-3">Оценить</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

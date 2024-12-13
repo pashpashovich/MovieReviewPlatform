@@ -1,7 +1,10 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
+import by.innowise.moviereview.mapper.MovieMapperImpl;
 import by.innowise.moviereview.mapper.UserMapperImpl;
+import by.innowise.moviereview.repository.MovieRepositoryImpl;
+import by.innowise.moviereview.repository.RatingRepositoryImpl;
 import by.innowise.moviereview.repository.UserRepositoryImpl;
 import by.innowise.moviereview.service.RatingService;
 import by.innowise.moviereview.service.ReviewService;
@@ -20,8 +23,8 @@ public class UserProfileServlet extends HttpServlet {
     private final ReviewService reviewService;
     private final RatingService ratingService;
 
-    public UserProfileServlet(RatingService ratingService) {
-        this.ratingService = ratingService;
+    public UserProfileServlet() {
+        this.ratingService = new RatingService(new RatingRepositoryImpl(),new UserRepositoryImpl(),new MovieRepositoryImpl());
         this.userService = new UserService(new UserRepositoryImpl(), new UserMapperImpl());
         this.reviewService = new ReviewService();
     }
@@ -40,7 +43,6 @@ public class UserProfileServlet extends HttpServlet {
             return;
         }
         req.setAttribute("recentReviews", reviewService.findRecentReviewsByUserId(userId));
-        req.setAttribute("lastRatedMovies", ratingService.findLastRatedMoviesByUser(userId));
 
         req.setAttribute("user", userDto);
         req.getRequestDispatcher("/WEB-INF/views/user/profile.jsp").forward(req, resp);

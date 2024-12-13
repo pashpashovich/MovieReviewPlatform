@@ -27,6 +27,10 @@ wrapper {
     version = "8.5"
 }
 
+tasks.named('war') {
+    destinationDirectory = file("$rootDir/deploy")
+}
+
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'

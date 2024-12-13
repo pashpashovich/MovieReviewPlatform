@@ -77,14 +77,6 @@ public class PersonRepositoryImpl implements Repository<Person> {
         }
     }
 
-    public List<Person> findAllById(List<Long> ids) {
-        try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Person p WHERE p.id IN :ids", Person.class)
-                    .setParameter("ids", ids)
-                    .list();
-        }
-    }
-
     public Set<Person> findAllByNameAndRole(Set<String> names, MovieRole role) {
         try (Session session = HibernateUtil.getSession()) {
             List<Person> people = session.createQuery("FROM Person p WHERE p.fullName IN :names AND p.role = :role", Person.class)

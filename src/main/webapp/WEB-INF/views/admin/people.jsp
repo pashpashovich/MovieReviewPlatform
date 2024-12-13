@@ -83,7 +83,14 @@
                 <tr class="text-center align-middle">
                     <td>${person.id}</td>
                     <td>${person.fullName}</td>
-                    <td>${person.role}</td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${person.role == 'PRODUCER'}">Продюсер</c:when>
+                            <c:when test="${person.role == 'DIRECTOR'}">Режиссер</c:when>
+                            <c:when test="${person.role == 'ACTOR'}">Актер</c:when>
+                            <c:otherwise>${person.role}</c:otherwise>
+                        </c:choose>
+                    </td>
                     <td>
                         <button
                                 class="btn btn-sm btn-primary mb-1"
@@ -120,9 +127,9 @@
                 <div class="mb-3">
                     <label for="role" class="form-label">Роль</label>
                     <select id="role" name="role" class="form-select" required>
-                        <c:forEach var="role" items="${roles}">
-                            <option value="${role}">${role}</option>
-                        </c:forEach>
+                        <option value="PRODUCER">Продюсер</option>
+                        <option value="DIRECTOR">Режиссер</option>
+                        <option value="ACTOR">Актер</option>
                     </select>
                 </div>
 

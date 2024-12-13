@@ -15,13 +15,11 @@ public class RatingService {
     private final RatingRepositoryImpl ratingRepository;
     private final UserRepositoryImpl userRepository;
     private final MovieRepositoryImpl movieRepository;
-    private final MovieMapper movieMapper;
 
-    public RatingService(RatingRepositoryImpl ratingRepository, UserRepositoryImpl userRepository, MovieRepositoryImpl movieRepository, MovieMapper movieMapper) {
+    public RatingService(RatingRepositoryImpl ratingRepository, UserRepositoryImpl userRepository, MovieRepositoryImpl movieRepository) {
         this.ratingRepository = ratingRepository;
         this.userRepository = userRepository;
         this.movieRepository = movieRepository;
-        this.movieMapper = movieMapper;
     }
 
     public void saveOrUpdateRating(Long userId, Long movieId, int ratingValue) {
@@ -47,13 +45,5 @@ public class RatingService {
 
     public Double getAverageRatingForMovie(Long movieId) {
         return ratingRepository.findAverageRatingByMovieId(movieId);
-    }
-
-    public List<MovieDto> findLastRatedMoviesByUser(Long userId) {
-        List<Rating> ratings = ratingRepository.findByUserIdOrderByUpdatedAtDesc(userId);
-        return ratings.stream()
-                .map(Rating::getMovie)
-                .map(movieMapper::toDto)
-                .toList();
     }
 }

@@ -32,7 +32,7 @@ public class MovieDetailsServlet extends HttpServlet {
 
     public MovieDetailsServlet() {
         this.watchlistService = new WatchlistService(new WatchlistRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
-        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl(), new MovieMapperImpl());
+        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
         this.movieService = new MovieService(new MovieRepositoryImpl(), new MovieMapperImpl(), new PersonRepositoryImpl(), new GenreRepositoryImpl());
         this.reviewService = new ReviewService();
     }

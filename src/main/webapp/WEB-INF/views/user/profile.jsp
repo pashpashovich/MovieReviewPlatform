@@ -116,6 +116,7 @@
             minute: '2-digit',
         });
     }
+
     document.querySelectorAll('.createdAt').forEach((element) => {
         const rawDate = element.textContent;
         element.textContent = formatDateTime(rawDate);

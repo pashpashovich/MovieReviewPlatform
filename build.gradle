@@ -15,8 +15,8 @@ ext {
 }
 
 java {
-    sourceCompatibility=JavaVersion.VERSION_21
-    targetCompatibility=JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 war {
@@ -24,7 +24,7 @@ war {
 }
 
 wrapper {
-    version="8.5"
+    version = "8.5"
 }
 
 
@@ -37,7 +37,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.36'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor  'org.mapstruct:mapstruct-processor:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
 
     implementation('org.hibernate:hibernate-core:6.0.2.Final')
@@ -51,8 +51,6 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.5.12'
     implementation 'org.mindrot:jbcrypt:0.4'
 
-
-
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
@@ -60,3 +58,4 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+

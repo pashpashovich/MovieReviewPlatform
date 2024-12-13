@@ -3,6 +3,7 @@ package by.innowise.moviereview.servlet;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.mapper.UserMapperImpl;
 import by.innowise.moviereview.repository.UserRepositoryImpl;
+import by.innowise.moviereview.service.RatingService;
 import by.innowise.moviereview.service.ReviewService;
 import by.innowise.moviereview.service.UserService;
 import jakarta.servlet.ServletException;
@@ -17,8 +18,10 @@ import java.io.IOException;
 public class UserProfileServlet extends HttpServlet {
     private final UserService userService;
     private final ReviewService reviewService;
+    private final RatingService ratingService;
 
-    public UserProfileServlet() {
+    public UserProfileServlet(RatingService ratingService) {
+        this.ratingService = ratingService;
         this.userService = new UserService(new UserRepositoryImpl(), new UserMapperImpl());
         this.reviewService = new ReviewService();
     }
@@ -36,8 +39,8 @@ public class UserProfileServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Пользователь не найден");
             return;
         }
-
         req.setAttribute("recentReviews", reviewService.findRecentReviewsByUserId(userId));
+        req.setAttribute("lastRatedMovies", ratingService.findLastRatedMoviesByUser(userId));
 
         req.setAttribute("user", userDto);
         req.getRequestDispatcher("/WEB-INF/views/user/profile.jsp").forward(req, resp);

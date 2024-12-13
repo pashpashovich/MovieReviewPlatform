@@ -23,7 +23,6 @@ public class RecommendationService {
     @Transactional
     public List<MovieDto> getRecommendationsForUser(Long userId) {
         List<Movie> topRatedMovies = movieRepository.findTopRatedMovies();
-        System.out.println(topRatedMovies);
         List<MovieDto> topRatedMoviesDto = topRatedMovies.stream()
                 .map(movieMapper::toDtoForRecomendations)
                 .toList();

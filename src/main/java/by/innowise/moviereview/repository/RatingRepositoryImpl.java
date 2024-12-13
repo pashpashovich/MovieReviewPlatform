@@ -63,13 +63,4 @@ public class RatingRepositoryImpl {
         }
     }
 
-    public List<Rating> findByUserIdOrderByUpdatedAtDesc(Long userId) {
-        try (Session session = HibernateUtil.getSession()) {
-            String hql = "FROM Rating r WHERE r.user.id = :userId ORDER BY r.updatedAt DESC";
-            return session.createQuery(hql, Rating.class)
-                    .setParameter("userId", userId)
-                    .setMaxResults(2)
-                    .getResultList();
-        }
-    }
 }

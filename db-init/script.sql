@@ -1,7 +1,8 @@
 create table genres
 (
-    id serial primary key,
-    name varchar(100) not null constraint uk_pe1a9woik1k97l87cieguyhh4 unique
+    id   serial primary key,
+    name varchar(100) not null
+        constraint uk_pe1a9woik1k97l87cieguyhh4 unique
 );
 
 alter table genres

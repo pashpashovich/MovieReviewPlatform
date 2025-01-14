@@ -2,7 +2,7 @@ package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.EntityDto;
 import by.innowise.moviereview.mapper.GenreMapperImpl;
-import by.innowise.moviereview.repository.GenreRepositoryImpl;
+import by.innowise.moviereview.dao.GenreDao;
 import by.innowise.moviereview.service.GenreService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +18,7 @@ public class GenreServlet extends HttpServlet {
     private final GenreService genreService;
 
     public GenreServlet() {
-        this.genreService= new GenreService(new GenreRepositoryImpl(), new GenreMapperImpl());
+        this.genreService= GenreService.getInstance();
     }
 
     @Override

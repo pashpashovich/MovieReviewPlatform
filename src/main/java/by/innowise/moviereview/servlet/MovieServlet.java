@@ -1,12 +1,6 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.MovieDto;
-import by.innowise.moviereview.mapper.GenreMapperImpl;
-import by.innowise.moviereview.mapper.MovieMapperImpl;
-import by.innowise.moviereview.mapper.PersonMapperImpl;
-import by.innowise.moviereview.repository.GenreRepositoryImpl;
-import by.innowise.moviereview.repository.MovieRepositoryImpl;
-import by.innowise.moviereview.repository.PersonRepositoryImpl;
 import by.innowise.moviereview.service.GenreService;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.service.PersonService;
@@ -35,9 +29,9 @@ public class MovieServlet extends HttpServlet {
     private final PersonService personService;
 
     public MovieServlet() {
-        this.movieService = new MovieService(new MovieRepositoryImpl(), new MovieMapperImpl(), new PersonRepositoryImpl(), new GenreRepositoryImpl());
-        this.genreService=new GenreService(new GenreRepositoryImpl(),new GenreMapperImpl());
-        this.personService=new PersonService(new PersonRepositoryImpl(), new PersonMapperImpl());
+        this.movieService = MovieService.getInstance();
+        this.genreService = GenreService.getInstance();
+        this.personService = PersonService.getInstance();
     }
 
     @Override

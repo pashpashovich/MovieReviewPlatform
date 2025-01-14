@@ -2,9 +2,9 @@ package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.dto.WatchlistDto;
-import by.innowise.moviereview.repository.MovieRepositoryImpl;
-import by.innowise.moviereview.repository.UserRepositoryImpl;
-import by.innowise.moviereview.repository.WatchlistRepositoryImpl;
+import by.innowise.moviereview.dao.MovieDao;
+import by.innowise.moviereview.dao.UserDao;
+import by.innowise.moviereview.dao.WatchlistDao;
 import by.innowise.moviereview.service.WatchlistService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,11 +20,7 @@ public class WatchlistServlet extends HttpServlet {
     private final WatchlistService watchlistService;
 
     public WatchlistServlet() {
-        this.watchlistService = new WatchlistService(
-                new WatchlistRepositoryImpl(),
-                new UserRepositoryImpl(),
-                new MovieRepositoryImpl()
-        );
+        this.watchlistService = WatchlistService.getInstance();
     }
 
     @Override

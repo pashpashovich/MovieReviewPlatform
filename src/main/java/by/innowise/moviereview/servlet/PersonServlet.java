@@ -2,7 +2,7 @@ package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.mapper.PersonMapperImpl;
-import by.innowise.moviereview.repository.PersonRepositoryImpl;
+import by.innowise.moviereview.dao.PersonDao;
 import by.innowise.moviereview.service.PersonService;
 import by.innowise.moviereview.util.enums.MovieRole;
 import jakarta.servlet.ServletException;
@@ -19,7 +19,7 @@ public class PersonServlet extends HttpServlet {
     private final PersonService personService;
 
     public PersonServlet() {
-        this.personService = new PersonService(new PersonRepositoryImpl(), new PersonMapperImpl());
+        this.personService = PersonService.getInstance();
     }
 
     @Override

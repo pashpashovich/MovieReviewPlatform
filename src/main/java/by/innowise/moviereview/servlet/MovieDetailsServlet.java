@@ -1,15 +1,11 @@
 package by.innowise.moviereview.servlet;
 
+import by.innowise.moviereview.dao.MovieDao;
+import by.innowise.moviereview.dao.UserDao;
+import by.innowise.moviereview.dao.WatchlistDao;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.Review;
-import by.innowise.moviereview.mapper.MovieMapperImpl;
-import by.innowise.moviereview.repository.GenreRepositoryImpl;
-import by.innowise.moviereview.repository.MovieRepositoryImpl;
-import by.innowise.moviereview.repository.PersonRepositoryImpl;
-import by.innowise.moviereview.repository.RatingRepositoryImpl;
-import by.innowise.moviereview.repository.UserRepositoryImpl;
-import by.innowise.moviereview.repository.WatchlistRepositoryImpl;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.service.RatingService;
 import by.innowise.moviereview.service.ReviewService;
@@ -31,10 +27,10 @@ public class MovieDetailsServlet extends HttpServlet {
     private final WatchlistService watchlistService;
 
     public MovieDetailsServlet() {
-        this.watchlistService = new WatchlistService(new WatchlistRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
-        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
-        this.movieService = new MovieService(new MovieRepositoryImpl(), new MovieMapperImpl(), new PersonRepositoryImpl(), new GenreRepositoryImpl());
-        this.reviewService = new ReviewService();
+        this.watchlistService = WatchlistService.getInstance();
+        this.ratingService = RatingService.getInstance();
+        this.movieService = MovieService.getInstance();
+        this.reviewService = ReviewService.getInstance();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package by.innowise.moviereview.service;
 
 
+import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.dto.UserCreateDto;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.User;
@@ -10,29 +11,33 @@ import by.innowise.moviereview.exception.NoAccessException;
 import by.innowise.moviereview.exception.UserNotFoundException;
 import by.innowise.moviereview.mapper.UserMapper;
 import by.innowise.moviereview.mapper.UserMapperImpl;
-import by.innowise.moviereview.repository.UserRepositoryImpl;
 import by.innowise.moviereview.util.PasswordUtils;
 import by.innowise.moviereview.util.enums.Role;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UserService {
-
-    private final UserRepositoryImpl userRepository;
+    private static UserService instance;
+    private final UserDao userDao;
     private final UserMapper userMapper;
 
-    public UserService(UserRepositoryImpl userRepository, UserMapperImpl userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
+    public UserService() {
+        this.userDao = UserDao.getInstance();
+        this.userMapper = new UserMapperImpl();
     }
 
-    public UserDto findById(Long id)
-    {
-        return userMapper.toDto(userRepository.findById(id));
+    public static UserService getInstance() {
+        if (instance == null)
+            instance = new UserService();
+        return instance;
+    }
+
+    public UserDto findById(Long id) {
+        return userMapper.toDto(userDao.findById(id));
     }
 
     public UserDto authenticate(String username, String password) {
-        User user = userRepository.findByEmail(username);
+        User user = userDao.findByEmail(username);
         if (user != null && PasswordUtils.verify(password, user.getPassword())) {
             if (Boolean.TRUE.equals(user.getIsBlocked())) throw new NoAccessException("Пользователь заблокирован");
             else return userMapper.toDto(user);
@@ -40,11 +45,11 @@ public class UserService {
     }
 
     public void register(UserCreateDto user) {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+        if (userDao.findByUsername(user.getUsername()) != null) {
             throw new UserNotFoundException("Пользователь с таким именем уже существует");
         }
 
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+        if (userDao.findByEmail(user.getEmail()) != null) {
             throw new EmailNotAvailableException("Пользователь с таким email уже существует");
         }
 
@@ -52,7 +57,7 @@ public class UserService {
         User entityCreate = userMapper.toEntityCreate(user);
         entityCreate.setRole(Role.USER);
         log.info("Новая сущность:" + entityCreate);
-        userRepository.save(entityCreate);
+        userDao.save(entityCreate);
     }
 
 }

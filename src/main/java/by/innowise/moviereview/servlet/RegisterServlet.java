@@ -2,7 +2,7 @@ package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserCreateDto;
 import by.innowise.moviereview.mapper.UserMapperImpl;
-import by.innowise.moviereview.repository.UserRepositoryImpl;
+import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,7 +17,7 @@ public class RegisterServlet extends HttpServlet {
     private final UserService userService;
 
     public RegisterServlet() {
-        this.userService = new UserService(new UserRepositoryImpl(), new UserMapperImpl());
+        this.userService = UserService.getInstance();
     }
 
     @Override

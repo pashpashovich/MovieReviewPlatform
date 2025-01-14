@@ -1,15 +1,15 @@
 package by.innowise.moviereview.service;
 
+import by.innowise.moviereview.dao.GenreDao;
+import by.innowise.moviereview.dao.MovieDao;
+import by.innowise.moviereview.dao.PersonDao;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Person;
-import by.innowise.moviereview.entity.Rating;
 import by.innowise.moviereview.exception.EntityNotFoundException;
 import by.innowise.moviereview.exception.UpdatingException;
 import by.innowise.moviereview.mapper.MovieMapper;
-import by.innowise.moviereview.repository.GenreRepositoryImpl;
-import by.innowise.moviereview.repository.PersonRepositoryImpl;
-import by.innowise.moviereview.repository.Repository;
+import by.innowise.moviereview.mapper.MovieMapperImpl;
 import by.innowise.moviereview.util.HibernateUtil;
 import by.innowise.moviereview.util.enums.MovieRole;
 import lombok.extern.slf4j.Slf4j;
@@ -17,48 +17,54 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.lang.module.FindException;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
 public class MovieService {
-    private final Repository<Movie> movieRepository;
+    private static MovieService instance;
+    private final MovieDao movieDao;
     private final MovieMapper movieMapper;
-    private final PersonRepositoryImpl personRepository;
-    private final GenreRepositoryImpl genreRepository;
+    private final PersonDao personDao;
+    private final GenreDao genreDao;
 
-    public MovieService(Repository<Movie> movieRepository, MovieMapper movieMapper, PersonRepositoryImpl personRepository, GenreRepositoryImpl genreRepository) {
-        this.movieRepository = movieRepository;
-        this.movieMapper = movieMapper;
-        this.personRepository = personRepository;
-        this.genreRepository = genreRepository;
+    private MovieService() {
+        this.movieDao = MovieDao.getInstance();
+        this.movieMapper = new MovieMapperImpl();
+        this.personDao = PersonDao.getInstance();
+        this.genreDao = GenreDao.getInstance();
+    }
+
+    public static MovieService getInstance() {
+        if (instance == null)
+            instance = new MovieService();
+        return instance;
     }
 
     public List<MovieDto> getAllMovies() {
-        return movieRepository.findAll().stream()
+        return movieDao.findAll().stream()
                 .map(movieMapper::toDto)
                 .toList();
     }
 
-    public MovieDto getMovieById(Long id) {
-        Movie movie = movieRepository.findById(id);
-        if (movie == null) {
-            throw new FindException("Фильм не найден с id: " + id);
-        }
-        return movieMapper.toDto(movie);
-    }
+//    public MovieDto getMovieById(Long id) {
+//        Movie movie = movieDao.findById(id);
+//        if (movie == null) {
+//            throw new FindException("Фильм не найден с id: " + id);
+//        }
+//        return movieMapper.toDto(movie);
+//    }
 
     public void createMovie(MovieDto movieDto) {
         Movie movie = movieMapper.toEntityFromDto(movieDto);
-        movie.setGenres(genreRepository.findAllByName(movieDto.getGenres()));
+        movie.setGenres(genreDao.findAllByName(movieDto.getGenres()));
         movie.setPeople(getPeopleByRoles(movieDto));
-        movieRepository.save(movie);
+        movieDao.save(movie);
     }
 
     public void updateMovie(Long id, MovieDto movieDto) {
-        Movie existingMovie = movieRepository.findById(id);
+        Movie existingMovie = movieDao.findById(id);
         if (existingMovie == null) {
             throw new UpdatingException("Фильм с ID " + id + " не найден.");
         }
@@ -68,25 +74,25 @@ public class MovieService {
         existingMovie.setReleaseYear(movieDto.getReleaseYear());
         existingMovie.setDuration(movieDto.getDuration());
         existingMovie.setLanguage(movieDto.getLanguage());
-        existingMovie.setGenres(genreRepository.findAllByName(movieDto.getGenres()));
+        existingMovie.setGenres(genreDao.findAllByName(movieDto.getGenres()));
         existingMovie.setPeople(getPeopleByRoles(movieDto));
 
-        movieRepository.update(existingMovie);
+        movieDao.update(existingMovie);
     }
 
     public void deleteMovie(Long id) throws EntityNotFoundException {
-        Movie movie = movieRepository.findById(id);
+        Movie movie = movieDao.findById(id);
         if (movie == null) {
             throw new EntityNotFoundException("Фильм с id " + id + " не найден.");
         }
-        movieRepository.delete(movie);
+        movieDao.delete(movie);
     }
 
     private Set<Person> getPeopleByRoles(MovieDto movieDto) {
         Set<Person> people = new HashSet<>();
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
+        people.addAll(personDao.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
+        people.addAll(personDao.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
+        people.addAll(personDao.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
         return people;
     }
 

@@ -1,12 +1,6 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
-import by.innowise.moviereview.mapper.MovieMapperImpl;
-import by.innowise.moviereview.mapper.UserMapperImpl;
-import by.innowise.moviereview.repository.MovieRepositoryImpl;
-import by.innowise.moviereview.repository.RatingRepositoryImpl;
-import by.innowise.moviereview.repository.UserRepositoryImpl;
-import by.innowise.moviereview.service.RatingService;
 import by.innowise.moviereview.service.ReviewService;
 import by.innowise.moviereview.service.UserService;
 import jakarta.servlet.ServletException;
@@ -21,12 +15,10 @@ import java.io.IOException;
 public class UserProfileServlet extends HttpServlet {
     private final UserService userService;
     private final ReviewService reviewService;
-    private final RatingService ratingService;
 
     public UserProfileServlet() {
-        this.ratingService = new RatingService(new RatingRepositoryImpl(),new UserRepositoryImpl(),new MovieRepositoryImpl());
-        this.userService = new UserService(new UserRepositoryImpl(), new UserMapperImpl());
-        this.reviewService = new ReviewService();
+        this.userService = UserService.getInstance();
+        this.reviewService = ReviewService.getInstance();
     }
 
     @Override

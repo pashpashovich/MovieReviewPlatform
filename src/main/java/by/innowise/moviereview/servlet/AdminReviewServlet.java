@@ -16,7 +16,7 @@ public class AdminReviewServlet extends HttpServlet {
     private final ReviewService reviewService;
 
     public AdminReviewServlet() {
-        this.reviewService = new ReviewService();
+        this.reviewService = ReviewService.getInstance();
     }
 
     @Override

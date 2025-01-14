@@ -1,14 +1,9 @@
 package by.innowise.moviereview.servlet;
 
+import by.innowise.moviereview.dto.EntityDto;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.dto.UserDto;
-import by.innowise.moviereview.entity.Genre;
-import by.innowise.moviereview.mapper.MovieMapperImpl;
-import by.innowise.moviereview.repository.GenreRepositoryImpl;
-import by.innowise.moviereview.repository.MovieRepositoryImpl;
-import by.innowise.moviereview.repository.PersonRepositoryImpl;
-import by.innowise.moviereview.repository.RatingRepositoryImpl;
-import by.innowise.moviereview.repository.UserRepositoryImpl;
+import by.innowise.moviereview.service.GenreService;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.service.RatingService;
 import by.innowise.moviereview.service.RecommendationService;
@@ -27,15 +22,15 @@ import java.util.Map;
 @WebServlet("/user/movies")
 public class UserMovieServlet extends HttpServlet {
     private final MovieService movieService;
-    private final GenreRepositoryImpl genreRepository;
+    private final GenreService genreService;
     private final RatingService ratingService;
     private final RecommendationService recommendationService;
 
     public UserMovieServlet() {
-        this.genreRepository = new GenreRepositoryImpl();
-        this.ratingService = new RatingService(new RatingRepositoryImpl(), new UserRepositoryImpl(), new MovieRepositoryImpl());
-        this.movieService = new MovieService(new MovieRepositoryImpl(), new MovieMapperImpl(), new PersonRepositoryImpl(), genreRepository);
-        this.recommendationService = new RecommendationService(new RatingRepositoryImpl(), new MovieRepositoryImpl(), new MovieMapperImpl());
+        this.genreService = GenreService.getInstance();
+        this.ratingService = RatingService.getInstance();
+        this.movieService = MovieService.getInstance();
+        this.recommendationService = RecommendationService.getInstance();
     }
 
     @Override
@@ -59,7 +54,7 @@ public class UserMovieServlet extends HttpServlet {
         String duration = req.getParameter("duration") != null ? req.getParameter("duration") : "";
 
         List<MovieDto> movies = movieService.filterMovies(searchQuery, genreId, language, year, duration);
-        List<Genre> genres = genreRepository.findAll();
+        List<EntityDto> genres = genreService.findAll();
 
         Map<Long, Integer> userRatings = new HashMap<>();
         if (userId != null) {

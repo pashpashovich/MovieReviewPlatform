@@ -2,7 +2,7 @@ package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.mapper.UserMapperImpl;
-import by.innowise.moviereview.repository.UserRepositoryImpl;
+import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.service.AdminUserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,13 +19,12 @@ public class AdminUserServlet extends HttpServlet {
     private final AdminUserService adminUserService;
 
     public AdminUserServlet() {
-        this.adminUserService = new AdminUserService(new UserRepositoryImpl(), new UserMapperImpl());
+        this.adminUserService = AdminUserService.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<UserDto> users = adminUserService.getAllUsers();
-        System.out.println(users);
         req.setAttribute("users", users);
         req.getRequestDispatcher("/WEB-INF/views/admin/users.jsp").forward(req, resp);
     }
@@ -34,7 +33,6 @@ public class AdminUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String action = req.getParameter("action");
         Long userId = Long.valueOf(req.getParameter("userId"));
-        System.out.println(userId);
 
         switch (action) {
             case "delete":

@@ -27,7 +27,7 @@ public class LocaleFilter implements Filter {
         }
 
         if (lang == null) {
-            lang = "en";
+            lang = "ru";
         }
 
         httpRequest.getSession().setAttribute("lang", lang);

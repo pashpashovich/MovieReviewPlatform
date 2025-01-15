@@ -1,12 +1,15 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${lang}"/>
+<fmt:setBundle basename="messages"/>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="${lang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Управление фильмами</title>
+    <title><fmt:message key="page.title"/></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
@@ -21,7 +24,7 @@
         document.getElementById('language').value = language;
         document.getElementById('method').value = 'PUT';
 
-        document.getElementById('formTitle').innerText = 'Редактирование фильма';
+        document.getElementById('formTitle').innerText = document.getElementById('editMovieMessage').textContent;
 
         updateSelect(document.getElementById('genres'), selectedGenres);
         updateSelect(document.getElementById('actors'), selectedActors);
@@ -38,7 +41,7 @@
         document.getElementById('language').value = '';
         document.getElementById('method').value = 'POST';
 
-        document.getElementById('formTitle').innerText = 'Добавление фильма';
+        document.getElementById('formTitle').innerText = document.getElementById('editMovieMessage').textContent;
 
         resetSelect(document.getElementById('genres'));
         resetSelect(document.getElementById('actors'));
@@ -65,7 +68,7 @@
     function validateForm() {
         const language = document.getElementById("language").value;
         if (!language) {
-            alert("Пожалуйста, выберите язык.");
+            alert(document.getElementById('alert').textContent);
             return false;
         }
         return true;
@@ -74,7 +77,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
         <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/admin/movies">
-            <strong>КиноАдмин</strong>
+            <strong><fmt:message key="nav.title.default"/></strong>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
@@ -85,55 +88,59 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page"
                        href="${pageContext.request.contextPath}/admin/movies">
-                        <i class="bi bi-film"></i> Управление фильмами
+                        <i class="bi bi-film"></i> <fmt:message key="navbar.admin.movies"/>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/admin/genres">
-                        <i class="bi bi-tags"></i> Жанры
+                        <i class="bi bi-tags"></i> <fmt:message key="navbar.admin.genres"/>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/admin/people">
-                        <i class="bi bi-person-stars"></i> Звезды
+                        <i class="bi bi-person-stars"></i> <fmt:message key="navbar.admin.stars"/>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/admin/users">
-                        <i class="bi bi-person-stars"></i> Пользователи
+                        <i class="bi bi-person-stars"></i> <fmt:message key="navbar.admin.users"/>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/admin/reviews">
-                        <i class="bi bi-person-stars"></i> Рецензии
+                        <i class="bi bi-person-stars"></i> <fmt:message key="navbar.admin.reviews"/>
                     </a>
                 </li>
             </ul>
             <form method="post" action="${pageContext.request.contextPath}/logout" class="d-flex">
                 <button class="btn btn-danger btn-sm" type="submit">
-                    <i class="bi bi-box-arrow-right"></i> Выйти
+                    <i class="bi bi-box-arrow-right"></i> <fmt:message key="navbar.logout"/>
                 </button>
             </form>
         </div>
     </div>
+    <div class="ml-auto">
+        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=ru" class="text-white">RU</a>
+    </div>
 </nav>
 <div class="container my-5">
-    <h1 class="text-center mb-4">Управление фильмами</h1>
+    <h1 class="text-center mb-4"><fmt:message key="page.header"/></h1>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
             <tr class="text-center">
-                <th>Постер</th>
-                <th>ID</th>
-                <th>Название</th>
-                <th>Жанры</th>
-                <th>Актеры</th>
-                <th>Режиссеры</th>
-                <th>Продюсеры</th>
-                <th>Год выпуска</th>
-                <th>Продолжительность</th>
-                <th>Язык</th>
-                <th>Действия</th>
+                <th><fmt:message key="table.poster"/></th>
+                <th><fmt:message key="table.id"/></th>
+                <th><fmt:message key="table.title"/></th>
+                <th><fmt:message key="table.genres"/></th>
+                <th><fmt:message key="table.actors"/></th>
+                <th><fmt:message key="table.directors"/></th>
+                <th><fmt:message key="table.producers"/></th>
+                <th><fmt:message key="table.year"/></th>
+                <th><fmt:message key="table.duration"/></th>
+                <th><fmt:message key="table.language"/></th>
+                <th><fmt:message key="table.actions"/></th>
             </tr>
             </thead>
             <tbody>
@@ -141,7 +148,7 @@
                 <tr class="text-center align-middle">
                     <td>
                         <img src="data:image/jpeg;base64,${movie.posterBase64}"
-                             alt="Постер ${movie.title}"
+                             alt="<fmt:message key="table.poster"/> ${movie.title}"
                              class="img-thumbnail"
                              style="max-width: 100px; max-height: 150px;"
                         >
@@ -190,13 +197,14 @@
                                         ['<c:forEach var="producer"
                                                      items="${movie.producers}">${producer},</c:forEach>'.slice(0, -1)]
                                         )">
-                            Редактировать
+                            <fmt:message key="button.edit"/>
                         </button>
                         <form method="post" action="${pageContext.request.contextPath}/admin/movies"
                               style="display:inline;">
                             <input type="hidden" name="id" value="${movie.id}">
                             <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                            <button type="submit" class="btn btn-sm btn-danger"><fmt:message
+                                    key="button.delete"/></button>
                         </form>
                     </td>
                 </tr>
@@ -208,8 +216,10 @@
     <hr class="my-5">
     <div class="card">
         <div class="card-header bg-dark text-white">
-            <h2 class="text-center mb-0" id="formTitle">Добавление фильма</h2>
-            <h6 class="text-center mb-0">Используйте кнопку Ctrl для множественного выбора</h6>
+            <h2 class="text-center mb-0" id="formTitle"><fmt:message key="form.addMovie"/></h2>
+            <span id="editMovieMessage" style="display:none;"><fmt:message key="form.editMovie"/></span>
+            <span id="alert" style="display:none;"><fmt:message key="alert"/></span>
+            <h6 class="text-center mb-0"><fmt:message key="hint"/></h6>
         </div>
         <div class="card-body">
             <form method="post" action="${pageContext.request.contextPath}/admin/movies" enctype="multipart/form-data"
@@ -217,42 +227,42 @@
                 <input type="hidden" id="id" name="id">
                 <input type="hidden" name="_method" id="method" value="POST">
                 <div class="mb-3">
-                    <label for="title" class="form-label">Название</label>
+                    <label for="title" class="form-label"><fmt:message key="form.title"/></label>
                     <input type="text" id="title" name="title" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Описание</label>
+                    <label for="description" class="form-label"><fmt:message key="form.description"/></label>
                     <textarea id="description" name="description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label for="releaseYear" class="form-label">Год выпуска</label>
+                        <label for="releaseYear" class="form-label"><fmt:message key="table.year"/></label>
                         <input type="number" id="releaseYear" name="releaseYear" min="1895"
                                max="<%= java.time.Year.now().getValue() %>" class="form-control" required>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label for="duration" class="form-label">Продолжительность (мин)</label>
+                        <label for="duration" class="form-label"><fmt:message key="form.duration"/></label>
                         <input type="number" id="duration" name="duration" min="1" class="form-control" required>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label for="language" class="form-label">Язык</label>
+                        <label for="language" class="form-label"><fmt:message key="form.language"/></label>
                         <select id="language" name="language" class="form-select" required>
-                            <option value="" disabled selected>Выберите язык</option>
-                            <option value="Русский">Русский</option>
-                            <option value="Английский">Английский</option>
-                            <option value="Французский">Французский</option>
-                            <option value="Испанский">Испанский</option>
-                            <option value="Белорусский">Белорусский</option>
+                            <option value="" disabled selected><fmt:message key="form.selectLanguage"/></option>
+                            <option value="Русский"><fmt:message key="form.russian"/></option>
+                            <option value="Английский"><fmt:message key="form.english"/></option>
+                            <option value="Французский"><fmt:message key="form.french"/></option>
+                            <option value="Испанский"><fmt:message key="form.spanish"/></option>
+                            <option value="Белорусский"><fmt:message key="form.belarusian"/></option>
                         </select>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="posterFile" class="form-label">Постер</label>
+                    <label for="posterFile" class="form-label"><fmt:message key="table.poster"/></label>
                     <input type="file" id="posterFile" name="posterFile" class="form-control" accept="image/*">
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="genres" class="form-label">Жанры</label>
+                        <label for="genres" class="form-label"><fmt:message key="table.genres"/></label>
                         <select name="genres" id="genres" class="form-select" multiple required>
                             <c:forEach var="genre" items="${genres}">
                                 <option value="${genre.name}">${genre.name}</option>
@@ -260,7 +270,7 @@
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="actors" class="form-label">Актеры</label>
+                        <label for="actors" class="form-label"><fmt:message key="table.actors"/></label>
                         <select name="actors" id="actors" class="form-select" multiple required>
                             <c:forEach var="actor" items="${actors}">
                                 <option value="${actor.fullName}">${actor.fullName}</option>
@@ -270,7 +280,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="directors" class="form-label">Режиссеры</label>
+                        <label for="directors" class="form-label"><fmt:message key="table.directors"/></label>
                         <select name="directors" id="directors" class="form-select" multiple required>
                             <c:forEach var="director" items="${directors}">
                                 <option value="${director.fullName}">${director.fullName}</option>
@@ -278,7 +288,7 @@
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="producers" class="form-label">Продюсеры</label>
+                        <label for="producers" class="form-label"><fmt:message key="table.producers"/></label>
                         <select name="producers" id="producers" class="form-select" multiple required>
                             <c:forEach var="producer" items="${producers}">
                                 <option value="${producer.fullName}">${producer.fullName}</option>
@@ -287,8 +297,9 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-success">Сохранить</button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Сброс</button>
+                    <button type="submit" class="btn btn-success"><fmt:message key="button.save"/></button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()"><fmt:message
+                            key="button.reset"/></button>
                 </div>
             </form>
         </div>

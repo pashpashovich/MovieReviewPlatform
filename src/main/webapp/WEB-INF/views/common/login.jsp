@@ -34,7 +34,7 @@
                 </div>
                 <div class="card-body">
                     <c:if test="${error != null}">
-                        <div class="alert alert-danger text-center"><fmt:message key="${error}"/></div>
+                        <div class="alert alert-danger text-center">${error}</div>
                     </c:if>
                     <form method="post" action="${pageContext.request.contextPath}/login">
                         <div class="mb-3">

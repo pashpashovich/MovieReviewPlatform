@@ -1,11 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${lang}"/>
+<fmt:setBundle basename="messages"/>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="${lang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог фильмов</title>
+    <title><fmt:message key="title"/></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
@@ -14,7 +17,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
         <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/user/profile">
-            <strong>КиноХелпер</strong>
+            <strong><fmt:message key="app.name"/></strong>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
@@ -24,43 +27,47 @@
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/profile">
-                        <i class="bi bi-film"></i> Профиль
+                        <i class="bi bi-film"></i> <fmt:message key="navbar.profile"/>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page"
                        href="${pageContext.request.contextPath}/user/movies">
-                        <i class="bi bi-film"></i> Поиск фильмов
+                        <i class="bi bi-film"></i> <fmt:message key="navbar.search"/>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/user/watchlist">
-                        <i class="bi bi-tags"></i> Хочу посмотреть
+                        <i class="bi bi-tags"></i> <fmt:message key="navbar.watchlist"/>
                     </a>
                 </li>
             </ul>
             <form method="post" action="${pageContext.request.contextPath}/logout" class="d-flex">
                 <button class="btn btn-danger btn-sm" type="submit">
-                    <i class="bi bi-box-arrow-right"></i> Выйти
+                    <i class="bi bi-box-arrow-right"></i> <fmt:message key="navbar.logout"/>
                 </button>
             </form>
         </div>
     </div>
+    <div class="ml-auto">
+        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=ru" class="text-white">RU</a>
+    </div>
 </nav>
 <div class="container my-5">
-    <h1 class="text-center mb-4">Каталог фильмов</h1>
+    <h1 class="text-center mb-4"><fmt:message key="title"/></h1>
     <div class="card p-4 shadow-sm mb-4">
         <form id="filterForm" method="POST" action="${pageContext.request.contextPath}/user/movies">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label">Поиск по названию</label>
+                    <label class="form-label"><fmt:message key="filter.title"/></label>
                     <input type="text" id="searchQueryInput" name="searchQuery" class="form-control"
-                           placeholder="Введите название фильма" value="${param.searchQuery}">
+                           placeholder="<fmt:message key='filter.title' />" value="${param.searchQuery}">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Жанры</label>
+                    <label class="form-label"><fmt:message key="filter.genres"/></label>
                     <select id="genreFilterInput" name="genre" class="form-select">
-                        <option value="">Все жанры</option>
+                        <option value=""><fmt:message key="filter.allgenres"/></option>
                         <c:forEach var="genre" items="${genres}">
                             <option value="${genre.id}"
                                     <c:if test="${genre.id == param.genre}">selected</c:if>>${genre.name}</option>
@@ -68,48 +75,54 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Язык</label>
+                    <label class="form-label"><fmt:message key="filter.language"/></label>
                     <select id="languageFilterInput" name="language" class="form-select">
-                        <option value="" disabled ${empty param.language ? 'selected' : ''}>Выберите язык</option>
-                        <option value="Русский" ${param.language == 'Русский' ? 'selected' : ''}>Русский</option>
-                        <option value="Английский" ${param.language == 'Английский' ? 'selected' : ''}>Английский
-                        </option>
-                        <option value="Французский" ${param.language == 'Французский' ? 'selected' : ''}>Французский
-                        </option>
-                        <option value="Испанский" ${param.language == 'Испанский' ? 'selected' : ''}>Испанский</option>
-                        <option value="Белорусский" ${param.language == 'Белорусский' ? 'selected' : ''}>Белорусский
-                        </option>
+                        <option value="" disabled ${empty param.language ? 'selected' : ''}><fmt:message
+                                key="form.selectLanguage"/></option>
+                        <option value="Русский" ${param.language == 'Русский' ? 'selected' : ''}><fmt:message
+                                key="form.russian"/></option>
+                        <option value="Английский" ${param.language == 'Английский' ? 'selected' : ''}><fmt:message
+                                key="form.english"/></option>
+                        <option value="Французский" ${param.language == 'Французский' ? 'selected' : ''}><fmt:message
+                                key="form.french"/></option>
+                        <option value="Испанский" ${param.language == 'Испанский' ? 'selected' : ''}><fmt:message
+                                key="form.spanish"/></option>
+                        <option value="Белорусский" ${param.language == 'Белорусский' ? 'selected' : ''}><fmt:message
+                                key="form.belarusian"/></option>
                     </select>
                 </div>
             </div>
             <div class="row g-3 mt-3">
                 <div class="col-md-3">
-                    <label class="form-label">Год выпуска</label>
+                    <label class="form-label"><fmt:message key="filter.year"/></label>
                     <input type="number" id="yearFilterInput" name="year" class="form-control"
-                           placeholder="Например, 2023" value="${param.year}">
+                           placeholder="2023" value="${param.year}">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Продолжительность</label>
+                    <label class="form-label"><fmt:message key="filter.duration"/></label>
                     <input type="number" id="durationFilterInput" name="duration" class="form-control"
-                           placeholder="Минуты" value="${param.duration}">
+                           placeholder="<fmt:message key="filter.minutes"/>" value="${param.duration}">
                 </div>
                 <div class="col-md-3 align-self-end">
-                    <button type="button" class="btn btn-primary w-100" onclick="applyFilters()">Применить фильтры
+                    <button type="button" class="btn btn-primary w-100" onclick="applyFilters()">
+                        <fmt:message key="filter.apply"/>
                     </button>
                 </div>
                 <div class="col-md-3 align-self-end">
-                    <button type="reset" class="btn btn-secondary w-100" onclick="resetFilters()">Сбросить</button>
+                    <button type="reset" class="btn btn-secondary w-100" onclick="resetFilters()">
+                        <fmt:message key="filter.reset"/>
+                    </button>
                 </div>
             </div>
         </form>
     </div>
     <div class="row mb-4">
         <div class="col-md-12">
-            <h3>Рекомендации для вас</h3>
+            <h3><fmt:message key="recommendations.title"/></h3>
             <c:choose>
                 <c:when test="${empty recommendations}">
                     <div class="alert alert-info text-center" role="alert">
-                        Рекомендаций пока нет. Оцените фильмы, чтобы получить рекомендации.
+                        <fmt:message key="recommendations.empty"/>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -123,7 +136,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">${recommendation.title}</h5>
                                         <a href="${pageContext.request.contextPath}/user/movies/${recommendation.id}"
-                                           class="btn btn-outline-primary">Подробнее</a>
+                                           class="btn btn-outline-primary"><fmt:message key="movies.more"/></a>
                                     </div>
                                 </div>
                             </div>
@@ -135,11 +148,11 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <h3>Фильмы</h3>
+            <h3><fmt:message key="movies.title"/></h3>
             <c:choose>
                 <c:when test="${empty movies}">
                     <div class="alert alert-warning text-center" role="alert">
-                        <strong>Ничего не найдено!</strong> Попробуйте изменить параметры фильтрации.
+                        <strong><fmt:message key="movies.empty"/></strong>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -151,15 +164,19 @@
                                          alt="${movie.title}">
                                     <div class="card-body">
                                         <h5 class="card-title">${movie.title}</h5>
-                                        <p class="card-text"><strong>Жанры:</strong> ${movie.genres}</p>
-                                        <p class="card-text"><strong>Язык:</strong> ${movie.language}</p>
-                                        <p class="card-text"><strong>Год:</strong> ${movie.releaseYear}</p>
-                                        <p class="card-text"><strong>Продолжительность:</strong> ${movie.duration} мин
+                                        <p class="card-text"><strong> <fmt:message key="filter.genres"/>
+                                        </strong> ${movie.genres}</p>
+                                        <p class="card-text"><strong><fmt:message
+                                                key="filter.language"/></strong> ${movie.language}</p>
+                                        <p class="card-text"><strong><fmt:message
+                                                key="filter.year"/></strong> ${movie.releaseYear}</p>
+                                        <p class="card-text"><strong><fmt:message
+                                                key="filter.duration"/></strong> ${movie.duration} мин
                                         </p>
                                         <a href="${pageContext.request.contextPath}/user/movies/${movie.id}"
-                                           class="btn btn-primary">Подробнее</a>
-
-                                        <form method="POST" action="${pageContext.request.contextPath}/user/movies/rate">
+                                           class="btn btn-primary"><fmt:message key="movies.more"/></a>
+                                        <form method="POST"
+                                              action="${pageContext.request.contextPath}/user/movies/rate">
                                             <input type="hidden" name="movieId" value="${movie.id}">
                                             <div class="rating">
                                                 <c:forEach begin="1" end="5" var="star">
@@ -174,7 +191,9 @@
                                                     </label>
                                                 </c:forEach>
                                             </div>
-                                            <button type="submit" class="btn btn-success mt-3">Оценить</button>
+                                            <button type="submit" class="btn btn-success mt-3"><fmt:message
+                                                    key="rating.submit"/>
+                                            </button>
                                         </form>
                                     </div>
                                 </div>
@@ -186,16 +205,13 @@
         </div>
     </div>
 </div>
-
 <script>
     function applyFilters() {
-        const form = document.getElementById('filterForm');
-        form.submit();
+        document.getElementById('filterForm').submit();
     }
 
     function resetFilters() {
-        const form = document.getElementById('filterForm');
-        form.reset();
+        document.getElementById('filterForm').reset();
         window.location.href = `${window.location.pathname}`;
     }
 </script>

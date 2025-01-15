@@ -25,7 +25,7 @@ public class GenreServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<EntityDto> genres = genreService.findAll();
         req.setAttribute("entities", genres);
-        req.setAttribute("entityType", "Жанры");
+        req.setAttribute("entityType", "жанрами");
         req.setAttribute("entityPath", "/admin/genres");
         req.getRequestDispatcher("/WEB-INF/views/admin/entity-management.jsp").forward(req, resp);
     }

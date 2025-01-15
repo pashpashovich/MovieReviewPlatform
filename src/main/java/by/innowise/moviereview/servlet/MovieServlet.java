@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -83,6 +86,12 @@ public class MovieServlet extends HttpServlet {
             byte[] posterBytes = posterPart.getInputStream().readAllBytes();
             String posterBase64 = Base64.getEncoder().encodeToString(posterBytes);
             movieDto.setPosterBase64(posterBase64);
+        } else {
+            String defaultPosterPath = req.getServletContext().getRealPath("/static/images/default-poster.png");
+            Path path = Paths.get(defaultPosterPath);
+            byte[] defaultPosterBytes = Files.readAllBytes(path);
+            String defaultPosterBase64 = Base64.getEncoder().encodeToString(defaultPosterBytes);
+            movieDto.setPosterBase64(defaultPosterBase64);
         }
         String[] genres = req.getParameterValues("genres");
         if (genres != null) {

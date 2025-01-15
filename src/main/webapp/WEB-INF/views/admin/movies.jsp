@@ -47,6 +47,9 @@
     }
 
     function updateSelect(selectElement, selectedValues) {
+        if (selectedValues.length === 1 && typeof selectedValues[0] === 'string') {
+            selectedValues = selectedValues[0].split(',').map(value => value.trim());
+        }
         const selectedSet = new Set(selectedValues);
         Array.from(selectElement.options).forEach(option => {
             option.selected = selectedSet.has(option.value);
@@ -80,7 +83,8 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/movies">
+                    <a class="nav-link active" aria-current="page"
+                       href="${pageContext.request.contextPath}/admin/movies">
                         <i class="bi bi-film"></i> Управление фильмами
                     </a>
                 </li>
@@ -136,8 +140,11 @@
             <c:forEach var="movie" items="${movies}">
                 <tr class="text-center align-middle">
                     <td>
-                        <img src="data:image/jpeg;base64,${movie.posterBase64}" alt="Постер ${movie.title}"
-                             class="img-thumbnail" style="max-width: 100px; max-height: 150px;">
+                        <img src="data:image/jpeg;base64,${movie.posterBase64}"
+                             alt="Постер ${movie.title}"
+                             class="img-thumbnail"
+                             style="max-width: 100px; max-height: 150px;"
+                        >
                     </td>
                     <td>${movie.id}</td>
                     <td>${movie.title}</td>
@@ -202,6 +209,7 @@
     <div class="card">
         <div class="card-header bg-dark text-white">
             <h2 class="text-center mb-0" id="formTitle">Добавление фильма</h2>
+            <h6 class="text-center mb-0">Используйте кнопку Ctrl для множественного выбора</h6>
         </div>
         <div class="card-body">
             <form method="post" action="${pageContext.request.contextPath}/admin/movies" enctype="multipart/form-data"

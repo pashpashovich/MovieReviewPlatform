@@ -33,7 +33,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             graph.addAttributeNodes("genres", "people");
             String hql = "SELECT m FROM Movie m";
             return session.createQuery(hql, Movie.class)
-                    .setHint("javax.persistence.loadgraph", graph)
+                    .setHint("jakarta.persistence.loadgraph", graph)
                     .getResultList();
         }
     }
@@ -47,7 +47,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             String hql = "SELECT m FROM Movie m WHERE m.id = :id";
             return session.createQuery(hql, Movie.class)
                     .setParameter("id", id)
-                    .setHint("javax.persistence.loadgraph", graph)
+                    .setHint("jakarta.persistence.loadgraph", graph)
                     .uniqueResult();
         }
     }
@@ -88,7 +88,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             graph.addAttributeNodes("genres", "people", "watchlist", "ratings", "reviews");
             Movie managedMovie = session.createQuery("SELECT m FROM Movie m WHERE m.id = :id", Movie.class)
                     .setParameter("id", movie.getId())
-                    .setHint("javax.persistence.loadgraph", graph)
+                    .setHint("jakarta.persistence.loadgraph", graph)
                     .uniqueResult();
             if (managedMovie != null) {
                 session.remove(managedMovie);

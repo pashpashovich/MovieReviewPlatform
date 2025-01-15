@@ -68,12 +68,12 @@ public class MovieService {
         if (existingMovie == null) {
             throw new UpdatingException("Фильм с ID " + id + " не найден.");
         }
-
         existingMovie.setTitle(movieDto.getTitle());
         existingMovie.setDescription(movieDto.getDescription());
         existingMovie.setReleaseYear(movieDto.getReleaseYear());
         existingMovie.setDuration(movieDto.getDuration());
         existingMovie.setLanguage(movieDto.getLanguage());
+        existingMovie.setPosterBase64(movieDto.getPosterBase64());
         existingMovie.setGenres(genreDao.findAllByName(movieDto.getGenres()));
         existingMovie.setPeople(getPeopleByRoles(movieDto));
 

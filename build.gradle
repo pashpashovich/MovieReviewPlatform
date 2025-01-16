@@ -27,9 +27,9 @@ wrapper {
     version = "8.5"
 }
 
-tasks.named('war') {
-    destinationDirectory = file("$rootDir/deploy")
-}
+//tasks.named('war') {
+//    destinationDirectory = file("$rootDir/deploy")
+//}
 
 
 tasks.withType(JavaCompile) {
@@ -54,6 +54,8 @@ dependencies {
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
     implementation 'ch.qos.logback:logback-classic:1.5.12'
     implementation 'org.mindrot:jbcrypt:0.4'
+    implementation 'org.hibernate.orm:hibernate-hikaricp:7.0.0.Beta3'
+
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")

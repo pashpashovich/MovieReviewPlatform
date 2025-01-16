@@ -1,10 +1,11 @@
 package by.innowise.moviereview.service;
 
-import by.innowise.moviereview.dto.WatchlistDto;
-import by.innowise.moviereview.entity.Watchlist;
 import by.innowise.moviereview.dao.MovieDao;
 import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.dao.WatchlistDao;
+import by.innowise.moviereview.dto.WatchlistDto;
+import by.innowise.moviereview.entity.Watchlist;
+import by.innowise.moviereview.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,11 +53,12 @@ public class WatchlistService {
     }
 
     public void removeFromWatchlist(Long userId, Long movieId) {
-        watchlistDao.deleteByUserIdAndMovieId(userId, movieId);
+        Watchlist watchlist = watchlistDao.findByUserIdAndMovieId(userId, movieId)
+                .orElseThrow(() -> new NotFoundException(String.format("Фильм с таким id %d не найден.", movieId)));
+        watchlistDao.delete(watchlist);
     }
 
     public boolean isMovieInWatchlist(Long userId, Long movieId) {
         return watchlistDao.findByUserIdAndMovieId(userId, movieId).isPresent();
     }
-
 }

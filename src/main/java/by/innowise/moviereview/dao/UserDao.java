@@ -39,7 +39,7 @@ public class UserDao implements AbstractHibernateDao<User, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-            session.save(user);
+            session.persist(user);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

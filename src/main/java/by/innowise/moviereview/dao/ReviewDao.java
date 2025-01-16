@@ -47,7 +47,7 @@ public class ReviewDao implements AbstractHibernateDao<Review, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.update(review);
+            session.merge(review);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -60,7 +60,7 @@ public class ReviewDao implements AbstractHibernateDao<Review, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(review);
+            session.remove(review);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -72,38 +72,6 @@ public class ReviewDao implements AbstractHibernateDao<Review, Long> {
     public List<Review> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM Review", Review.class).getResultList();
-        }
-    }
-
-
-    public List<Review> findByMovieId(Long movieId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Review WHERE movie.id = :movieId", Review.class)
-                    .setParameter("movieId", movieId)
-                    .getResultList();
-        }
-    }
-
-    public List<Review> findByUserId(Long userId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Review WHERE user.id = :userId", Review.class)
-                    .setParameter("userId", userId)
-                    .getResultList();
-        }
-    }
-
-    public void deleteById(Long id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Review review = session.get(Review.class, id);
-            if (review != null) {
-                session.delete(review);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            throw e;
         }
     }
 

@@ -59,6 +59,5 @@ public class UserService {
         log.info("Новая сущность:" + entityCreate);
         userDao.save(entityCreate);
     }
-
 }
 

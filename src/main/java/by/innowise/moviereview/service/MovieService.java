@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import java.lang.module.FindException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +86,6 @@ public class MovieService {
         }
         movieDao.delete(movie);
     }
-
     private Set<Person> getPeopleByRoles(MovieDto movieDto) {
         Set<Person> people = new HashSet<>();
         people.addAll(personDao.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
@@ -150,7 +148,6 @@ public class MovieService {
             return movieMapper.toDto(movie);
         }
     }
-
 }
 
 

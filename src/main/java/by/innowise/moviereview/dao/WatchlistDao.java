@@ -21,13 +21,17 @@ public class WatchlistDao implements AbstractHibernateDao<Watchlist, Long> {
     }
 
     @Override
-    public Watchlist findById(Long aLong) {
-        return null;
+    public Watchlist findById(Long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(Watchlist.class, id);
+        }
     }
 
     @Override
     public List<Watchlist> findAll() {
-        return null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM Watchlist", Watchlist.class).getResultList();
+        }
     }
 
     @Override
@@ -35,7 +39,7 @@ public class WatchlistDao implements AbstractHibernateDao<Watchlist, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(watchlist);
+            session.persist(watchlist);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -44,13 +48,29 @@ public class WatchlistDao implements AbstractHibernateDao<Watchlist, Long> {
     }
 
     @Override
-    public void update(Watchlist object) {
-
+    public void update(Watchlist watchlist) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSession()) {
+            transaction = session.beginTransaction();
+            session.merge(watchlist);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw new RuntimeException("Ошибка обновления списка для просмотра: " + watchlist, e);
+        }
     }
 
     @Override
-    public void delete(Watchlist object) {
-
+    public void delete(Watchlist watchlist) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSession()) {
+            transaction = session.beginTransaction();
+            session.remove(session.contains(watchlist) ? watchlist : session.merge(watchlist));
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw new RuntimeException("Ошибка удаления списка для просмотра: " + watchlist, e);
+        }
     }
 
     public List<Watchlist> findByUserId(Long userId) {
@@ -59,21 +79,6 @@ public class WatchlistDao implements AbstractHibernateDao<Watchlist, Long> {
                     "SELECT w FROM Watchlist w JOIN FETCH w.movie WHERE w.user.id = :userId",
                     Watchlist.class
             ).setParameter("userId", userId).getResultList();
-        }
-    }
-
-    public void deleteByUserIdAndMovieId(Long userId, Long movieId) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.createQuery("DELETE FROM Watchlist WHERE user.id = :userId AND movie.id = :movieId")
-                    .setParameter("userId", userId)
-                    .setParameter("movieId", movieId)
-                    .executeUpdate();
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            throw e;
         }
     }
 

@@ -1,6 +1,5 @@
 package by.innowise.moviereview.dao;
 
-import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.entity.Rating;
 import by.innowise.moviereview.util.HibernateUtil;
 import lombok.AccessLevel;
@@ -12,34 +11,28 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RatingDao implements AbstractHibernateDao<Rating, Long> {
-
     private static RatingDao instance;
 
-    public static RatingDao getInstance()
-    {
-        if (instance==null)
-            instance=new RatingDao();
+    public static RatingDao getInstance() {
+        if (instance == null)
+            instance = new RatingDao();
         return instance;
     }
 
-    public Rating findByUserAndMovie(Long userId, Long movieId) {
+    @Override
+    public Rating findById(Long aLong) {
         try (Session session = HibernateUtil.getSession()) {
-            String hql = "FROM Rating r WHERE r.user.id = :userId AND r.movie.id = :movieId";
+            String hql = "FROM Rating r WHERE r.id = :aLong";
             return session.createQuery(hql, Rating.class)
-                    .setParameter("userId", userId)
-                    .setParameter("movieId", movieId)
                     .uniqueResult();
         }
     }
 
     @Override
-    public Rating findById(Long aLong) {
-        return null;
-    }
-
-    @Override
     public List<Rating> findAll() {
-        return null;
+        try (Session session = HibernateUtil.getSession()) {
+            return session.createQuery("FROM Rating ", Rating.class).list();
+        }
     }
 
     @Override
@@ -47,7 +40,7 @@ public class RatingDao implements AbstractHibernateDao<Rating, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-            session.save(rating);
+            session.persist(rating);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -60,7 +53,7 @@ public class RatingDao implements AbstractHibernateDao<Rating, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-            session.update(rating);
+            session.merge(rating);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -69,7 +62,16 @@ public class RatingDao implements AbstractHibernateDao<Rating, Long> {
     }
 
     @Override
-    public void delete(Rating object) {
+    public void delete(Rating rating) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSession()) {
+            transaction = session.beginTransaction();
+            session.remove(session.contains(rating) ? rating : session.merge(rating));
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw new RuntimeException("Ошибка удаления рейтинга: " + rating, e);
+        }
 
     }
 
@@ -94,4 +96,13 @@ public class RatingDao implements AbstractHibernateDao<Rating, Long> {
         }
     }
 
+    public Rating findByUserAndMovie(Long userId, Long movieId) {
+        try (Session session = HibernateUtil.getSession()) {
+            String hql = "FROM Rating r WHERE r.user.id = :userId AND r.movie.id = :movieId";
+            return session.createQuery(hql, Rating.class)
+                    .setParameter("userId", userId)
+                    .setParameter("movieId", movieId)
+                    .uniqueResult();
+        }
+    }
 }

@@ -33,7 +33,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             graph.addAttributeNodes("genres", "people");
             String hql = "SELECT m FROM Movie m";
             return session.createQuery(hql, Movie.class)
-                    .setHint("jakarta.persistence.loadgraph", graph)
+                    .setHint("javax.persistence.loadgraph", graph)
                     .getResultList();
         }
     }
@@ -47,18 +47,17 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             String hql = "SELECT m FROM Movie m WHERE m.id = :id";
             return session.createQuery(hql, Movie.class)
                     .setParameter("id", id)
-                    .setHint("jakarta.persistence.loadgraph", graph)
+                    .setHint("javax.persistence.loadgraph", graph)
                     .uniqueResult();
         }
     }
-
 
     @Override
     public void save(Movie movie) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-            session.save(movie);
+            session.persist(movie);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -88,7 +87,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             graph.addAttributeNodes("genres", "people", "watchlist", "ratings", "reviews");
             Movie managedMovie = session.createQuery("SELECT m FROM Movie m WHERE m.id = :id", Movie.class)
                     .setParameter("id", movie.getId())
-                    .setHint("jakarta.persistence.loadgraph", graph)
+                    .setHint("javax.persistence.loadgraph", graph)
                     .uniqueResult();
             if (managedMovie != null) {
                 session.remove(managedMovie);
@@ -125,6 +124,5 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
                     .setMaxResults(10)
                     .getResultList();
         }
-
     }
 }

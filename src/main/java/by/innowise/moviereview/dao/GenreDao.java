@@ -43,7 +43,7 @@ public class GenreDao implements AbstractHibernateDao<Genre, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-            session.save(genre);
+            session.persist(genre);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -69,18 +69,14 @@ public class GenreDao implements AbstractHibernateDao<Genre, Long> {
         if (genre == null || genre.getId() == null) {
             throw new IllegalArgumentException("Сущность Genre или ее id не могут быть null");
         }
-
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-
             session.createNativeQuery("DELETE FROM movie_genre WHERE genre_id = :genreId")
                     .setParameter("genreId", genre.getId())
                     .executeUpdate();
-
             Genre managedGenre = session.contains(genre) ? genre : session.merge(genre);
             session.remove(managedGenre);
-
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

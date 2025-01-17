@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MovieDao implements AbstractHibernateDao<Movie, Long> {
 
+    public static final String JAKARTA_PERSISTENCE_LOADGRAPH = "jakarta.persistence.loadgraph";
     private static MovieDao instance;
 
     public static MovieDao getInstance() {
@@ -33,7 +34,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             graph.addAttributeNodes("genres", "people");
             String hql = "SELECT m FROM Movie m";
             return session.createQuery(hql, Movie.class)
-                    .setHint("javax.persistence.loadgraph", graph)
+                    .setHint(JAKARTA_PERSISTENCE_LOADGRAPH, graph)
                     .getResultList();
         }
     }
@@ -47,7 +48,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             String hql = "SELECT m FROM Movie m WHERE m.id = :id";
             return session.createQuery(hql, Movie.class)
                     .setParameter("id", id)
-                    .setHint("javax.persistence.loadgraph", graph)
+                    .setHint(JAKARTA_PERSISTENCE_LOADGRAPH, graph)
                     .uniqueResult();
         }
     }
@@ -87,7 +88,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
             graph.addAttributeNodes("genres", "people", "watchlist", "ratings", "reviews");
             Movie managedMovie = session.createQuery("SELECT m FROM Movie m WHERE m.id = :id", Movie.class)
                     .setParameter("id", movie.getId())
-                    .setHint("javax.persistence.loadgraph", graph)
+                    .setHint(JAKARTA_PERSISTENCE_LOADGRAPH, graph)
                     .uniqueResult();
             if (managedMovie != null) {
                 session.remove(managedMovie);

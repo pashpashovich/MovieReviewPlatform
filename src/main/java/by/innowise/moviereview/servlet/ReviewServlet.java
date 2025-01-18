@@ -2,7 +2,6 @@ package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.service.ReviewService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,11 +11,7 @@ import java.io.IOException;
 
 @WebServlet("/user/movies/review")
 public class ReviewServlet extends HttpServlet {
-    private final ReviewService reviewService;
-
-    public ReviewServlet() {
-        this.reviewService = ReviewService.getInstance();
-    }
+    private final ReviewService reviewService = ReviewService.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {

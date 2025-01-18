@@ -79,7 +79,7 @@
 </nav>
 
 <div class="container my-5">
-    <h1 class="text-center mb-4" id="formTitle"><fmt:message key="page.header" /></h1>
+    <h1 class="text-center mb-4" id="formTitle"><fmt:message key="stars.header" /></h1>
     <div class="table-responsive mb-5">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">

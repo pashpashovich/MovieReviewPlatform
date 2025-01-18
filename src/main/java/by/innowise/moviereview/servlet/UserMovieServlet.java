@@ -21,17 +21,10 @@ import java.util.Map;
 
 @WebServlet("/user/movies")
 public class UserMovieServlet extends HttpServlet {
-    private final MovieService movieService;
-    private final GenreService genreService;
-    private final RatingService ratingService;
-    private final RecommendationService recommendationService;
-
-    public UserMovieServlet() {
-        this.genreService = GenreService.getInstance();
-        this.ratingService = RatingService.getInstance();
-        this.movieService = MovieService.getInstance();
-        this.recommendationService = RecommendationService.getInstance();
-    }
+    private final MovieService movieService = MovieService.getInstance();
+    private final GenreService genreService = GenreService.getInstance();
+    private final RatingService ratingService = RatingService.getInstance();
+    private final RecommendationService recommendationService = RecommendationService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

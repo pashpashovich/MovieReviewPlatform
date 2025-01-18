@@ -125,6 +125,13 @@
     </div>
 </nav>
 <div class="container my-5">
+    <form method="get" action="" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="title" class="form-control"
+                   placeholder="<fmt:message key='form.searchPlaceholder'/>" value="${param.title}">
+            <button class="btn btn-primary" type="submit"><fmt:message key="button.search"/></button>
+        </div>
+    </form>
     <h1 class="text-center mb-4"><fmt:message key="page.header"/></h1>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
@@ -212,6 +219,15 @@
             </tbody>
         </table>
     </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <c:forEach var="i" begin="1" end="${totalPages}">
+                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                    <a class="page-link" href="?page=${i}&pageSize=5">${i}</a>
+                </li>
+            </c:forEach>
+        </ul>
+    </nav>
 
     <hr class="my-5">
     <div class="card">

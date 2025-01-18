@@ -14,11 +14,7 @@ import java.io.IOException;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
-    private final UserService userService;
-
-    public RegisterServlet() {
-        this.userService = UserService.getInstance();
-    }
+    private final UserService userService = UserService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

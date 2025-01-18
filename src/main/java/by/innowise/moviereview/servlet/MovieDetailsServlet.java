@@ -1,8 +1,5 @@
 package by.innowise.moviereview.servlet;
 
-import by.innowise.moviereview.dao.MovieDao;
-import by.innowise.moviereview.dao.UserDao;
-import by.innowise.moviereview.dao.WatchlistDao;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.Review;
@@ -21,17 +18,11 @@ import java.util.List;
 
 @WebServlet(name = "MovieDetailsServlet", urlPatterns = "/user/movies/*")
 public class MovieDetailsServlet extends HttpServlet {
-    private final RatingService ratingService;
-    private final MovieService movieService;
-    private final ReviewService reviewService;
-    private final WatchlistService watchlistService;
+    private final RatingService ratingService = RatingService.getInstance();
+    private final MovieService movieService = MovieService.getInstance();
+    private final ReviewService reviewService = ReviewService.getInstance();
+    private final WatchlistService watchlistService = WatchlistService.getInstance();
 
-    public MovieDetailsServlet() {
-        this.watchlistService = WatchlistService.getInstance();
-        this.ratingService = RatingService.getInstance();
-        this.movieService = MovieService.getInstance();
-        this.reviewService = ReviewService.getInstance();
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -42,7 +33,7 @@ public class MovieDetailsServlet extends HttpServlet {
                 return;
             }
             Long movieId = Long.valueOf(movieIdParam);
-            MovieDto movie = movieService.findMovieById(movieId);
+            MovieDto movie = movieService.getMovieById(movieId);
             if (movie == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Фильм с ID " + movieId + " не найден");
                 return;

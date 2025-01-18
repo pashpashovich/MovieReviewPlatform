@@ -27,24 +27,28 @@ import java.util.stream.Collectors;
         maxFileSize = 1024 * 1024 * 10,
         maxRequestSize = 1024 * 1024 * 50)
 public class MovieServlet extends HttpServlet {
-    private final MovieService movieService;
-    private final GenreService genreService;
-    private final PersonService personService;
-
-    public MovieServlet() {
-        this.movieService = MovieService.getInstance();
-        this.genreService = GenreService.getInstance();
-        this.personService = PersonService.getInstance();
-    }
+    private final MovieService movieService = MovieService.getInstance();
+    private final GenreService genreService = GenreService.getInstance();
+    private final PersonService personService = PersonService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<MovieDto> movies = movieService.getAllMovies();
+        int page = Integer.parseInt(req.getParameter("page") != null ? req.getParameter("page") : "1");
+        int pageSize = Integer.parseInt(req.getParameter("pageSize") != null ? req.getParameter("pageSize") : "5");
+        String query = req.getParameter("title");
+        List<MovieDto> movies;
+        if (query==null) movies = movieService.getMoviesWithPagination(page, pageSize);
+        else movies = movieService.filterMovies(query, null, null, null, null); ;
+        long totalMovies = movieService.getTotalMoviesCount();
+        int totalPages = (int) Math.ceil((double) totalMovies / pageSize);
         req.setAttribute("movies", movies);
+        req.setAttribute("currentPage", page);
+        req.setAttribute("totalPages", totalPages);
         req.setAttribute("genres", genreService.findAll());
         req.setAttribute("actors", personService.getAllPeopleByRole(MovieRole.ACTOR));
         req.setAttribute("directors", personService.getAllPeopleByRole(MovieRole.DIRECTOR));
         req.setAttribute("producers", personService.getAllPeopleByRole(MovieRole.PRODUCER));
+
         req.getRequestDispatcher("/WEB-INF/views/admin/movies.jsp").forward(req, resp);
     }
 
@@ -87,11 +91,13 @@ public class MovieServlet extends HttpServlet {
             String posterBase64 = Base64.getEncoder().encodeToString(posterBytes);
             movieDto.setPosterBase64(posterBase64);
         } else {
-            String defaultPosterPath = req.getServletContext().getRealPath("/static/images/default-poster.png");
-            Path path = Paths.get(defaultPosterPath);
-            byte[] defaultPosterBytes = Files.readAllBytes(path);
-            String defaultPosterBase64 = Base64.getEncoder().encodeToString(defaultPosterBytes);
-            movieDto.setPosterBase64(defaultPosterBase64);
+            if (req.getMethod().equals("POST")) {
+                String defaultPosterPath = req.getServletContext().getRealPath("/static/images/default-poster.png");
+                Path path = Paths.get(defaultPosterPath);
+                byte[] defaultPosterBytes = Files.readAllBytes(path);
+                String defaultPosterBase64 = Base64.getEncoder().encodeToString(defaultPosterBytes);
+                movieDto.setPosterBase64(defaultPosterBase64);
+            }
         }
         String[] genres = req.getParameterValues("genres");
         if (genres != null) {

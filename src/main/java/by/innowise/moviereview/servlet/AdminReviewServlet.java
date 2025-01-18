@@ -13,11 +13,8 @@ import java.util.List;
 
 @WebServlet("/admin/reviews")
 public class AdminReviewServlet extends HttpServlet {
-    private final ReviewService reviewService;
+    private final ReviewService reviewService = ReviewService.getInstance();
 
-    public AdminReviewServlet() {
-        this.reviewService = ReviewService.getInstance();
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

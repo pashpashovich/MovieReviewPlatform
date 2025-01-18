@@ -63,7 +63,29 @@
     </div>
 </nav>
 <div class="container my-5">
-    <h1 class="text-center"><fmt:message key="admin.manage"/> ${entityType}</h1>
+    <h1 class="text-center"><fmt:message key="admin.manage"/></h1>
+    <form method="get" action="${pageContext.request.contextPath}/admin/genres" class="d-flex mb-3">
+        <input type="text" name="search" placeholder="<fmt:message key='admin.search.placeholder'/>"
+               value="${param.search}" class="form-control me-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> <fmt:message key="admin.search"/>
+        </button>
+        <a href="${pageContext.request.contextPath}/admin/genres" class="btn btn-secondary ms-2">
+            <i class="bi bi-x-circle"></i> <fmt:message key="admin.reset"/>
+        </a>
+    </form>
+    <div class="mb-3">
+        <label for="sort" class="form-label"><fmt:message key="admin.sort.by"/></label>
+        <form method="get" action="${pageContext.request.contextPath}/admin/genres">
+            <select id="sort" name="sort" class="form-select" onchange="this.form.submit()">
+                <option value="id" <c:if test="${param.sort == 'id'}">selected</c:if>><fmt:message
+                        key="admin.id"/></option>
+                <option value="name" <c:if test="${param.sort == 'name'}">selected</c:if>><fmt:message
+                        key="admin.name"/></option>
+            </select>
+        </form>
+    </div>
+
     <div class="table-responsive my-4">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -82,7 +104,7 @@
                         <button class="btn btn-sm btn-primary" onclick="editEntity(${entity.id}, '${entity.name}')">
                             <fmt:message key="admin.edit"/>
                         </button>
-                        <form method="post" action="${entityPath}" style="display:inline;">
+                        <form method="post" action="/admin/genres" style="display:inline;">
                             <input type="hidden" name="id" value="${entity.id}">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-sm btn-danger">
@@ -95,13 +117,24 @@
             </tbody>
         </table>
     </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <c:forEach var="i" begin="1" end="${totalPages}">
+                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                    <a class="page-link"
+                       href="?page=${i}&size=10&search=${param.search}&sort=${param.sort}">
+                            ${i}
+                    </a></li>
+            </c:forEach>
+        </ul>
+    </nav>
 
     <div class="card">
         <div class="card-header bg-dark text-white">
-            <h2 id="formTitle" class="mb-0"><fmt:message key="admin.add"/> ${entityType}</h2>
+            <h2 id="formTitle" class="mb-0"><fmt:message key="admin.add"/></h2>
         </div>
         <div class="card-body">
-            <form method="post" action="${entityPath}" id="entityForm">
+            <form method="post" action="/admin/genres" id="entityForm">
                 <input type="hidden" id="id" name="id">
                 <input type="hidden" id="method" name="_method" value="POST">
                 <div class="mb-3">
@@ -120,7 +153,7 @@
         document.getElementById('id').value = id;
         document.getElementById('name').value = name;
         document.getElementById('method').value = 'PUT';
-        document.getElementById('formTitle').textContent = '<fmt:message key="admin.edit" /> ${entityType}';
+        document.getElementById('formTitle').textContent = '<fmt:message key="admin.edit" />';
     }
 </script>
 </body>

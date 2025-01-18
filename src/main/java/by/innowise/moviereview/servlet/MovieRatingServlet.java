@@ -12,11 +12,8 @@ import java.io.IOException;
 
 @WebServlet("/user/movies/rate")
 public class MovieRatingServlet extends HttpServlet {
-    private final RatingService ratingService;
+    private final RatingService ratingService = RatingService.getInstance();
 
-    public MovieRatingServlet() {
-        this.ratingService = RatingService.getInstance();
-    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {

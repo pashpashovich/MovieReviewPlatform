@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,10 +18,9 @@ import java.util.Set;
 public class GenreDao implements AbstractHibernateDao<Genre, Long> {
     private static GenreDao instance;
 
-    public static GenreDao getInstance()
-    {
-        if (instance==null)
-            instance=new GenreDao();
+    public static GenreDao getInstance() {
+        if (instance == null)
+            instance = new GenreDao();
         return instance;
     }
 
@@ -90,6 +90,34 @@ public class GenreDao implements AbstractHibernateDao<Genre, Long> {
                     .setParameter("names", names)
                     .list();
             return new HashSet<>(genres);
+        }
+    }
+
+    public List<Genre> findAllWithFilters(String searchQuery, String primarySortField, int page, int pageSize) {
+        try (Session session = HibernateUtil.getSession()) {
+            String hql = "FROM Genre g " +
+                    "WHERE (:searchQuery IS NULL " +
+                    "OR LOWER(g.name) LIKE :searchPattern) " +
+                    "ORDER BY " + ((primarySortField != null && !primarySortField.isEmpty())  ? "g." + primarySortField : "g.id");
+
+            Query<Genre> query = session.createQuery(hql, Genre.class);
+            query.setParameter("searchQuery", searchQuery);
+            query.setParameter("searchPattern", searchQuery != null ? "%" + searchQuery.toLowerCase() + "%" : null);
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            return query.list();
+        }
+    }
+
+    public long countAllWithFilters(String searchQuery) {
+        try (Session session = HibernateUtil.getSession()) {
+            String hql = "SELECT COUNT(g) " +
+                    "FROM Genre g " +
+                    "WHERE (:searchQuery IS NULL OR LOWER(g.name) LIKE :searchPattern)";
+            Query<Long> query = session.createQuery(hql, Long.class);
+            query.setParameter("searchQuery", searchQuery);
+            query.setParameter("searchPattern", searchQuery != null ? "%" + searchQuery.toLowerCase() + "%" : null);
+            return query.uniqueResult();
         }
     }
 }

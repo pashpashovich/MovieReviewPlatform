@@ -13,13 +13,8 @@ import java.io.IOException;
 
 @WebServlet("/user/profile")
 public class UserProfileServlet extends HttpServlet {
-    private final UserService userService;
-    private final ReviewService reviewService;
-
-    public UserProfileServlet() {
-        this.userService = UserService.getInstance();
-        this.reviewService = ReviewService.getInstance();
-    }
+    private final UserService userService = UserService.getInstance();
+    private final ReviewService reviewService = ReviewService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

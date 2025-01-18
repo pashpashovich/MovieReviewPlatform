@@ -2,9 +2,6 @@ package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.dto.WatchlistDto;
-import by.innowise.moviereview.dao.MovieDao;
-import by.innowise.moviereview.dao.UserDao;
-import by.innowise.moviereview.dao.WatchlistDao;
 import by.innowise.moviereview.service.WatchlistService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,11 +14,7 @@ import java.util.List;
 
 @WebServlet(name = "WatchlistServlet", urlPatterns = {"/user/watchlist/add", "/user/watchlist", "/user/watchlist/remove"})
 public class WatchlistServlet extends HttpServlet {
-    private final WatchlistService watchlistService;
-
-    public WatchlistServlet() {
-        this.watchlistService = WatchlistService.getInstance();
-    }
+    private final WatchlistService watchlistService = WatchlistService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

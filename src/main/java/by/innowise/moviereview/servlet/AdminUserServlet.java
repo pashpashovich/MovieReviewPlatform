@@ -16,11 +16,8 @@ import java.util.List;
 @WebServlet("/admin/users")
 public class AdminUserServlet extends HttpServlet {
 
-    private final AdminUserService adminUserService;
+    private final AdminUserService adminUserService = AdminUserService.getInstance();
 
-    public AdminUserServlet() {
-        this.adminUserService = AdminUserService.getInstance();
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

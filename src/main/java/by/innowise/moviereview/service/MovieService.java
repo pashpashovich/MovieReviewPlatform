@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import java.lang.module.FindException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,19 +42,19 @@ public class MovieService {
         return instance;
     }
 
-    public List<MovieDto> getAllMovies() {
-        return movieDao.findAll().stream()
+    public List<MovieDto> getMoviesWithPagination(int page, int pageSize) {
+        return movieDao.findMoviesWithPagination(page, pageSize).stream()
                 .map(movieMapper::toDto)
                 .toList();
     }
 
-//    public MovieDto getMovieById(Long id) {
-//        Movie movie = movieDao.findById(id);
-//        if (movie == null) {
-//            throw new FindException("Фильм не найден с id: " + id);
-//        }
-//        return movieMapper.toDto(movie);
-//    }
+    public MovieDto getMovieById(Long id) {
+        Movie movie = movieDao.findById(id);
+        if (movie == null) {
+            throw new FindException("Фильм не найден с id: " + id);
+        }
+        return movieMapper.toDto(movie);
+    }
 
     public void createMovie(MovieDto movieDto) {
         Movie movie = movieMapper.toEntityFromDto(movieDto);
@@ -72,7 +73,7 @@ public class MovieService {
         existingMovie.setReleaseYear(movieDto.getReleaseYear());
         existingMovie.setDuration(movieDto.getDuration());
         existingMovie.setLanguage(movieDto.getLanguage());
-        existingMovie.setPosterBase64(movieDto.getPosterBase64());
+        if(movieDto.getPosterBase64()!=null) existingMovie.setPosterBase64(movieDto.getPosterBase64());
         existingMovie.setGenres(genreDao.findAllByName(movieDto.getGenres()));
         existingMovie.setPeople(getPeopleByRoles(movieDto));
 
@@ -86,6 +87,7 @@ public class MovieService {
         }
         movieDao.delete(movie);
     }
+
     private Set<Person> getPeopleByRoles(MovieDto movieDto) {
         Set<Person> people = new HashSet<>();
         people.addAll(personDao.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
@@ -139,14 +141,8 @@ public class MovieService {
         }
     }
 
-    public MovieDto findMovieById(Long id) {
-        try (Session session = HibernateUtil.getSession()) {
-            Movie movie = session.get(Movie.class, id);
-            if (movie == null) {
-                return null;
-            }
-            return movieMapper.toDto(movie);
-        }
+    public long getTotalMoviesCount() {
+        return movieDao.getTotalMoviesCount();
     }
 }
 

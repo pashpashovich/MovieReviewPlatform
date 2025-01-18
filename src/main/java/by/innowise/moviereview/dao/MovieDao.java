@@ -39,7 +39,6 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
         }
     }
 
-
     @Override
     public Movie findById(Long id) {
         try (Session session = HibernateUtil.getSession()) {
@@ -123,6 +122,27 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createNativeQuery(sql, Movie.class)
                     .setMaxResults(10)
+                    .getResultList();
+        }
+    }
+
+    public long getTotalMoviesCount() {
+        try (Session session = HibernateUtil.getSession()) {
+            return session
+                    .createQuery("SELECT COUNT(m) FROM Movie m", Long.class)
+                    .getSingleResult();
+        }
+    }
+
+    public List<Movie> findMoviesWithPagination(int page, int pageSize) {
+        try (Session session = HibernateUtil.getSession()) {
+            EntityGraph<Movie> graph = session.createEntityGraph(Movie.class);
+            graph.addAttributeNodes("genres", "people");
+            String hql = "SELECT m FROM Movie m";
+            return session.createQuery(hql, Movie.class)
+                    .setHint(JAKARTA_PERSISTENCE_LOADGRAPH, graph)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
                     .getResultList();
         }
     }

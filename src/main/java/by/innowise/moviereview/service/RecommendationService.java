@@ -6,7 +6,6 @@ import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.mapper.MovieMapperImpl;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class RecommendationService {
         return instance;
     }
 
-    @Transactional
+
     public List<MovieDto> getRecommendationsForUser(Long userId) {
         List<Movie> topRatedMovies = movieDao.findTopRatedMovies();
         List<MovieDto> topRatedMoviesDto = topRatedMovies.stream()

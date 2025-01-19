@@ -65,7 +65,7 @@ public class WatchlistDao implements AbstractHibernateDao<Watchlist, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
             transaction = session.beginTransaction();
-            session.remove(session.contains(watchlist) ? watchlist : session.merge(watchlist));
+            session.remove(watchlist);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

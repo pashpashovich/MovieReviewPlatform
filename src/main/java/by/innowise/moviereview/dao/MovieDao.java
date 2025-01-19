@@ -6,12 +6,19 @@ import by.innowise.moviereview.exception.SavingException;
 import by.innowise.moviereview.exception.UpdatingException;
 import by.innowise.moviereview.util.HibernateUtil;
 import jakarta.persistence.EntityGraph;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -121,7 +128,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
                 "ORDER BY COALESCE(AVG(r.rating), 0) DESC";
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createNativeQuery(sql, Movie.class)
-                    .setMaxResults(10)
+                    .setMaxResults(5)
                     .getResultList();
         }
     }
@@ -146,4 +153,38 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
                     .getResultList();
         }
     }
+
+    public List<Movie> findMoviesWithFiltersAndPagination(
+            String searchQuery, String genreId, String language, String year, String duration, int page, int size) {
+        try (Session session = HibernateUtil.getSession()) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> cq = cb.createQuery(Movie.class);
+            Root<Movie> movieRoot = cq.from(Movie.class);
+            movieRoot.fetch("genres", JoinType.LEFT);
+            movieRoot.fetch("people", JoinType.LEFT);
+
+            List<Predicate> predicates = new ArrayList<>();
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                predicates.add(cb.like(cb.lower(movieRoot.get("title")), "%" + searchQuery.toLowerCase() + "%"));
+            }
+            if (genreId != null && !genreId.isEmpty()) {
+                predicates.add(cb.equal(movieRoot.join("genres",JoinType.LEFT).get("id"), Long.valueOf(genreId)));
+            }
+            if (language != null && !language.isEmpty()) {
+                predicates.add(cb.equal(movieRoot.get("language"), language));
+            }
+            if (year != null && !year.isEmpty()) {
+                predicates.add(cb.equal(movieRoot.get("releaseYear"), Integer.valueOf(year)));
+            }
+            if (duration != null && !duration.isEmpty()) {
+                predicates.add(cb.equal(movieRoot.get("duration"), Integer.valueOf(duration)));
+            }
+            cq.select(movieRoot).distinct(true).where(predicates.toArray(new Predicate[0]));
+            Query<Movie> query = session.createQuery(cq);
+            query.setFirstResult((page - 1) * size);
+            query.setMaxResults(size);
+            return query.getResultList();
+        }
+    }
+
 }

@@ -5,8 +5,10 @@ import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.util.enums.MovieRole;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import java.util.List;
 import java.util.Set;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @Mapper(imports = {MovieRole.class})
 public interface MovieMapper {
 
+    @Named("toDto")
     @Mapping(target = "genres", source = "genres")
     @Mapping(target = "actors", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.ACTOR))")
     @Mapping(target = "directors", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.DIRECTOR))")
@@ -36,15 +39,9 @@ public interface MovieMapper {
     @Mapping(target = "watchlist", ignore = true)
     Movie toEntityFromDto(MovieDto movieDto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "people", ignore = true)
-    @Mapping(target = "genres", ignore = true)
-    @Mapping(target = "avgRating", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "reviews", ignore = true)
-    @Mapping(target = "ratings", ignore = true)
-    @Mapping(target = "watchlist", ignore = true)
-    Movie toEntityFromCreateDto(MovieDto movieDto);
+
+    @IterableMapping(qualifiedByName = "toDto")
+    List<MovieDto> toDtoList(List<Movie> movies);
 
     default Set<String> mapGenresToNames(Set<Genre> genres) {
         if (genres == null) return null;

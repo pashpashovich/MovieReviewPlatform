@@ -1,8 +1,6 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.entity.Person;
-import by.innowise.moviereview.mapper.PersonMapperImpl;
-import by.innowise.moviereview.dao.PersonDao;
 import by.innowise.moviereview.service.PersonService;
 import by.innowise.moviereview.util.enums.MovieRole;
 import jakarta.servlet.ServletException;
@@ -20,11 +18,23 @@ public class PersonServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Person> people = personService.getAllPeople();
+        int page = Integer.parseInt(req.getParameter("page") != null ? req.getParameter("page") : "1");
+        int size = Integer.parseInt(req.getParameter("size") != null ? req.getParameter("size") : "10");
+        String searchQuery = req.getParameter("search");
+        String roleFilter = req.getParameter("role");
+        List<Person> people = personService.getAllPeople(page, size, searchQuery, roleFilter);
+        long totalRecords = personService.countPeople(searchQuery, roleFilter);
+        int totalPages = (int) Math.ceil((double) totalRecords / size);
         req.setAttribute("people", people);
         req.setAttribute("roles", MovieRole.values());
+        req.setAttribute("currentPage", page);
+        req.setAttribute("size", size);
+        req.setAttribute("searchQuery", searchQuery);
+        req.setAttribute("roleFilter", roleFilter);
+        req.setAttribute("totalPages", totalPages);
         req.getRequestDispatcher("/WEB-INF/views/admin/people.jsp").forward(req, resp);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

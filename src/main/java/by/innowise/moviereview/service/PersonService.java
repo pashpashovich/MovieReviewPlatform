@@ -1,9 +1,9 @@
 package by.innowise.moviereview.service;
 
+import by.innowise.moviereview.dao.PersonDao;
 import by.innowise.moviereview.dto.PersonDto;
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.mapper.PersonMapper;
-import by.innowise.moviereview.dao.PersonDao;
 import by.innowise.moviereview.mapper.PersonMapperImpl;
 import by.innowise.moviereview.util.enums.MovieRole;
 
@@ -25,9 +25,14 @@ public class PersonService {
         return instance;
     }
 
-    public List<Person> getAllPeople() {
-        return personDao.findAll();
+    public List<Person> getAllPeople(int page, int size, String searchQuery, String roleFilter) {
+        return personDao.findPeople(page, size, searchQuery, roleFilter);
     }
+
+    public long countPeople(String searchQuery, String roleFilter) {
+        return personDao.countPeople(searchQuery, roleFilter);
+    }
+
     public List<PersonDto> getAllPeopleByRole(MovieRole role) {
         return personMapper.toDto(personDao.findAllByRole(role));
     }

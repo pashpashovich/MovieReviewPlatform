@@ -37,9 +37,14 @@ public class MovieServlet extends HttpServlet {
         int pageSize = Integer.parseInt(req.getParameter("pageSize") != null ? req.getParameter("pageSize") : "5");
         String query = req.getParameter("title");
         List<MovieDto> movies;
-        if (query==null) movies = movieService.getMoviesWithPagination(page, pageSize);
-        else movies = movieService.filterMovies(query, null, null, null, null); ;
-        long totalMovies = movieService.getTotalMoviesCount();
+        long totalMovies;
+        if (query == null) {
+            movies = movieService.getMoviesWithPagination(page, pageSize);
+            totalMovies = movieService.getTotalMoviesCount();
+        } else {
+            movies = movieService.filterMoviesWithPagination(query, null, null, null, null,page,pageSize);
+            totalMovies = movies.size();
+        }
         int totalPages = (int) Math.ceil((double) totalMovies / pageSize);
         req.setAttribute("movies", movies);
         req.setAttribute("currentPage", page);

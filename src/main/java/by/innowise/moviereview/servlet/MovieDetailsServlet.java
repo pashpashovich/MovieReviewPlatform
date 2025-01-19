@@ -43,10 +43,12 @@ public class MovieDetailsServlet extends HttpServlet {
             HttpSession session = req.getSession(false);
             UserDto userDto = (UserDto) session.getAttribute("user");
             boolean isInList = watchlistService.isMovieInWatchlist(userDto.getId(), movieId);
+            Integer ratingByUserAndMovie = ratingService.getRatingByUserAndMovie(userDto.getId(), movieId);
             req.setAttribute("movie", movie);
             req.setAttribute("averageRating", averageRating);
             req.setAttribute("reviews", approvedReviews);
             req.setAttribute("isInList", isInList);
+            req.setAttribute("rating",ratingByUserAndMovie);
             req.getRequestDispatcher("/WEB-INF/views/user/movie-details.jsp").forward(req, resp);
         } catch (Exception e) {
             e.printStackTrace();

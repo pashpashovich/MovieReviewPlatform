@@ -58,8 +58,9 @@
         </div>
     </div>
     <div class="ml-auto">
-        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=en" class="text-white">EN</a>
         <a href="?lang=ru" class="text-white">RU</a>
+        <a href="?lang=by" class="text-white">BY</a>
     </div>
 </nav>
 <div class="container my-5">
@@ -96,24 +97,36 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="entity" items="${entities}">
-                <tr>
-                    <td>${entity.id}</td>
-                    <td>${entity.name}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="editEntity(${entity.id}, '${entity.name}')">
-                            <fmt:message key="admin.edit"/>
-                        </button>
-                        <form method="post" action="/admin/genres" style="display:inline;">
-                            <input type="hidden" name="id" value="${entity.id}">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <fmt:message key="admin.delete"/>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
+            <c:choose>
+                <c:when test="${empty entities}">
+                    <tr>
+                        <td colspan="11" class="text-center text-muted">
+                            <fmt:message key="table.noData"/>
+                        </td>
+                    </tr>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="entity" items="${entities}">
+                        <tr>
+                            <td>${entity.id}</td>
+                            <td>${entity.name}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary"
+                                        onclick="editEntity(${entity.id}, '${entity.name}')">
+                                    <fmt:message key="admin.edit"/>
+                                </button>
+                                <form method="post" action="/admin/genres" style="display:inline;">
+                                    <input type="hidden" name="id" value="${entity.id}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <fmt:message key="admin.delete"/>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
             </tbody>
         </table>
     </div>
@@ -128,7 +141,6 @@
             </c:forEach>
         </ul>
     </nav>
-
     <div class="card">
         <div class="card-header bg-dark text-white">
             <h2 id="formTitle" class="mb-0"><fmt:message key="admin.add"/></h2>
@@ -153,7 +165,7 @@
         document.getElementById('id').value = id;
         document.getElementById('name').value = name;
         document.getElementById('method').value = 'PUT';
-        document.getElementById('formTitle').textContent = '<fmt:message key="admin.edit" />';
+        document.getElementById('formTitle').textContent = '<fmt:message key="admin.edit"/>';
     }
 </script>
 </body>

@@ -20,8 +20,9 @@
         </a>
     </div>
     <div class="ml-auto">
-        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=en" class="text-white">EN</a>
         <a href="?lang=ru" class="text-white">RU</a>
+        <a href="?lang=by" class="text-white">BY</a>
     </div>
 </nav>
 <div class="container my-5">

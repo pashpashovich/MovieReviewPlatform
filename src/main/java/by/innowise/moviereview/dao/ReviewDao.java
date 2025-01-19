@@ -13,7 +13,6 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReviewDao implements AbstractHibernateDao<Review, Long> {
-
     private static ReviewDao instance;
 
     public static ReviewDao getInstance() {
@@ -27,7 +26,7 @@ public class ReviewDao implements AbstractHibernateDao<Review, Long> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.saveOrUpdate(review);
+            session.persist(review);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

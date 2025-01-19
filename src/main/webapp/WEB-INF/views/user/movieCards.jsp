@@ -50,8 +50,9 @@
         </div>
     </div>
     <div class="ml-auto">
-        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=en" class="text-white">EN</a>
         <a href="?lang=ru" class="text-white">RU</a>
+        <a href="?lang=by" class="text-white">BY</a>
     </div>
 </nav>
 <div class="container my-5">
@@ -164,42 +165,32 @@
                                          alt="${movie.title}">
                                     <div class="card-body">
                                         <h5 class="card-title">${movie.title}</h5>
-                                        <p class="card-text"><strong> <fmt:message key="filter.genres"/>
-                                        </strong> ${movie.genres}</p>
+                                        <p class="card-text"><strong><fmt:message
+                                                key="filter.genres"/></strong> ${movie.genres}</p>
                                         <p class="card-text"><strong><fmt:message
                                                 key="filter.language"/></strong> ${movie.language}</p>
                                         <p class="card-text"><strong><fmt:message
                                                 key="filter.year"/></strong> ${movie.releaseYear}</p>
                                         <p class="card-text"><strong><fmt:message
-                                                key="filter.duration"/></strong> ${movie.duration} мин
-                                        </p>
+                                                key="filter.duration"/></strong> ${movie.duration} мин</p>
                                         <a href="${pageContext.request.contextPath}/user/movies/${movie.id}"
                                            class="btn btn-primary"><fmt:message key="movies.more"/></a>
-                                        <form method="POST"
-                                              action="${pageContext.request.contextPath}/user/movies/rate">
-                                            <input type="hidden" name="movieId" value="${movie.id}">
-                                            <div class="rating">
-                                                <c:forEach begin="1" end="5" var="star">
-                                                    <input
-                                                            type="radio"
-                                                            id="star-${star}-${movie.id}"
-                                                            name="rating"
-                                                            value="${star}"
-                                                            <c:if test="${userRatings[movie.id] == star}">checked</c:if> />
-                                                    <label for="star-${star}-${movie.id}" class="star-label">
-                                                        <i class="bi bi-star-fill"></i>
-                                                    </label>
-                                                </c:forEach>
-                                            </div>
-                                            <button type="submit" class="btn btn-success mt-3"><fmt:message
-                                                    key="rating.submit"/>
-                                            </button>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </c:forEach>
                     </div>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                    <a class="page-link"
+                                       href="?page=${i}&size=9&search=${param.search}&sort=${param.sort}">
+                                            ${i}
+                                    </a></li>
+                            </c:forEach>
+                        </ul>
+                    </nav>
                 </c:otherwise>
             </c:choose>
         </div>

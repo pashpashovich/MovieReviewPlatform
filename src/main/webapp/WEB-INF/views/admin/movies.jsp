@@ -120,8 +120,9 @@
         </div>
     </div>
     <div class="ml-auto">
-        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=en" class="text-white">EN</a>
         <a href="?lang=ru" class="text-white">RU</a>
+        <a href="?lang=by" class="text-white">BY</a>
     </div>
 </nav>
 <div class="container my-5">
@@ -130,6 +131,9 @@
             <input type="text" name="title" class="form-control"
                    placeholder="<fmt:message key='form.searchPlaceholder'/>" value="${param.title}">
             <button class="btn btn-primary" type="submit"><fmt:message key="button.search"/></button>
+            <a href="${pageContext.request.contextPath}/admin/movies" class="btn btn-secondary ms-2">
+                <i class="bi bi-x-circle"></i> <fmt:message key="admin.reset"/>
+            </a>
         </div>
     </form>
     <h1 class="text-center mb-4"><fmt:message key="page.header"/></h1>
@@ -151,71 +155,82 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="movie" items="${movies}">
-                <tr class="text-center align-middle">
-                    <td>
-                        <img src="data:image/jpeg;base64,${movie.posterBase64}"
-                             alt="<fmt:message key="table.poster"/> ${movie.title}"
-                             class="img-thumbnail"
-                             style="max-width: 100px; max-height: 150px;"
-                        >
-                    </td>
-                    <td>${movie.id}</td>
-                    <td>${movie.title}</td>
-                    <td>
-                        <c:forEach var="genre" items="${movie.genres}">
-                            <span class="badge bg-primary">${genre}</span>
-                        </c:forEach>
-                    </td>
-                    <td>
-                        <c:forEach var="actor" items="${movie.actors}">
-                            <span class="badge bg-info">${actor}</span>
-                        </c:forEach>
-                    </td>
-                    <td>
-                        <c:forEach var="director" items="${movie.directors}">
-                            <span class="badge bg-warning text-dark">${director}</span>
-                        </c:forEach>
-                    </td>
-                    <td>
-                        <c:forEach var="producer" items="${movie.producers}">
-                            <span class="badge bg-success">${producer}</span>
-                        </c:forEach>
-                    </td>
-                    <td>${movie.releaseYear}</td>
-                    <td>${movie.duration} мин</td>
-                    <td>${movie.language}</td>
-                    <td>
-                        <button
-                                class="btn btn-sm btn-primary mb-1"
-                                onclick="editMovie(
-                                    ${movie.id},
-                                        '${movie.title}',
-                                        '${movie.description}',
-                                    ${movie.releaseYear},
-                                    ${movie.duration},
-                                        '${movie.language}',
-                                        ['<c:forEach var="genre"
-                                                     items="${movie.genres}">${genre},</c:forEach>'.slice(0, -1)],
-                                        ['<c:forEach var="actor"
-                                                     items="${movie.actors}">${actor},</c:forEach>'.slice(0, -1)],
-                                        ['<c:forEach var="director"
-                                                     items="${movie.directors}">${director},</c:forEach>'.slice(0, -1)],
-                                        ['<c:forEach var="producer"
-                                                     items="${movie.producers}">${producer},</c:forEach>'.slice(0, -1)]
-                                        )">
-                            <fmt:message key="button.edit"/>
-                        </button>
-                        <form method="post" action="${pageContext.request.contextPath}/admin/movies"
-                              style="display:inline;">
-                            <input type="hidden" name="id" value="${movie.id}">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-sm btn-danger"><fmt:message
-                                    key="button.delete"/></button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
+            <c:choose>
+                <c:when test="${empty movies}">
+                    <tr>
+                        <td colspan="11" class="text-center text-muted">
+                            <fmt:message key="table.noData"/>
+                        </td>
+                    </tr>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="movie" items="${movies}">
+                        <tr class="text-center align-middle">
+                            <td>
+                                <img src="data:image/jpeg;base64,${movie.posterBase64}"
+                                     alt="<fmt:message key="table.poster"/> ${movie.title}"
+                                     class="img-thumbnail"
+                                     style="max-width: 100px; max-height: 150px;"
+                                >
+                            </td>
+                            <td>${movie.id}</td>
+                            <td>${movie.title}</td>
+                            <td>
+                                <c:forEach var="genre" items="${movie.genres}">
+                                    <span class="badge bg-primary">${genre}</span>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="actor" items="${movie.actors}">
+                                    <span class="badge bg-info">${actor}</span>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="director" items="${movie.directors}">
+                                    <span class="badge bg-warning text-dark">${director}</span>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="producer" items="${movie.producers}">
+                                    <span class="badge bg-success">${producer}</span>
+                                </c:forEach>
+                            </td>
+                            <td>${movie.releaseYear}</td>
+                            <td>${movie.duration} мин</td>
+                            <td>${movie.language}</td>
+                            <td>
+                                <button
+                                        class="btn btn-sm btn-primary mb-1"
+                                        onclick="editMovie(
+                                            ${movie.id},
+                                                '${movie.title}',
+                                                '${movie.description}',
+                                            ${movie.releaseYear},
+                                            ${movie.duration},
+                                                '${movie.language}',
+                                                ['<c:forEach var="genre"
+                                                             items="${movie.genres}">${genre},</c:forEach>'.slice(0, -1)],
+                                                ['<c:forEach var="actor"
+                                                             items="${movie.actors}">${actor},</c:forEach>'.slice(0, -1)],
+                                                ['<c:forEach var="director"
+                                                             items="${movie.directors}">${director},</c:forEach>'.slice(0, -1)],
+                                                ['<c:forEach var="producer"
+                                                             items="${movie.producers}">${producer},</c:forEach>'.slice(0, -1)]
+                                                )">
+                                    <fmt:message key="button.edit"/>
+                                </button>
+                                <form method="post" action="${pageContext.request.contextPath}/admin/movies"
+                                      style="display:inline;">
+                                    <input type="hidden" name="id" value="${movie.id}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-sm btn-danger"><fmt:message
+                                            key="button.delete"/></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
             </tbody>
         </table>
     </div>
@@ -228,7 +243,6 @@
             </c:forEach>
         </ul>
     </nav>
-
     <hr class="my-5">
     <div class="card">
         <div class="card-header bg-dark text-white">

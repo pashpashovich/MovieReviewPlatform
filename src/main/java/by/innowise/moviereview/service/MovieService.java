@@ -10,11 +10,8 @@ import by.innowise.moviereview.exception.EntityNotFoundException;
 import by.innowise.moviereview.exception.UpdatingException;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.mapper.MovieMapperImpl;
-import by.innowise.moviereview.util.HibernateUtil;
 import by.innowise.moviereview.util.enums.MovieRole;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import java.lang.module.FindException;
 import java.util.HashSet;
@@ -43,7 +40,8 @@ public class MovieService {
     }
 
     public List<MovieDto> getMoviesWithPagination(int page, int pageSize) {
-        return movieDao.findMoviesWithPagination(page, pageSize).stream()
+        return movieDao.findMoviesWithPagination(page, pageSize)
+                .stream()
                 .map(movieMapper::toDto)
                 .toList();
     }
@@ -73,7 +71,7 @@ public class MovieService {
         existingMovie.setReleaseYear(movieDto.getReleaseYear());
         existingMovie.setDuration(movieDto.getDuration());
         existingMovie.setLanguage(movieDto.getLanguage());
-        if(movieDto.getPosterBase64()!=null) existingMovie.setPosterBase64(movieDto.getPosterBase64());
+        if (movieDto.getPosterBase64() != null) existingMovie.setPosterBase64(movieDto.getPosterBase64());
         existingMovie.setGenres(genreDao.findAllByName(movieDto.getGenres()));
         existingMovie.setPeople(getPeopleByRoles(movieDto));
 
@@ -96,49 +94,8 @@ public class MovieService {
         return people;
     }
 
-    public List<MovieDto> filterMovies(String searchQuery, String genreId, String language, String year, String duration) {
-        String hql = "SELECT DISTINCT m FROM Movie m LEFT JOIN m.genres g WHERE 1=1";
-
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            hql += " AND LOWER(m.title) LIKE :searchQuery";
-        }
-        if (genreId != null && !genreId.isEmpty()) {
-            hql += " AND g.id = :genreId";
-        }
-        if (language != null && !language.isEmpty()) {
-            hql += " AND m.language = :language";
-        }
-        if (year != null && !year.isEmpty()) {
-            hql += " AND m.releaseYear = :year";
-        }
-        if (duration != null && !duration.isEmpty()) {
-            hql += " AND m.duration = :duration";
-        }
-
-        try (Session session = HibernateUtil.getSession()) {
-            Query<Movie> query = session.createQuery(hql, Movie.class);
-
-            if (searchQuery != null && !searchQuery.isEmpty()) {
-                query.setParameter("searchQuery", "%" + searchQuery.toLowerCase() + "%");
-            }
-            if (genreId != null && !genreId.isEmpty()) {
-                query.setParameter("genreId", Long.valueOf(genreId));
-            }
-            if (language != null && !language.isEmpty()) {
-                query.setParameter("language", language);
-            }
-            if (year != null && !year.isEmpty()) {
-                query.setParameter("year", Integer.valueOf(year));
-            }
-            if (duration != null && !duration.isEmpty()) {
-                query.setParameter("duration", Integer.valueOf(duration));
-            }
-
-            List<Movie> movies = query.list();
-            return movies.stream()
-                    .map(movieMapper::toDto)
-                    .toList();
-        }
+    public List<MovieDto> filterMoviesWithPagination(String searchQuery, String genreId, String language, String year, String duration, int page, int size) {
+        return movieMapper.toDtoList(movieDao.findMoviesWithFiltersAndPagination(searchQuery, genreId, language, year, duration, page, size));
     }
 
     public long getTotalMoviesCount() {

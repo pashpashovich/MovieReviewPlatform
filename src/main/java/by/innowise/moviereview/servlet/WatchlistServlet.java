@@ -53,7 +53,6 @@ public class WatchlistServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             Long userId = ((UserDto) req.getSession().getAttribute("user")).getId();
-            System.out.println(req.getParameter("movieId"));
             Long movieId = Long.parseLong(req.getParameter("movieId"));
             watchlistService.removeFromWatchlist(userId, movieId);
             resp.sendRedirect(req.getContextPath() + "/user/watchlist");

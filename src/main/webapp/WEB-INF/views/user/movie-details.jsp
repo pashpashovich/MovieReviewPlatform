@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${lang}" />
-<fmt:setBundle basename="messages" />
+<fmt:setLocale value="${lang}"/>
+<fmt:setBundle basename="messages"/>
 <!DOCTYPE html>
 <html lang="${lang}">
 <head>
@@ -49,8 +49,9 @@
         </div>
     </div>
     <div class="ml-auto">
-        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=en" class="text-white">EN</a>
         <a href="?lang=ru" class="text-white">RU</a>
+        <a href="?lang=by" class="text-white">BY</a>
     </div>
 </nav>
 <div class="container my-5">
@@ -88,6 +89,26 @@
                     </c:forEach>
                 </li>
             </ul>
+            <form method="POST"
+                  action="${pageContext.request.contextPath}/user/movies/rate">
+                <input type="hidden" name="movieId" value="${movie.id}">
+                <div class="rating">
+                    <c:forEach begin="1" end="5" var="star">
+                        <input
+                                type="radio"
+                                id="star-${star}-${movie.id}"
+                                name="rating"
+                                value="${star}"
+                                <c:if test="${rating == star}">checked</c:if> />
+                        <label for="star-${star}-${movie.id}" class="star-label">
+                            <i class="bi bi-star-fill"></i>
+                        </label>
+                    </c:forEach>
+                </div>
+                <button type="submit" class="btn btn-success mt-3"><fmt:message
+                        key="rating.submit"/>
+                </button>
+            </form>
             <form method="POST" action="${pageContext.request.contextPath}/user/watchlist/add">
                 <input type="hidden" name="movieId" value="${movie.id}">
                 <button

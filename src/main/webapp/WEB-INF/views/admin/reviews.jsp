@@ -56,8 +56,9 @@
         </div>
     </div>
     <div class="ml-auto">
-        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=en" class="text-white">EN</a>
         <a href="?lang=ru" class="text-white">RU</a>
+        <a href="?lang=by" class="text-white">BY</a>
     </div>
 </nav>
 <div class="container my-5">
@@ -73,24 +74,35 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="review" items="${reviews}">
-            <tr>
-                <td>${review.user.username}</td>
-                <td>${review.movie.title}</td>
-                <td>${review.content}</td>
-                <td>${review.status}</td>
-                <td>
-                    <form method="POST" action="${pageContext.request.contextPath}/admin/reviews">
-                        <input type="hidden" name="reviewId" value="${review.id}">
-                        <select name="status" class="form-select">
-                            <option value="APPROVED"><fmt:message key="status.approved"/></option>
-                            <option value="REJECTED"><fmt:message key="status.rejected"/></option>
-                        </select>
-                        <button type="submit" class="btn btn-primary mt-2"><fmt:message key="update"/></button>
-                    </form>
-                </td>
-            </tr>
-        </c:forEach>
+        <c:choose>
+            <c:when test="${empty reviews}">
+                <tr>
+                    <td colspan="11" class="text-center text-muted">
+                        <fmt:message key="table.noData"/>
+                    </td>
+                </tr>
+            </c:when>
+            <c:otherwise>
+                <c:forEach var="review" items="${reviews}">
+                    <tr>
+                        <td>${review.user.username}</td>
+                        <td>${review.movie.title}</td>
+                        <td>${review.content}</td>
+                        <td>${review.status}</td>
+                        <td>
+                            <form method="POST" action="${pageContext.request.contextPath}/admin/reviews">
+                                <input type="hidden" name="reviewId" value="${review.id}">
+                                <select name="status" class="form-select">
+                                    <option value="APPROVED"><fmt:message key="status.approved"/></option>
+                                    <option value="REJECTED"><fmt:message key="status.rejected"/></option>
+                                </select>
+                                <button type="submit" class="btn btn-primary mt-2"><fmt:message key="update"/></button>
+                            </form>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
         </tbody>
     </table>
 </div>

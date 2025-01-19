@@ -58,8 +58,9 @@
         </div>
     </div>
     <div class="ml-auto">
-        <a href="?lang=en" class="text-white">EN</a> |
+        <a href="?lang=en" class="text-white">EN</a>
         <a href="?lang=ru" class="text-white">RU</a>
+        <a href="?lang=by" class="text-white">BY</a>
     </div>
 </nav>
 <div class="container my-5">
@@ -77,48 +78,61 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="user" items="${users}">
-                <tr class="text-center align-middle">
-                    <td>${user.id}</td>
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td>${user.role}</td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${user.isBlocked}">
-                                <fmt:message key="status.blocked"/>
-                            </c:when>
-                            <c:otherwise>
-                                <fmt:message key="status.active"/>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td>
-                        <form method="post" style="display:inline;">
-                            <input type="hidden" name="userId" value="${user.id}">
-                            <input type="hidden" name="action" value="block">
-                            <button class="btn btn-warning btn-sm" ${user.isBlocked ? "disabled" : ""}><fmt:message
-                                    key="block"/></button>
-                        </form>
-                        <form method="post" style="display:inline;">
-                            <input type="hidden" name="userId" value="${user.id}">
-                            <input type="hidden" name="action" value="unblock">
-                            <button class="btn btn-success btn-sm" ${!user.isBlocked ? "disabled" : ""}><fmt:message
-                                    key="unblock"/></button>
-                        </form>
-                        <form method="post" style="display:inline;">
-                            <input type="hidden" name="userId" value="${user.id}">
-                            <input type="hidden" name="action" value="promote">
-                            <button class="btn btn-primary btn-sm"><fmt:message key="promote"/></button>
-                        </form>
-                        <form method="post" style="display:inline;">
-                            <input type="hidden" name="userId" value="${user.id}">
-                            <input type="hidden" name="action" value="delete">
-                            <button class="btn btn-danger btn-sm"><fmt:message key="delete"/></button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
+            <c:choose>
+                <c:when test="${empty users}">
+                    <tr>
+                        <td colspan="11" class="text-center text-muted">
+                            <fmt:message key="table.noData"/>
+                        </td>
+                    </tr>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="user" items="${users}">
+                        <tr class="text-center align-middle">
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>${user.role}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${user.isBlocked}">
+                                        <fmt:message key="status.blocked"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <fmt:message key="status.active"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <form method="post" style="display:inline;">
+                                    <input type="hidden" name="userId" value="${user.id}">
+                                    <input type="hidden" name="action" value="block">
+                                    <button class="btn btn-warning btn-sm" ${user.isBlocked ? "disabled" : ""}>
+                                        <fmt:message
+                                                key="block"/></button>
+                                </form>
+                                <form method="post" style="display:inline;">
+                                    <input type="hidden" name="userId" value="${user.id}">
+                                    <input type="hidden" name="action" value="unblock">
+                                    <button class="btn btn-success btn-sm" ${!user.isBlocked ? "disabled" : ""}>
+                                        <fmt:message
+                                                key="unblock"/></button>
+                                </form>
+                                <form method="post" style="display:inline;">
+                                    <input type="hidden" name="userId" value="${user.id}">
+                                    <input type="hidden" name="action" value="promote">
+                                    <button class="btn btn-primary btn-sm"><fmt:message key="promote"/></button>
+                                </form>
+                                <form method="post" style="display:inline;">
+                                    <input type="hidden" name="userId" value="${user.id}">
+                                    <input type="hidden" name="action" value="delete">
+                                    <button class="btn btn-danger btn-sm"><fmt:message key="delete"/></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
             </tbody>
         </table>
     </div>

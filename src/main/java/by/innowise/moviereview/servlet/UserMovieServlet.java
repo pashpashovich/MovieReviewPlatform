@@ -15,9 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet("/user/movies")
 public class UserMovieServlet extends HttpServlet {
@@ -37,6 +35,8 @@ public class UserMovieServlet extends HttpServlet {
     }
 
     private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int page = req.getParameter("page") != null ? Integer.parseInt(req.getParameter("page")) : 1;
+        int size = req.getParameter("size") != null ? Integer.parseInt(req.getParameter("size")) : 9;
         HttpSession session = req.getSession();
         Long userId = session.getAttribute("user") != null ? ((UserDto) session.getAttribute("user")).getId() : null;
 
@@ -46,16 +46,16 @@ public class UserMovieServlet extends HttpServlet {
         String year = req.getParameter("year") != null ? req.getParameter("year") : "";
         String duration = req.getParameter("duration") != null ? req.getParameter("duration") : "";
 
-        List<MovieDto> movies = movieService.filterMovies(searchQuery, genreId, language, year, duration);
-        List<EntityDto> genres = genreService.findAll();
-
-        Map<Long, Integer> userRatings = new HashMap<>();
-        if (userId != null) {
-            for (MovieDto movie : movies) {
-                Integer rating = ratingService.getRatingByUserAndMovie(userId, movie.getId());
-                userRatings.put(movie.getId(), rating);
-            }
+        List<MovieDto> movies = movieService.filterMoviesWithPagination(searchQuery, genreId, language, year, duration, page, size);
+        long totalMovies;
+        if (searchQuery.isEmpty() && genreId.isEmpty() && language.isEmpty() && year.isEmpty() && duration.isEmpty()) {
+            totalMovies = movieService.getTotalMoviesCount();
+        } else {
+            totalMovies = movies.size();
         }
+
+        int totalPages = (int) Math.ceil((double) totalMovies / size);
+        List<EntityDto> genres = genreService.findAll();
 
         List<MovieDto> recommendations = recommendationService.getRecommendationsForUser(userId);
 
@@ -67,8 +67,9 @@ public class UserMovieServlet extends HttpServlet {
 
         req.setAttribute("movies", movies);
         req.setAttribute("genres", genres);
-        req.setAttribute("userRatings", userRatings);
         req.setAttribute("recommendations", recommendations);
+        req.setAttribute("currentPage", page);
+        req.setAttribute("totalPages", totalPages);
 
         req.getRequestDispatcher("/WEB-INF/views/user/movieCards.jsp").forward(req, resp);
     }

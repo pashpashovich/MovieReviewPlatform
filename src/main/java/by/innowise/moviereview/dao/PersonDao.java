@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +96,51 @@ public class PersonDao implements AbstractHibernateDao<Person, Long> {
                     .setParameter("role", role)
                     .list();
             return new HashSet<>(people);
+        }
+    }
+
+    public List<Person> findPeople(int page, int size, String searchQuery, String roleFilter) {
+        String hql = "FROM Person p WHERE 1=1";
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            hql += " AND LOWER(p.fullName) LIKE :searchQuery";
+        }
+        if (roleFilter != null && !roleFilter.isEmpty()) {
+            hql += " AND p.role = :roleFilter";
+        }
+        try (Session session = HibernateUtil.getSession()) {
+            Query<Person> query = session.createQuery(hql, Person.class);
+
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                query.setParameter("searchQuery", "%" + searchQuery.toLowerCase() + "%");
+            }
+            if (roleFilter != null && !roleFilter.isEmpty()) {
+                query.setParameter("roleFilter", MovieRole.valueOf(roleFilter));
+            }
+            query.setFirstResult((page - 1) * size);
+            query.setMaxResults(size);
+            return query.getResultList();
+        }
+    }
+
+    public long countPeople(String searchQuery, String roleFilter) {
+        String hql = "SELECT COUNT(p) FROM Person p WHERE 1=1";
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            hql += " AND LOWER(p.fullName) LIKE :searchQuery";
+        }
+        if (roleFilter != null && !roleFilter.isEmpty()) {
+            hql += " AND p.role = :roleFilter";
+        }
+        try (Session session = HibernateUtil.getSession()) {
+            Query<Long> query = session.createQuery(hql, Long.class);
+
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                query.setParameter("searchQuery", "%" + searchQuery.toLowerCase() + "%");
+            }
+            if (roleFilter != null && !roleFilter.isEmpty()) {
+                query.setParameter("roleFilter", MovieRole.valueOf(roleFilter));
+            }
+
+            return query.getSingleResult();
         }
     }
 }

@@ -168,7 +168,7 @@ public class MovieDao implements AbstractHibernateDao<Movie, Long> {
                 predicates.add(cb.like(cb.lower(movieRoot.get("title")), "%" + searchQuery.toLowerCase() + "%"));
             }
             if (genreId != null && !genreId.isEmpty()) {
-                predicates.add(cb.equal(movieRoot.join("genres",JoinType.LEFT).get("id"), Long.valueOf(genreId)));
+                predicates.add(cb.equal(movieRoot.join("genres", JoinType.LEFT).get("id"), Long.valueOf(genreId)));
             }
             if (language != null && !language.isEmpty()) {
                 predicates.add(cb.equal(movieRoot.get("language"), language));

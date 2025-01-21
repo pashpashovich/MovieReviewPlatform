@@ -98,7 +98,7 @@ public class GenreDao implements AbstractHibernateDao<Genre, Long> {
             String hql = "FROM Genre g " +
                     "WHERE (:searchQuery IS NULL " +
                     "OR LOWER(g.name) LIKE :searchPattern) " +
-                    "ORDER BY " + ((primarySortField != null && !primarySortField.isEmpty())  ? "g." + primarySortField : "g.id");
+                    "ORDER BY " + ((primarySortField != null && !primarySortField.isEmpty()) ? "g." + primarySortField : "g.id");
 
             Query<Genre> query = session.createQuery(hql, Genre.class);
             query.setParameter("searchQuery", searchQuery);

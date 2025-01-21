@@ -14,7 +14,6 @@ import java.io.IOException;
 public class MovieRatingServlet extends HttpServlet {
     private final RatingService ratingService = RatingService.getInstance();
 
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession();

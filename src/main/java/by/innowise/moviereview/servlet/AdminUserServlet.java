@@ -1,8 +1,6 @@
 package by.innowise.moviereview.servlet;
 
 import by.innowise.moviereview.dto.UserDto;
-import by.innowise.moviereview.mapper.UserMapperImpl;
-import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.service.AdminUserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

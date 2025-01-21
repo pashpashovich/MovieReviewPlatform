@@ -48,7 +48,7 @@ public class MovieDetailsServlet extends HttpServlet {
             req.setAttribute("averageRating", averageRating);
             req.setAttribute("reviews", approvedReviews);
             req.setAttribute("isInList", isInList);
-            req.setAttribute("rating",ratingByUserAndMovie);
+            req.setAttribute("rating", ratingByUserAndMovie);
             req.getRequestDispatcher("/WEB-INF/views/user/movie-details.jsp").forward(req, resp);
         } catch (Exception e) {
             e.printStackTrace();

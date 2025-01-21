@@ -1,7 +1,9 @@
 package by.innowise.moviereview.util;
 
+import lombok.experimental.UtilityClass;
 import org.mindrot.jbcrypt.BCrypt;
 
+@UtilityClass
 public class PasswordUtils {
 
     public static String hash(String password) {

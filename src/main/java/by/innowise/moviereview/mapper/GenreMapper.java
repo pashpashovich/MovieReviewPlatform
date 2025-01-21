@@ -11,7 +11,9 @@ import java.util.List;
 public interface GenreMapper {
 
     EntityDto toDto(Genre genre);
+
     List<EntityDto> toListDto(List<Genre> genres);
+
     @Mapping(target = "movies", ignore = true)
     Genre toEntity(EntityDto entityDto);
 }

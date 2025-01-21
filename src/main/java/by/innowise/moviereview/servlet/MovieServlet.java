@@ -42,7 +42,7 @@ public class MovieServlet extends HttpServlet {
             movies = movieService.getMoviesWithPagination(page, pageSize);
             totalMovies = movieService.getTotalMoviesCount();
         } else {
-            movies = movieService.filterMoviesWithPagination(query, null, null, null, null,page,pageSize);
+            movies = movieService.filterMoviesWithPagination(query, null, null, null, null, page, pageSize);
             totalMovies = movies.size();
         }
         int totalPages = (int) Math.ceil((double) totalMovies / pageSize);

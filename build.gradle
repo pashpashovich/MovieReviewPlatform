@@ -12,6 +12,7 @@ repositories {
 
 ext {
     junitVersion = '5.9.2'
+    springVersion = '6.2.2'
 }
 
 java {
@@ -27,9 +28,9 @@ wrapper {
     version = "8.5"
 }
 
-tasks.named('war') {
-    destinationDirectory = file("$rootDir/deploy")
-}
+//tasks.named('war') {
+//    destinationDirectory = file("$rootDir/deploy")
+//}
 
 
 tasks.withType(JavaCompile) {
@@ -42,10 +43,10 @@ dependencies {
 
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
-
-    implementation('org.hibernate:hibernate-core:6.0.2.Final')
-    implementation('org.glassfish.jaxb:jaxb-runtime:3.0.2')
+    implementation 'org.hibernate:hibernate-core:6.0.2.Final'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
     implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'org.projectlombok:lombok:1.18.36'
     implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
@@ -56,9 +57,15 @@ dependencies {
     implementation 'org.mindrot:jbcrypt:0.4'
     implementation 'org.hibernate.orm:hibernate-hikaricp:7.0.0.Beta3'
     implementation 'org.ehcache:ehcache:3.10.0:jakarta'
+    implementation "org.springframework:spring-core:${springVersion}"
+    implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-web:${springVersion}"
+    implementation "org.springframework:spring-webmvc:${springVersion}"
+    implementation 'org.springframework.data:spring-data-jpa:3.4.2'
+    implementation 'org.yaml:snakeyaml:2.0'
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
 test {

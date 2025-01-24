@@ -1,37 +1,31 @@
 package by.innowise.moviereview.service;
 
-import by.innowise.moviereview.dao.MovieDao;
-import by.innowise.moviereview.dao.ReviewDao;
-import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Review;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.repository.MovieRepository;
+import by.innowise.moviereview.repository.ReviewRepository;
+import by.innowise.moviereview.repository.UserRepository;
 import by.innowise.moviereview.util.enums.ReviewStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
 public class ReviewService {
-    private static ReviewService instance;
-    private final ReviewDao reviewDao;
-    private final UserDao userDao;
-    private final MovieDao movieDao;
 
-    private ReviewService() {
-        this.reviewDao = ReviewDao.getInstance();
-        this.userDao = UserDao.getInstance();
-        this.movieDao = MovieDao.getInstance();
-    }
-
-    public static ReviewService getInstance() {
-        if (instance == null)
-            instance = new ReviewService();
-        return instance;
-    }
+    private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
 
     public void addReview(Long userId, Long movieId, String content, int rating) {
-        User user = userDao.findById(userId);
-        Movie movie = movieDao.findById(movieId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден."));
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new IllegalArgumentException("Фильм не найден."));
         Review review = new Review();
         review.setUser(user);
         review.setMovie(movie);
@@ -39,29 +33,26 @@ public class ReviewService {
         review.setRating(rating);
         review.setStatus(ReviewStatus.PENDING);
         review.setCreatedAt(LocalDateTime.now());
-        reviewDao.save(review);
+        reviewRepository.save(review);
     }
 
     public List<Review> findAllPendingReviews() {
-        return reviewDao.findByStatus(ReviewStatus.PENDING);
+        return reviewRepository.findByStatus(ReviewStatus.PENDING);
     }
 
     public void updateReviewStatus(Long reviewId, String status) {
-        Review review = reviewDao.findById(reviewId);
-        if (review != null) {
-            review.setStatus(ReviewStatus.valueOf(status));
-            reviewDao.update(review);
-        } else {
-            throw new IllegalArgumentException("Рецензия не найдена.");
-        }
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Рецензия не найдена."));
+        review.setStatus(ReviewStatus.valueOf(status));
+        reviewRepository.save(review);
     }
 
     public List<Review> findApprovedReviewsByMovieId(Long movieId) {
-        return reviewDao.findByMovieIdAndStatus(movieId, ReviewStatus.APPROVED);
+        return reviewRepository.findByMovieIdAndStatus(movieId, ReviewStatus.APPROVED);
     }
 
     public List<Review> findRecentReviewsByUserId(Long userId) {
         LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
-        return reviewDao.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
+        return reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
     }
 }

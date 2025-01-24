@@ -1,65 +1,65 @@
 package by.innowise.moviereview.service;
 
-import by.innowise.moviereview.dao.GenreDao;
 import by.innowise.moviereview.dto.EntityDto;
 import by.innowise.moviereview.entity.Genre;
+import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.mapper.GenreMapper;
-import by.innowise.moviereview.mapper.GenreMapperImpl;
+import by.innowise.moviereview.repository.GenreRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
+@RequiredArgsConstructor
 @Slf4j
 public class GenreService {
-
-    private static GenreService instance;
-    private final GenreDao genreDao;
+    private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
 
-    private GenreService() {
-        this.genreDao = GenreDao.getInstance();
-        this.genreMapper = new GenreMapperImpl();
-    }
-
-    public static GenreService getInstance() {
-        if (instance == null)
-            instance = new GenreService();
-        return instance;
-    }
-
     public List<EntityDto> findAll() {
-        return genreMapper.toListDto(genreDao.findAll());
+        return genreMapper.toListDto(genreRepository.findAll());
     }
 
     public Map<String, Object> getGenresWithFilters(String searchQuery, String sortField, int page, int pageSize) {
-        long totalCount = genreDao.countAllWithFilters(searchQuery);
-        int totalPages = (int) Math.ceil((double) totalCount / pageSize);
-        List<Genre> genres = genreDao.findAllWithFilters(searchQuery, sortField, page, pageSize);
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(sortField != null ? sortField : "id"));
+        Page<Genre> genrePage = genreRepository.findAllWithFilters(searchQuery, pageable);
+
         Map<String, Object> result = new HashMap<>();
-        result.put("genres", genres);
-        result.put("totalPages", totalPages);
+        result.put("genres", genrePage.getContent());
+        result.put("totalPages", genrePage.getTotalPages());
         result.put("currentPage", page);
         return result;
     }
 
 
     public Genre findById(Long id) {
-        return genreDao.findById(id);
+        return genreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Сущности с ID %d не найдено", id)));
     }
 
     public void save(EntityDto entityDto) {
         Genre genre = genreMapper.toEntity(entityDto);
-        genreDao.save(genre);
+        genreRepository.save(genre);
     }
 
     public void update(EntityDto dto) {
-        genreDao.update(genreMapper.toEntity(dto));
+        Long id = dto.getId();
+        Genre genre = genreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Сущности с ID %d не найдено", id)));
+        genre.setName(dto.getName());
+        genreRepository.save(genre);
     }
 
     public void delete(Long id) {
-        genreDao.delete(findById(id));
+        genreRepository.delete(findById(id));
     }
 }
 

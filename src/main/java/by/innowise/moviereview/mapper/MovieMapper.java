@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(imports = {MovieRole.class})
+@Mapper(componentModel = "spring", imports = {MovieRole.class})
 public interface MovieMapper {
 
     @Named("toDto")

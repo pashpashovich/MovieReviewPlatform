@@ -15,8 +15,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     Set<Genre> findAllByName(@Param("names") Set<String> names);
 
     @Query("FROM Genre g " +
-            "WHERE (:searchQuery IS NULL OR LOWER(g.name) LIKE CONCAT('%', :searchQuery, '%')) " +
-            "ORDER BY CASE WHEN :sortField = 'name' THEN g.name END, g.id")
-    Page<Genre> findAllWithFilters(@Param("searchQuery") String searchQuery,
-                                   Pageable pageable);
+            "WHERE (:searchQuery IS NULL OR LOWER(g.name) LIKE LOWER(CONCAT('%', CAST(:searchQuery AS string), '%'))) ")
+    Page<Genre> findAllWithFilters(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

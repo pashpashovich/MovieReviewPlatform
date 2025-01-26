@@ -8,11 +8,14 @@ import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.repository.GenreRepository;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.PersonRepository;
+import by.innowise.moviereview.util.MovieSpecifications;
 import by.innowise.moviereview.util.enums.MovieRole;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -29,6 +32,7 @@ public class MovieService {
     private final PersonRepository personRepository;
     private final MovieMapper movieMapper;
 
+    @Transactional
     public List<MovieDto> getMoviesWithPagination(int page, int pageSize) {
         return movieRepository.findAll(PageRequest.of(page - 1, pageSize))
                 .map(movieMapper::toDto)
@@ -41,6 +45,7 @@ public class MovieService {
         return movieMapper.toDto(movie);
     }
 
+    @Transactional
     public void createMovie(MovieDto movieDto) {
         Movie movie = movieMapper.toEntityFromDto(movieDto);
         movie.setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())));
@@ -48,6 +53,7 @@ public class MovieService {
         movieRepository.save(movie);
     }
 
+    @Transactional
     public void updateMovie(Long id, MovieDto movieDto) throws EntityNotFoundException {
         Movie existingMovie = movieRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Фильм с ID " + id + " не найден."));
@@ -73,21 +79,18 @@ public class MovieService {
 
     private Set<Person> getPeopleByRoles(MovieDto movieDto) {
         Set<Person> people = new HashSet<>();
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR.toString()));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR.toString()));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER.toString()));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
         return people;
     }
 
+    @Transactional
     public List<MovieDto> filterMoviesWithPagination(String searchQuery, String genreId, String language, String year, String duration, int page, int size) {
-        Page<Movie> moviePage = movieRepository.findAll(PageRequest.of(page - 1, size));
-
-        return moviePage.getContent().stream()
-                .filter(movie -> searchQuery == null || movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()))
-                .filter(movie -> genreId == null || movie.getGenres().stream().anyMatch(genre -> genre.getId().toString().equals(genreId)))
-                .filter(movie -> language == null || movie.getLanguage().equalsIgnoreCase(language))
-                .filter(movie -> year == null || movie.getReleaseYear().equals(Integer.valueOf(year)))
-                .filter(movie -> duration == null || movie.getDuration().equals(Integer.valueOf(duration)))
+        Specification<Movie> specification = MovieSpecifications.withFilters(searchQuery, genreId, language, year, duration);
+        Page<Movie> moviePage = movieRepository.findAll(specification, PageRequest.of(page - 1, size));
+        return moviePage.getContent()
+                .stream()
                 .map(movieMapper::toDto)
                 .toList();
     }

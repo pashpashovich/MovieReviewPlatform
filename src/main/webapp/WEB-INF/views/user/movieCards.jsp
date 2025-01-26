@@ -58,7 +58,7 @@
 <div class="container my-5">
     <h1 class="text-center mb-4"><fmt:message key="title"/></h1>
     <div class="card p-4 shadow-sm mb-4">
-        <form id="filterForm" method="POST" action="${pageContext.request.contextPath}/user/movies">
+        <form id="filterForm" method="GET" action="${pageContext.request.contextPath}/user/movies">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label"><fmt:message key="filter.title"/></label>

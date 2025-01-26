@@ -21,6 +21,11 @@ public class AdminFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+        if (httpRequest.getContentType() != null && httpRequest.getContentType().startsWith("multipart/")) {
+            chain.doFilter(request, response);
+            return;
+        }
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession(false);
         UserDto user = (session != null) ? (UserDto) session.getAttribute("user") : null;

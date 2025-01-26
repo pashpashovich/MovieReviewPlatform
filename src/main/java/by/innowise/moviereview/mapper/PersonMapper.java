@@ -9,6 +9,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PersonMapper {
+    PersonDto toDto(Person person);
+
     @Mapping(target = "movies", ignore = true)
-    List<PersonDto> toDto(List<Person> people);
+    List<PersonDto> toListDto(List<Person> people);
 }

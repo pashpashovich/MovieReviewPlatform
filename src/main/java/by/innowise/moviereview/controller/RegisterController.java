@@ -37,7 +37,7 @@ public class RegisterController {
 
         try {
             userService.register(userDto);
-            return "redirect:/login";
+            return "redirect:/";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "common/register";

@@ -7,6 +7,7 @@ import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.ReviewRepository;
 import by.innowise.moviereview.repository.UserRepository;
 import by.innowise.moviereview.util.enums.ReviewStatus;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+    @Transactional
     public List<Review> findAllPendingReviews() {
         return reviewRepository.findByStatus(ReviewStatus.PENDING);
     }
@@ -47,10 +49,12 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+    @Transactional
     public List<Review> findApprovedReviewsByMovieId(Long movieId) {
         return reviewRepository.findByMovieIdAndStatus(movieId, ReviewStatus.APPROVED);
     }
 
+    @Transactional
     public List<Review> findRecentReviewsByUserId(Long userId) {
         LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
         return reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);

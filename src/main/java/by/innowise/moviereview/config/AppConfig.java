@@ -10,11 +10,11 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
@@ -27,14 +27,13 @@ import java.util.Properties;
 @ComponentScan("by.innowise")
 @EnableJpaRepositories("by.innowise.moviereview.repository")
 @EnableTransactionManagement
-public class AppConfig implements WebMvcConfigurer {
+public class AppConfig {
 
     private final Map<String, Object> yamlProperties;
 
     public AppConfig() {
-        try (InputStream input = Objects.requireNonNull(getClass().getClassLoader()
-                .getResourceAsStream("application.yml"))) {
-            Yaml yaml = new Yaml();
+        try (InputStream input = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("application.yml"))) {
+            org.yaml.snakeyaml.Yaml yaml = new org.yaml.snakeyaml.Yaml();
             this.yamlProperties = yaml.load(input);
         } catch (Exception e) {
             throw new RuntimeException("Не удалось загрузить application.yml", e);
@@ -81,7 +80,7 @@ public class AppConfig implements WebMvcConfigurer {
         }
 
         factoryBean.setJpaProperties(jpaProperties);
-        factoryBean.setPackagesToScan("by.clevertec.entity");
+        factoryBean.setPackagesToScan("by.innowise.moviereview.entity");
         return factoryBean;
     }
 
@@ -90,7 +89,6 @@ public class AppConfig implements WebMvcConfigurer {
         return new JpaTransactionManager(entityManagerFactory().getObject());
     }
 
-    @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.jsp("/WEB-INF/views/", ".jsp");
     }
@@ -101,5 +99,10 @@ public class AppConfig implements WebMvcConfigurer {
         resolver.setPrefix("/WEB-INF/views/");
         resolver.setSuffix(".jsp");
         return resolver;
+    }
+
+    @Bean
+    public StandardServletMultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
     }
 }

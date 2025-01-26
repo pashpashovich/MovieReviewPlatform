@@ -36,38 +36,35 @@ public class MovieDetailsController {
     }
 
     @GetMapping("/{movieId}")
-    public String getMovieDetails(@PathVariable Long movieId,
+    public String getMovieDetails(@PathVariable("movieId") Long movieId,
                                   HttpSession session,
                                   Model model) {
         try {
-            // Проверка существования фильма
             MovieDto movie = movieService.getMovieById(movieId);
             if (movie == null) {
                 throw new IllegalArgumentException("Фильм с ID " + movieId + " не найден");
             }
 
-            // Получение данных для отображения
             Double averageRating = ratingService.getAverageRatingForMovie(movieId);
             List<Review> approvedReviews = reviewService.findApprovedReviewsByMovieId(movieId);
             UserDto userDto = (UserDto) session.getAttribute("user");
             boolean isInList = watchlistService.isMovieInWatchlist(userDto.getId(), movieId);
             Integer ratingByUserAndMovie = ratingService.getRatingByUserAndMovie(userDto.getId(), movieId);
 
-            // Добавление атрибутов в модель
             model.addAttribute("movie", movie);
             model.addAttribute("averageRating", averageRating);
             model.addAttribute("reviews", approvedReviews);
             model.addAttribute("isInList", isInList);
             model.addAttribute("rating", ratingByUserAndMovie);
 
-            return "user/movie-details"; // Указывает на /WEB-INF/views/user/movie-details.jsp
+            return "user/movie-details";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "error/404"; // Указывает на страницу ошибки 404
+            return "error/404";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", "Произошла ошибка.");
-            return "error/500"; // Указывает на страницу ошибки 500
+            return "error/500";
         }
     }
 }

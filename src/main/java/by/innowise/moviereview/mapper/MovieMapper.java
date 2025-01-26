@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", imports = {MovieRole.class})
 public interface MovieMapper {
 
-    @Named("toDto")
+    @Named("toListDto")
     @Mapping(target = "genres", source = "genres")
     @Mapping(target = "actors", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.ACTOR))")
     @Mapping(target = "directors", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.DIRECTOR))")
@@ -40,7 +40,7 @@ public interface MovieMapper {
     Movie toEntityFromDto(MovieDto movieDto);
 
 
-    @IterableMapping(qualifiedByName = "toDto")
+    @IterableMapping(qualifiedByName = "toListDto")
     List<MovieDto> toDtoList(List<Movie> movies);
 
     default Set<String> mapGenresToNames(Set<Genre> genres) {

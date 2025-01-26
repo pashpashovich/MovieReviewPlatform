@@ -6,9 +6,9 @@ import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.UserRepository;
 import by.innowise.moviereview.repository.WatchlistRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +33,8 @@ public class WatchlistService {
         watchlistRepository.save(watchlist);
     }
 
+
+    @Transactional
     public List<WatchlistDto> getWatchlistByUserId(Long userId) {
         List<Watchlist> watchlist = watchlistRepository.findByUserId(userId);
         return watchlist.stream()
@@ -52,6 +54,7 @@ public class WatchlistService {
         watchlistRepository.delete(watchlist);
     }
 
+    @Transactional
     public boolean isMovieInWatchlist(Long userId, Long movieId) {
         return watchlistRepository.findByUserIdAndMovieId(userId, movieId).isPresent();
     }

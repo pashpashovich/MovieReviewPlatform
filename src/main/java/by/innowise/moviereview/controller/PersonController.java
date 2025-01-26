@@ -1,6 +1,7 @@
 package by.innowise.moviereview.controller;
 
 
+import by.innowise.moviereview.dto.PersonDto;
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.service.PersonService;
 import by.innowise.moviereview.util.enums.MovieRole;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +33,15 @@ public class PersonController {
                             @RequestParam(value = "search", required = false) String searchQuery,
                             @RequestParam(value = "role", required = false) String roleFilter,
                             Model model) {
-        List<Person> people = personService.getAllPeople(page, size, searchQuery, roleFilter);
-        long totalRecords = personService.countPeople(searchQuery, roleFilter);
+        List<Person> people;
+        long totalRecords;
+        if ((searchQuery == null || searchQuery.isEmpty()) && (roleFilter == null || roleFilter.isEmpty())) {
+            people = personService.getAllPeopleWithPagination(page, size);
+            totalRecords = personService.countPeople();
+        } else {
+            people = personService.getPeopleWithFiltersAndPagination(page, size, searchQuery, roleFilter);
+            totalRecords = personService.countPeopleWithFilters(searchQuery, roleFilter);
+        }
         int totalPages = (int) Math.ceil((double) totalRecords / size);
 
         model.addAttribute("people", people);
@@ -57,15 +66,8 @@ public class PersonController {
     }
 
     @PutMapping
-    public String updatePerson(@RequestParam("id") Long id,
-                               @RequestParam("fullName") String fullName,
-                               @RequestParam("role") String role) {
-        Person person = personService.getPersonById(id);
-        if (person != null) {
-            person.setFullName(fullName);
-            person.setRole(MovieRole.valueOf(role));
-            personService.update(person);
-        }
+    public String updatePerson(@ModelAttribute PersonDto personDto) {
+        personService.update(personDto);
         return "redirect:/admin/people";
     }
 

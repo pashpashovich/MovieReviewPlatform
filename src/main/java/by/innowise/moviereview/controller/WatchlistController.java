@@ -73,7 +73,7 @@ public class WatchlistController {
         }
     }
 
-    @DeleteMapping("/remove")
+    @DeleteMapping()
     public String removeFromWatchlist(@RequestParam("movieId") Long movieId, HttpSession session) {
         try {
             UserDto userDto = (UserDto) session.getAttribute("user");

@@ -17,14 +17,20 @@ public class HttpMethodOverrideFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
-            if ("POST".equalsIgnoreCase(httpRequest.getMethod()) && httpRequest.getParameter("_method") != null) {
+            if ("POST".equalsIgnoreCase(httpRequest.getMethod())
+                    && httpRequest.getContentType() != null
+                    && !httpRequest.getContentType().startsWith("multipart/")
+                    && httpRequest.getParameter("_method") != null) {
+
                 String method = httpRequest.getParameter("_method").toUpperCase();
+
                 HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(httpRequest) {
                     @Override
                     public String getMethod() {
                         return method;
                     }
                 };
+
                 chain.doFilter(wrapper, response);
                 return;
             }

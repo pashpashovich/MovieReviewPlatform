@@ -4,6 +4,7 @@ import by.innowise.moviereview.entity.Rating;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.RatingRepository;
 import by.innowise.moviereview.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class RatingService {
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
 
+    @Transactional
     public void saveOrUpdateRating(Long userId, Long movieId, int ratingValue) {
         Rating existingRating = ratingRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
         if (existingRating != null) {
@@ -33,6 +35,7 @@ public class RatingService {
         }
     }
 
+    @Transactional
     public Integer getRatingByUserAndMovie(Long userId, Long movieId) {
         return ratingRepository.findByUserIdAndMovieId(userId, movieId)
                 .map(Rating::getRating)

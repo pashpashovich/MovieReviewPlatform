@@ -64,6 +64,10 @@ dependencies {
     implementation 'org.springframework.security:spring-security-web:6.4.2'
     implementation 'org.springframework.data:spring-data-jpa:3.4.2'
     implementation 'org.yaml:snakeyaml:2.0'
+    implementation 'commons-fileupload:commons-fileupload:1.5'
+    implementation "org.springframework.security:spring-security-core:${springVersion}"
+    implementation "org.springframework.security:spring-security-web:${springVersion}"
+    implementation "org.springframework.security:spring-security-config:${springVersion}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"

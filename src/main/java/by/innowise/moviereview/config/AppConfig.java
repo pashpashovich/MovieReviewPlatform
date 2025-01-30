@@ -101,8 +101,4 @@ public class AppConfig {
         return resolver;
     }
 
-    @Bean
-    public StandardServletMultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
 }

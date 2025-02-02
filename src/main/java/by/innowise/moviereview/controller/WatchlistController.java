@@ -1,14 +1,13 @@
 package by.innowise.moviereview.controller;
 
-import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.dto.WatchlistDto;
 import by.innowise.moviereview.service.WatchlistService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,17 +28,12 @@ public class WatchlistController {
         this.watchlistService = watchlistService;
     }
 
-    @GetMapping
-    public String getWatchlist(HttpSession session, Model model) {
+    @GetMapping("/{userId}")
+    public String getWatchlist(Model model, @PathVariable("userId") Long userId) {
         try {
-            UserDto userDto = (UserDto) session.getAttribute("user");
-            if (userDto == null) {
-                return "redirect:/login";
-            }
-
-            Long userId = userDto.getId();
             List<WatchlistDto> watchlist = watchlistService.getWatchlistByUserId(userId);
             model.addAttribute("watchlist", watchlist);
+            model.addAttribute("userId", userId);
             return "user/watchlist";
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,18 +43,11 @@ public class WatchlistController {
     }
 
     @PostMapping("/add")
-    public String addToWatchlist(@RequestParam("movieId") Long movieId, HttpSession session, @RequestHeader("Referer") String referer, Model model) throws UnsupportedEncodingException {
+    public String addToWatchlist(@RequestParam("movieId") Long movieId, @RequestParam("userId") Long userId, @RequestHeader("Referer") String referer, Model model) throws UnsupportedEncodingException {
         try {
-            UserDto userDto = (UserDto) session.getAttribute("user");
-            if (userDto == null) {
-                return "redirect:/login";
-            }
-
-            Long userId = userDto.getId();
             if (watchlistService.isMovieInWatchlist(userId, movieId)) {
                 return "redirect:" + referer + "?error=already_in_watchlist";
             }
-
             watchlistService.addToWatchlist(userId, movieId);
             return "redirect:" + referer;
         } catch (IllegalArgumentException e) {
@@ -69,21 +56,15 @@ public class WatchlistController {
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", "Ошибка добавления в Watchlist.");
-            return "error"; // Страница ошибки
+            return "error";
         }
     }
 
     @DeleteMapping()
-    public String removeFromWatchlist(@RequestParam("movieId") Long movieId, HttpSession session) {
+    public String removeFromWatchlist(@RequestParam("movieId") Long movieId, @RequestParam("userId") Long userId) {
         try {
-            UserDto userDto = (UserDto) session.getAttribute("user");
-            if (userDto == null) {
-                return "redirect:/login";
-            }
-
-            Long userId = userDto.getId();
             watchlistService.removeFromWatchlist(userId, movieId);
-            return "redirect:/user/watchlist";
+            return "redirect:/user/watchlist/"+userId;
         } catch (Exception e) {
             e.printStackTrace();
             return "error";

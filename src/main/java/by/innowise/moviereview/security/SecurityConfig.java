@@ -36,7 +36,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/static/**", "/WEB-INF/**").permitAll()
+                        .requestMatchers("/css/**", "/static/**", "/WEB-INF/**", "/register").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/user/**").hasAuthority("USER")
                         .anyRequest().authenticated()
@@ -74,7 +74,10 @@ public class SecurityConfig {
         public void onAuthenticationSuccess(HttpServletRequest request,
                                             HttpServletResponse response,
                                             Authentication authentication) throws IOException {
-            String redirectUrl = "/user/profile";
+            var userDetails = (OurUserDetails) authentication.getPrincipal();
+            Long userId = userDetails.getId();
+
+            String redirectUrl = "/user/profile/" + userId;
 
             for (var authority : authentication.getAuthorities()) {
                 if (authority.getAuthority().equals("ADMIN")) {

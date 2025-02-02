@@ -2,14 +2,13 @@ package by.innowise.moviereview.controller;
 
 import by.innowise.moviereview.dto.EntityDto;
 import by.innowise.moviereview.dto.MovieDto;
-import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.service.GenreService;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.service.RecommendationService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -29,17 +28,16 @@ public class UserMovieController {
         this.recommendationService = recommendationService;
     }
 
-    @GetMapping
-    public String getMovies(@RequestParam(value = "page", defaultValue = "1") int page,
+    @GetMapping("/{id}")
+    public String getMovies(@PathVariable("id") Long userId,
+                            @RequestParam(value = "page", defaultValue = "1") int page,
                             @RequestParam(value = "size", defaultValue = "9") int size,
                             @RequestParam(value = "searchQuery", defaultValue = "") String searchQuery,
                             @RequestParam(value = "genre", defaultValue = "") String genreId,
                             @RequestParam(value = "language", defaultValue = "") String language,
                             @RequestParam(value = "year", defaultValue = "") String year,
                             @RequestParam(value = "duration", defaultValue = "") String duration,
-                            HttpSession session, Model model) {
-
-        Long userId = (session.getAttribute("user") != null) ? ((UserDto) session.getAttribute("user")).getId() : null;
+                            Model model) {
 
         List<MovieDto> movies = movieService.filterMoviesWithPagination(searchQuery, genreId, language, year, duration, page, size);
         long totalMovies = (searchQuery.isEmpty() && genreId.isEmpty() && language.isEmpty() && year.isEmpty() && duration.isEmpty()) ?
@@ -50,6 +48,7 @@ public class UserMovieController {
 
         List<MovieDto> recommendations = recommendationService.getRecommendationsForUser(userId);
 
+        model.addAttribute("userId",userId);
         model.addAttribute("searchQuery", searchQuery);
         model.addAttribute("genre", genreId);
         model.addAttribute("language", language);

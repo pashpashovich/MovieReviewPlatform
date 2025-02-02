@@ -26,17 +26,17 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/user/profile">
+                    <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/user/profile/${user.id}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.profile" />
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/user/movies">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/user/movies/${user.id}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.search" />
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/user/watchlist">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/user/watchlist/${user.id}">
                         <i class="bi bi-tags"></i> <fmt:message key="navbar.watchlist" />
                     </a>
                 </li>

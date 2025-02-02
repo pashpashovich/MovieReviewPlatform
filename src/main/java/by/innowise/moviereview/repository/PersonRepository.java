@@ -28,7 +28,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     long countWithFilters(@Param("searchQuery") String searchQuery,
                           @Param("roleFilter") MovieRole roleFilter);
 
-    @Query("SELECT p FROM Person p WHERE LOWER(p.fullName) IN :names AND p.role = :role")
-    Set<Person> findAllByNameAndRole(@Param("names") Set<String> names, @Param("role") MovieRole role);
+    @Query("SELECT p FROM Person p WHERE (p.fullName) IN (:names) AND p.role = :role")
+    List<Person> findAllByNameAndRole(@Param("names") Set<String> names, @Param("role") MovieRole role);
 
 }

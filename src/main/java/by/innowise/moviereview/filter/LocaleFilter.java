@@ -20,11 +20,6 @@ public class LocaleFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        if (httpRequest.getContentType() != null && httpRequest.getContentType().startsWith("multipart/")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
         String lang = httpRequest.getParameter("lang");
 
         if (lang == null) {

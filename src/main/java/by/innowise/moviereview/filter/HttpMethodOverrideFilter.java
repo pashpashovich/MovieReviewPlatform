@@ -18,8 +18,6 @@ public class HttpMethodOverrideFilter implements Filter {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             if ("POST".equalsIgnoreCase(httpRequest.getMethod())
-                    && httpRequest.getContentType() != null
-                    && !httpRequest.getContentType().startsWith("multipart/")
                     && httpRequest.getParameter("_method") != null) {
 
                 String method = httpRequest.getParameter("_method").toUpperCase();

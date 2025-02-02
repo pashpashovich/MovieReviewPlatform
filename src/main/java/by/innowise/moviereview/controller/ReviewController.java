@@ -1,6 +1,5 @@
 package by.innowise.moviereview.controller;
 
-import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -21,21 +20,17 @@ public class ReviewController {
     }
 
     @PostMapping("/review")
-    public String addReview(@RequestParam("movieId") Long movieId,
-                            @RequestParam("content") String content,
-                            @RequestParam("rating") int rating,
-                            HttpSession session, Model model) {
+    public String addReview(
+            @RequestParam("userId") Long userId,
+            @RequestParam("movieId") Long movieId,
+            @RequestParam("content") String content,
+            @RequestParam("rating") int rating,
+            HttpSession session, Model model) {
         try {
-            UserDto userDto = (UserDto) session.getAttribute("user");
-            if (userDto == null) {
-                return "redirect:/login";
-            }
-
-            Long userId = userDto.getId();
             reviewService.addReview(userId, movieId, content, rating);
 
             session.setAttribute("successMessage", "Ваша рецензия добавлена в список обработки у администратора, ожидайте.");
-            return "redirect:/user/movies/" + movieId;
+            return "redirect:/user/movies/movie/" + movieId + "?userId=" + userId;
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "Ошибка сохранения рецензии.");

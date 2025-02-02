@@ -24,17 +24,17 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/user/profile">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/user/profile/${userId}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.profile"/>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/user/movies">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/user/movies/${userId}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.search"/>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="${pageContext.request.contextPath}/user/watchlist">
+                    <a class="nav-link active" href="${pageContext.request.contextPath}/user/watchlist/${userId}">
                         <i class="bi bi-tags"></i> <fmt:message key="navbar.watchlist"/>
                     </a>
                 </li>
@@ -70,6 +70,7 @@
                                 </p>
                                 <form method="post" action="${pageContext.request.contextPath}/user/watchlist">
                                     <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="userId" value="${userId}">
                                     <input type="hidden" name="movieId" value="${watchlistItem.movieId}">
                                     <button type="submit" class="btn btn-danger">
                                         <fmt:message key="watchlist.delete"/>

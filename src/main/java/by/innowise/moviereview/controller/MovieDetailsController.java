@@ -1,18 +1,17 @@
 package by.innowise.moviereview.controller;
 
 import by.innowise.moviereview.dto.MovieDto;
-import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.Review;
 import by.innowise.moviereview.service.MovieService;
 import by.innowise.moviereview.service.RatingService;
 import by.innowise.moviereview.service.ReviewService;
 import by.innowise.moviereview.service.WatchlistService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class MovieDetailsController {
         this.watchlistService = watchlistService;
     }
 
-    @GetMapping("/{movieId}")
+    @GetMapping("/movie/{movieId}")
     public String getMovieDetails(@PathVariable("movieId") Long movieId,
-                                  HttpSession session,
+                                  @RequestParam("userId") Long userId,
                                   Model model) {
         try {
             MovieDto movie = movieService.getMovieById(movieId);
@@ -47,10 +46,10 @@ public class MovieDetailsController {
 
             Double averageRating = ratingService.getAverageRatingForMovie(movieId);
             List<Review> approvedReviews = reviewService.findApprovedReviewsByMovieId(movieId);
-            UserDto userDto = (UserDto) session.getAttribute("user");
-            boolean isInList = watchlistService.isMovieInWatchlist(userDto.getId(), movieId);
-            Integer ratingByUserAndMovie = ratingService.getRatingByUserAndMovie(userDto.getId(), movieId);
+            boolean isInList = watchlistService.isMovieInWatchlist(userId, movieId);
+            Integer ratingByUserAndMovie = ratingService.getRatingByUserAndMovie(userId, movieId);
 
+            model.addAttribute("userId", userId);
             model.addAttribute("movie", movie);
             model.addAttribute("averageRating", averageRating);
             model.addAttribute("reviews", approvedReviews);

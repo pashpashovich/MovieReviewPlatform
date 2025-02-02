@@ -3,11 +3,11 @@ package by.innowise.moviereview.controller;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.service.ReviewService;
 import by.innowise.moviereview.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
@@ -24,24 +24,16 @@ public class UserProfileController {
         this.reviewService = reviewService;
     }
 
-    @GetMapping
-    public String viewProfile(HttpSession session, Model model) {
-        UserDto userDto = (UserDto) session.getAttribute("user");
-
-        if (userDto == null) {
-            return "redirect:/login";
-        }
-
-        Long userId = userDto.getId();
-        UserDto userDetails = userService.findById(userId);
-
+    @GetMapping("/{id}")
+    public String viewProfile(Model model, @PathVariable("id") Long id) {
+        UserDto userDetails = userService.findById(id);
         if (userDetails == null) {
             model.addAttribute("error", "Пользователь не найден");
             return "error";
         }
 
         model.addAttribute("user", userDetails);
-        model.addAttribute("recentReviews", reviewService.findRecentReviewsByUserId(userId));
+        model.addAttribute("recentReviews", reviewService.findRecentReviewsByUserId(id));
         return "user/profile";
     }
 }

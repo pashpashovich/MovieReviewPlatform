@@ -22,6 +22,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @NamedEntityGraph(
@@ -94,6 +95,9 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
     private Set<Person> people;
+
+    public <T> Movie(String s, List<T> list) {
+    }
 
     @Override
     public String toString() {

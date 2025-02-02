@@ -69,7 +69,11 @@ dependencies {
     implementation "org.springframework.security:spring-security-web:${springVersion}"
     implementation "org.springframework.security:spring-security-config:${springVersion}"
 
+    testImplementation 'org.hamcrest:hamcrest:3.0'
+    testImplementation "org.springframework:spring-test:${springVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation "org.springframework.security:spring-security-test:${springVersion}"
+    testImplementation 'org.mockito:mockito-core:5.15.2'
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 

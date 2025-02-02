@@ -1,11 +1,15 @@
 package by.innowise.moviereview.utils;
 
+import by.innowise.moviereview.dto.EntityDto;
+import by.innowise.moviereview.dto.MovieDto;
+import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.entity.Rating;
 import by.innowise.moviereview.entity.Review;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.entity.Watchlist;
 import by.innowise.moviereview.util.enums.MovieRole;
 import by.innowise.moviereview.util.enums.ReviewStatus;
 import by.innowise.moviereview.util.enums.Role;
@@ -69,5 +73,42 @@ public class TestBuilder {
         review.setCreatedAt(time);
         review.setContent(content);
         return review;
+    }
+
+    public static Watchlist createWatchList(User user, Movie movie) {
+        Watchlist watchlist = new Watchlist();
+        watchlist.setUser(user);
+        watchlist.setMovie(movie);
+        watchlist.setAddedAt(LocalDateTime.now());
+        return watchlist;
+    }
+
+
+    public static UserDto createUserDto(Long id, String email, Role userRole, String username) {
+        return UserDto.builder()
+                .id(id)
+                .email(email)
+                .role(userRole)
+                .username(username)
+                .build();
+
+    }
+
+    public static EntityDto createGenreDto(Long id, String name) {
+        return EntityDto.builder()
+                .id(id)
+                .name(name)
+                .build();
+
+    }
+
+    public static MovieDto createMovieDto(String title) {
+        MovieDto movie = new MovieDto();
+        movie.setTitle(title);
+        movie.setGenres(Set.of("Драма"));
+        movie.setLanguage("Русский");
+        movie.setReleaseYear(2023);
+        movie.setDuration(134);
+        return movie;
     }
 }

@@ -1,5 +1,7 @@
 package by.innowise.moviereview.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -54,14 +56,19 @@ public class AppConfig {
     @Bean
     public DataSource dataSource() {
         Map<String, Object> datasource = getNestedMap("spring.datasource");
-
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName((String) datasource.get("driver-class-name"));
-        dataSource.setUrl((String) datasource.get("url"));
-        dataSource.setUsername((String) datasource.get("username"));
-        dataSource.setPassword((String) datasource.get("password"));
-        return dataSource;
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setDriverClassName((String) datasource.get("driver-class-name"));
+        hikariConfig.setJdbcUrl((String) datasource.get("url"));
+        hikariConfig.setUsername((String) datasource.get("username"));
+        hikariConfig.setPassword((String) datasource.get("password"));
+        hikariConfig.setMaximumPoolSize(10);
+        hikariConfig.setMinimumIdle(2);
+        hikariConfig.setIdleTimeout(30000);
+        hikariConfig.setMaxLifetime(1800000);
+        hikariConfig.setConnectionTimeout(30000);
+        return new HikariDataSource(hikariConfig);
     }
+
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {

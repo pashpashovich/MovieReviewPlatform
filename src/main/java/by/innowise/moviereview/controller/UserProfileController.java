@@ -18,7 +18,6 @@ public class UserProfileController {
     private final UserService userService;
     private final ReviewService reviewService;
 
-    @Autowired
     public UserProfileController(UserService userService, ReviewService reviewService) {
         this.userService = userService;
         this.reviewService = reviewService;

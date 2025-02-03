@@ -45,7 +45,10 @@ public class SecurityConfig {
                         .loginPage("/")
                         .loginProcessingUrl("/login")
                         .successHandler(myAuthenticationSuccessHandler())
-                        .failureHandler((request, response, exception) -> response.sendRedirect("/"))
+                        .failureHandler((request, response, exception) -> {
+                            request.getSession().setAttribute("error", "Неверный логин или пароль");
+                            response.sendRedirect("/");
+                        })
                         .permitAll()
                 )
                 .logout(logout -> logout

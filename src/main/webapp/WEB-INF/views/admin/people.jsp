@@ -185,7 +185,6 @@
                         <option value="ACTOR"><fmt:message key="role.actor"/></option>
                     </select>
                 </div>
-
                 <div class="text-center">
                     <button type="submit" class="btn btn-success"><fmt:message key="button.save"/></button>
                 </div>

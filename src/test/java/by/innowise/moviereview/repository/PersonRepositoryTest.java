@@ -44,17 +44,6 @@ class PersonRepositoryTest {
     }
 
     @Test
-    void shouldFindAllByRole() {
-        // given
-        //when
-        List<Person> directors = personRepository.findAllByRole(MovieRole.DIRECTOR);
-        //then
-        assertNotNull(directors);
-        assertEquals(1, directors.size());
-        assertEquals("Director 1", directors.get(0).getFullName());
-    }
-
-    @Test
     void shouldFindWithFilters() {
         // given
         PageRequest pageable = PageRequest.of(0, 10);

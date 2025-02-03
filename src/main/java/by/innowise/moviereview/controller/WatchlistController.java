@@ -23,7 +23,6 @@ public class WatchlistController {
 
     private final WatchlistService watchlistService;
 
-    @Autowired
     public WatchlistController(WatchlistService watchlistService) {
         this.watchlistService = watchlistService;
     }

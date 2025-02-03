@@ -5,8 +5,11 @@ import by.innowise.moviereview.dto.PersonDto;
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.service.PersonService;
 import by.innowise.moviereview.util.enums.MovieRole;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+@Validated
 @Controller
 @RequestMapping("/admin/people")
 public class PersonController {
@@ -66,7 +70,7 @@ public class PersonController {
     }
 
     @PutMapping
-    public String updatePerson(@ModelAttribute PersonDto personDto) {
+    public String updatePerson(@Valid @ModelAttribute PersonDto personDto) {
         personService.update(personDto);
         return "redirect:/admin/people";
     }

@@ -8,6 +8,7 @@ import by.innowise.moviereview.repository.UserRepository;
 import by.innowise.moviereview.repository.WatchlistRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WatchlistService {
 
     private final WatchlistRepository watchlistRepository;
@@ -31,6 +33,7 @@ public class WatchlistService {
         watchlist.setMovie(movieRepository.findById(movieId).orElseThrow(() -> new NotFoundException("Фильм не найден")));
         watchlist.setAddedAt(LocalDateTime.now());
         watchlistRepository.save(watchlist);
+        log.info(String.format("Movie %s added to want to watch",movieId));
     }
 
 
@@ -52,6 +55,7 @@ public class WatchlistService {
         Watchlist watchlist = watchlistRepository.findByUserIdAndMovieId(userId, movieId)
                 .orElseThrow(() -> new NotFoundException(String.format("Фильм с таким id %d не найден.", movieId)));
         watchlistRepository.delete(watchlist);
+        log.info(String.format("Movie %s removed from want to watch",movieId));
     }
 
     @Transactional

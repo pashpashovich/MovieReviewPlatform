@@ -7,7 +7,7 @@ import by.innowise.moviereview.mapper.PersonMapper;
 import by.innowise.moviereview.repository.PersonRepository;
 import by.innowise.moviereview.util.enums.MovieRole;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PersonService {
 
     private final PersonRepository personRepository;
@@ -45,6 +46,7 @@ public class PersonService {
 
     public void addPerson(Person person) {
         personRepository.save(person);
+        log.info(String.format("Star %s added", person.getFullName()));
     }
 
     public PersonDto getPersonById(Long id) {
@@ -59,11 +61,13 @@ public class PersonService {
         person1.setFullName(person.getFullName());
         person1.setRole(person.getRole());
         personRepository.save(person1);
+        log.info(String.format("Star with ID %s has been changed", id));
     }
 
     public void deletePersonById(Long id) {
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Человек с ID %d не найден", id)));
         personRepository.delete(person);
+        log.info(String.format("Star with ID %s has been deleted", id));
     }
 }

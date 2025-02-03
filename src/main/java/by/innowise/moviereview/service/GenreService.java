@@ -48,6 +48,7 @@ public class GenreService {
     public void save(EntityDto entityDto) {
         Genre genre = genreMapper.toEntity(entityDto);
         genreRepository.save(genre);
+        log.info(String.format("Genre %s added", genre.getName()));
     }
 
     public void update(EntityDto dto) {
@@ -56,10 +57,12 @@ public class GenreService {
                 .orElseThrow(() -> new NotFoundException(String.format("Сущности с ID %d не найдено", id)));
         genre.setName(dto.getName());
         genreRepository.save(genre);
+        log.info(String.format("Genre ID %s changed to %s", genre.getId(), genre.getName()));
     }
 
     public void delete(Long id) {
         genreRepository.delete(findById(id));
+        log.info(String.format("Genre with ID %s removed", id));
     }
 }
 

@@ -51,6 +51,7 @@ public class MovieService {
         movie.setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())));
         movie.setPeople(getPeopleByRoles(movieDto));
         movieRepository.save(movie);
+        log.info(String.format("Movie %s added", movieDto.getTitle()));
     }
 
     @Transactional
@@ -68,6 +69,7 @@ public class MovieService {
         existingMovie.setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())));
         existingMovie.setPeople(getPeopleByRoles(movieDto));
         movieRepository.save(existingMovie);
+        log.info(String.format("Movie with ID %s has been changed", id));
     }
 
     public void deleteMovie(Long id) throws EntityNotFoundException {
@@ -75,6 +77,7 @@ public class MovieService {
             throw new EntityNotFoundException("Фильм с id " + id + " не найден.");
         }
         movieRepository.deleteById(id);
+        log.info(String.format("Movie with ID %s removed", id));
     }
 
     private Set<Person> getPeopleByRoles(MovieDto movieDto) {

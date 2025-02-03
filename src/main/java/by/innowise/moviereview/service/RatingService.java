@@ -6,12 +6,14 @@ import by.innowise.moviereview.repository.RatingRepository;
 import by.innowise.moviereview.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RatingService {
 
     private final RatingRepository ratingRepository;
@@ -25,14 +27,14 @@ public class RatingService {
             existingRating.setRating(ratingValue);
             existingRating.setUpdatedAt(LocalDateTime.now());
             ratingRepository.save(existingRating);
-        } else {
+            log.info(String.format("User %s's rating for movie %s has been changed to %s",userId,movieId,ratingValue));        } else {
             Rating newRating = new Rating();
             newRating.setUser(userRepository.findById(userId).orElseThrow());
             newRating.setMovie(movieRepository.findById(movieId).orElseThrow());
             newRating.setRating(ratingValue);
             newRating.setCreatedAt(LocalDateTime.now());
             ratingRepository.save(newRating);
-        }
+            log.info(String.format("User %s rating for movie %s added with tag %s",userId,movieId,ratingValue));        }
     }
 
     @Transactional

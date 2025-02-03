@@ -9,6 +9,7 @@ import by.innowise.moviereview.repository.UserRepository;
 import by.innowise.moviereview.util.enums.ReviewStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -35,6 +37,7 @@ public class ReviewService {
         review.setStatus(ReviewStatus.PENDING);
         review.setCreatedAt(LocalDateTime.now());
         reviewRepository.save(review);
+        log.info(String.format("User %s's review of movie %s added", userId, movieId));
     }
 
     @Transactional
@@ -47,6 +50,7 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("Рецензия не найдена."));
         review.setStatus(ReviewStatus.valueOf(status));
         reviewRepository.save(review);
+        log.info(String.format("Review with ID %s has been changed", reviewId));
     }
 
     @Transactional

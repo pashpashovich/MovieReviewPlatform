@@ -31,13 +31,16 @@ public class UserService {
         User user = userRepository.findByEmail(username).orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
         if (Boolean.TRUE.equals(user.getIsBlocked())) {
+            log.warn("Access denied: " + username);
             throw new NoAccessException("User is blocked");
         }
 
         if (PasswordUtils.verify(password, user.getPassword())) {
+            log.info("Login successful: " + username);
             return userMapper.toDto(user);
         } else {
-            throw new BadCredentialsException("Invalid username or password");
+            log.warn("Incorrect login or password for user: " + username);
+            throw new BadCredentialsException("Неверный логин или пароль");
         }
     }
 
@@ -56,6 +59,6 @@ public class UserService {
         userEntity.setRole(Role.USER);
 
         userRepository.save(userEntity);
-        log.info("New user created: " + userEntity);
+        log.info("New user registered: " + userEntity);
     }
 }

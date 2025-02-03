@@ -16,7 +16,7 @@
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/user/profile">
+        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/user/profile/${userId}">
             <strong><fmt:message key="app.name"/></strong>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -26,17 +26,17 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/profile">
+                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/profile/${userId}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.profile"/>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/movies">
+                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/movies/${userId}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.movies"/>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/user/watchlist">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/user/watchlist/${userId}">
                         <i class="bi bi-tags"></i> <fmt:message key="navbar.watchlist"/>
                     </a>
                 </li>
@@ -91,6 +91,7 @@
             </ul>
             <form method="POST"
                   action="${pageContext.request.contextPath}/user/movies/rate">
+                <input type="hidden" name="userId" value="${userId}">
                 <input type="hidden" name="movieId" value="${movie.id}">
                 <div class="rating">
                     <c:forEach begin="1" end="5" var="star">
@@ -110,6 +111,7 @@
                 </button>
             </form>
             <form method="POST" action="${pageContext.request.contextPath}/user/watchlist/add">
+                <input type="hidden" name="userId" value="${userId}">
                 <input type="hidden" name="movieId" value="${movie.id}">
                 <button
                         type="submit"
@@ -159,6 +161,7 @@
                 <c:remove var="successMessage" scope="session"/>
             </c:if>
             <form method="POST" action="${pageContext.request.contextPath}/user/movies/review">
+                <input type="hidden" name="userId" value="${userId}">
                 <input type="hidden" name="movieId" value="${movie.id}">
                 <div class="mb-3">
                     <label for="reviewContent" class="form-label"><fmt:message key="movie.reviewContent"/></label>

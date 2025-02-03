@@ -16,7 +16,7 @@
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/user/profile">
+        <a class="navbar-brand mx-auto" href="${pageContext.request.contextPath}/user/profile/${userId}">
             <strong><fmt:message key="app.name"/></strong>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -26,18 +26,18 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/profile">
+                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/user/profile/${userId}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.profile"/>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page"
-                       href="${pageContext.request.contextPath}/user/movies">
+                       href="${pageContext.request.contextPath}/user/movies/${userId}">
                         <i class="bi bi-film"></i> <fmt:message key="navbar.search"/>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/user/watchlist">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/user/watchlist/${userId}">
                         <i class="bi bi-tags"></i> <fmt:message key="navbar.watchlist"/>
                     </a>
                 </li>
@@ -58,7 +58,7 @@
 <div class="container my-5">
     <h1 class="text-center mb-4"><fmt:message key="title"/></h1>
     <div class="card p-4 shadow-sm mb-4">
-        <form id="filterForm" method="POST" action="${pageContext.request.contextPath}/user/movies">
+        <form id="filterForm" method="GET" action="${pageContext.request.contextPath}/user/movies/${userId}">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label"><fmt:message key="filter.title"/></label>
@@ -136,7 +136,7 @@
                                          alt="${recommendation.title}">
                                     <div class="card-body">
                                         <h5 class="card-title">${recommendation.title}</h5>
-                                        <a href="${pageContext.request.contextPath}/user/movies/${recommendation.id}"
+                                        <a href="${pageContext.request.contextPath}/user/movies/movie/${recommendation.id}?userId=${userId}"
                                            class="btn btn-outline-primary"><fmt:message key="movies.more"/></a>
                                     </div>
                                 </div>
@@ -173,8 +173,10 @@
                                                 key="filter.year"/></strong> ${movie.releaseYear}</p>
                                         <p class="card-text"><strong><fmt:message
                                                 key="filter.duration"/></strong> ${movie.duration} мин</p>
-                                        <a href="${pageContext.request.contextPath}/user/movies/${movie.id}"
-                                           class="btn btn-primary"><fmt:message key="movies.more"/></a>
+                                        <a href="${pageContext.request.contextPath}/user/movies/movie/${movie.id}?userId=${userId}"
+                                           class="btn btn-primary">
+                                            <fmt:message key="movies.more"/>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

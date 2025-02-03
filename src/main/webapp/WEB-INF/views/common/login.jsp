@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page isELIgnored="false" %>
 <fmt:setLocale value="${lang}" />
 <fmt:setBundle basename="messages" />
@@ -37,10 +38,10 @@
                     <c:if test="${error != null}">
                         <div class="alert alert-danger text-center">${error}</div>
                     </c:if>
-                    <form method="post" action="${pageContext.request.contextPath}/login">
+                    <form:form method="post" action="${pageContext.request.contextPath}/login">
                         <div class="mb-3">
                             <label for="email" class="form-label"><fmt:message key="login.email"/></label>
-                            <input type="email" value="${email}" id="email" name="email" class="form-control" required>
+                            <input type="email" value="${username}" id="email" name="username" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label"><fmt:message key="login.password"/></label>
@@ -48,7 +49,7 @@
                                    class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><fmt:message key="login.submit"/></button>
-                    </form>
+                    </form:form>
                 </div>
                 <div class="card-footer text-center">
                     <a href="${pageContext.request.contextPath}/register" class="text-muted"><fmt:message

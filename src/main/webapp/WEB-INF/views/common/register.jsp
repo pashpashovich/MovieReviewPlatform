@@ -59,7 +59,7 @@
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <a href="${pageContext.request.contextPath}/login" class="text-muted"><fmt:message key="register.loginLink"/></a>
+                    <a href="${pageContext.request.contextPath}/" class="text-muted"><fmt:message key="register.loginLink"/></a>
                 </div>
             </div>
         </div>

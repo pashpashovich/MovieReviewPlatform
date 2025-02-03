@@ -4,6 +4,12 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
     <persistence-unit name="default">
-
+        <class>by.innowise.moviereview.entity.Genre</class>
+        <class>by.innowise.moviereview.entity.Movie</class>
+        <class>by.innowise.moviereview.entity.Person</class>
+        <class>by.innowise.moviereview.entity.Rating</class>
+        <class>by.innowise.moviereview.entity.Review</class>
+        <class>by.innowise.moviereview.entity.User</class>
+        <class>by.innowise.moviereview.entity.Watchlist</class>
     </persistence-unit>
 </persistence>

@@ -1,59 +1,60 @@
 package by.innowise.moviereview.service;
 
-import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.mapper.UserMapper;
-import by.innowise.moviereview.mapper.UserMapperImpl;
-import by.innowise.moviereview.util.daofactory.DaoFactory;
+import by.innowise.moviereview.repository.UserRepository;
 import by.innowise.moviereview.util.enums.Role;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
+@Slf4j
 public class AdminUserService {
-    private static AdminUserService instance;
-    private final UserDao userDao;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public static AdminUserService getInstance() {
-        if (instance == null)
-            instance = new AdminUserService();
-        return instance;
-    }
-
-    private AdminUserService() {
-        this.userDao = (UserDao) DaoFactory.getDAO(UserDao.class);
-        this.userMapper = new UserMapperImpl();
-    }
-
     public List<UserDto> getAllUsers() {
-        List<User> users = userDao.findAll();
+        List<User> users = userRepository.findAll();
         return userMapper.toListDto(users).stream()
                 .filter(userDto -> userDto.getRole().equals(Role.USER))
                 .toList();
     }
 
     public void deleteUser(Long userId) {
-        User user = userDao.findById(userId);
-        userDao.delete(user);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
+        userRepository.delete(user);
+        log.info(String.format("User with id %s deleted", userId));
     }
 
     public void blockUser(Long userId) {
-        User user = userDao.findById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
         user.setIsBlocked(true);
-        userDao.update(user);
+        userRepository.save(user);
+        log.info(String.format("User with id %s blocked", userId));
     }
 
     public void unblockUser(Long userId) {
-        User user = userDao.findById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
         user.setIsBlocked(false);
-        userDao.update(user);
+        userRepository.save(user);
+        log.info(String.format("User with id %s is unblocked", userId));
     }
 
     public void promoteToAdmin(Long userId) {
-        User user = userDao.findById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
         user.setRole(Role.ADMIN);
-        userDao.update(user);
+        userRepository.save(user);
+        log.info(String.format("User with id %s has been promoted to administrator role", userId));
     }
 }
 

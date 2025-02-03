@@ -1,52 +1,50 @@
 package by.innowise.moviereview.service;
 
-import by.innowise.moviereview.dao.MovieDao;
-import by.innowise.moviereview.dao.RatingDao;
-import by.innowise.moviereview.dao.UserDao;
 import by.innowise.moviereview.entity.Rating;
+import by.innowise.moviereview.repository.MovieRepository;
+import by.innowise.moviereview.repository.RatingRepository;
+import by.innowise.moviereview.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Service
+@RequiredArgsConstructor
+@Slf4j
 public class RatingService {
-    private static RatingService instance;
-    private final RatingDao ratingDao;
-    private final UserDao userDao;
-    private final MovieDao movieDao;
 
-    private RatingService() {
-        this.ratingDao = RatingDao.getInstance();
-        this.userDao = UserDao.getInstance();
-        this.movieDao = MovieDao.getInstance();
-    }
+    private final RatingRepository ratingRepository;
+    private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
 
-    public static RatingService getInstance() {
-        if (instance == null)
-            instance = new RatingService();
-        return instance;
-    }
-
+    @Transactional
     public void saveOrUpdateRating(Long userId, Long movieId, int ratingValue) {
-        Rating existingRating = ratingDao.findByUserAndMovie(userId, movieId);
+        Rating existingRating = ratingRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
         if (existingRating != null) {
             existingRating.setRating(ratingValue);
             existingRating.setUpdatedAt(LocalDateTime.now());
-            ratingDao.update(existingRating);
-        } else {
+            ratingRepository.save(existingRating);
+            log.info(String.format("User %s's rating for movie %s has been changed to %s",userId,movieId,ratingValue));        } else {
             Rating newRating = new Rating();
-            newRating.setUser(userDao.findById(userId));
-            newRating.setMovie(movieDao.findById(movieId));
+            newRating.setUser(userRepository.findById(userId).orElseThrow());
+            newRating.setMovie(movieRepository.findById(movieId).orElseThrow());
             newRating.setRating(ratingValue);
             newRating.setCreatedAt(LocalDateTime.now());
-            ratingDao.save(newRating);
-        }
+            ratingRepository.save(newRating);
+            log.info(String.format("User %s rating for movie %s added with tag %s",userId,movieId,ratingValue));        }
     }
 
+    @Transactional
     public Integer getRatingByUserAndMovie(Long userId, Long movieId) {
-        Rating rating = ratingDao.findByUserAndMovie(userId, movieId);
-        return rating != null ? rating.getRating() : null;
+        return ratingRepository.findByUserIdAndMovieId(userId, movieId)
+                .map(Rating::getRating)
+                .orElse(null);
     }
 
     public Double getAverageRatingForMovie(Long movieId) {
-        return ratingDao.findAverageRatingByMovieId(movieId);
+        return ratingRepository.findAverageRatingByMovieId(movieId);
     }
 }

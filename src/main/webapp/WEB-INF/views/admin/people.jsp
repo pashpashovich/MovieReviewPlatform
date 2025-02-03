@@ -155,7 +155,10 @@
         <ul class="pagination justify-content-center">
             <c:forEach var="i" begin="1" end="${totalPages}">
                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                    <a class="page-link" href="?page=${i}&pageSize=10">${i}</a>
+                    <a class="page-link"
+                       href="?page=${i}&size=${size}&search=${searchQuery}&role=${roleFilter}">
+                            ${i}
+                    </a>
                 </li>
             </c:forEach>
         </ul>
@@ -182,7 +185,6 @@
                         <option value="ACTOR"><fmt:message key="role.actor"/></option>
                     </select>
                 </div>
-
                 <div class="text-center">
                     <button type="submit" class="btn btn-success"><fmt:message key="button.save"/></button>
                 </div>

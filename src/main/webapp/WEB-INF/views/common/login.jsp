@@ -3,8 +3,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page isELIgnored="false" %>
-<fmt:setLocale value="${lang}" />
-<fmt:setBundle basename="messages" />
+<fmt:setLocale value="${lang}"/>
+<fmt:setBundle basename="messages"/>
 <!DOCTYPE html>
 <html lang="${lang}">
 <head>
@@ -35,13 +35,14 @@
                     <h3><fmt:message key="login.title"/></h3>
                 </div>
                 <div class="card-body">
-                    <c:if test="${error != null}">
-                        <div class="alert alert-danger text-center">${error}</div>
+                    <c:if test="${param.error != null}">
+                        <div class="alert alert-danger text-center">${param.error}</div>
                     </c:if>
                     <form:form method="post" action="${pageContext.request.contextPath}/login">
                         <div class="mb-3">
                             <label for="email" class="form-label"><fmt:message key="login.email"/></label>
-                            <input type="email" value="${username}" id="email" name="username" class="form-control" required>
+                            <input type="email" value="${username}" id="email" name="username" class="form-control"
+                                   required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label"><fmt:message key="login.password"/></label>

@@ -22,7 +22,6 @@ import java.util.Set;
 @UtilityClass
 public class TestBuilder {
 
-
     public static Genre createGenre(String name) {
         Genre genre = new Genre();
         genre.setName(name);

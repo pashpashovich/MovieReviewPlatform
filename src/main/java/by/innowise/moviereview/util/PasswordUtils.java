@@ -1,7 +1,7 @@
 package by.innowise.moviereview.util;
 
 import lombok.experimental.UtilityClass;
-import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 @UtilityClass
 public class PasswordUtils {

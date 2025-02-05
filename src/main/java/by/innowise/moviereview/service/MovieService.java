@@ -46,16 +46,18 @@ public class MovieService {
     }
 
     @Transactional
-    public void createMovie(MovieDto movieDto) {
+    public MovieDto createMovie(MovieDto movieDto) {
         Movie movie = movieMapper.toEntityFromDto(movieDto);
         movie.setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())));
         movie.setPeople(getPeopleByRoles(movieDto));
-        movieRepository.save(movie);
+        Movie savedMovie = movieRepository.save(movie);
+        MovieDto dto = movieMapper.toDto(savedMovie);
         log.info(String.format("Movie %s added", movieDto.getTitle()));
+        return dto;
     }
 
     @Transactional
-    public void updateMovie(Long id, MovieDto movieDto) throws EntityNotFoundException {
+    public MovieDto updateMovie(Long id, MovieDto movieDto) throws EntityNotFoundException {
         Movie existingMovie = movieRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Фильм с ID " + id + " не найден."));
         existingMovie.setTitle(movieDto.getTitle());
@@ -68,14 +70,12 @@ public class MovieService {
         }
         existingMovie.setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())));
         existingMovie.setPeople(getPeopleByRoles(movieDto));
-        movieRepository.save(existingMovie);
+        Movie savedMovie = movieRepository.save(existingMovie);
         log.info(String.format("Movie with ID %s has been changed", id));
+        return movieMapper.toDto(savedMovie);
     }
 
-    public void deleteMovie(Long id) throws EntityNotFoundException {
-        if (!movieRepository.existsById(id)) {
-            throw new EntityNotFoundException("Фильм с id " + id + " не найден.");
-        }
+    public void deleteMovie(Long id) {
         movieRepository.deleteById(id);
         log.info(String.format("Movie with ID %s removed", id));
     }

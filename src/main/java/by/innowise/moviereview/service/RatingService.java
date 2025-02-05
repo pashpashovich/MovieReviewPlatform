@@ -1,6 +1,11 @@
 package by.innowise.moviereview.service;
 
+import by.innowise.moviereview.dto.RateCreateDto;
+import by.innowise.moviereview.dto.RatingDto;
 import by.innowise.moviereview.entity.Rating;
+import by.innowise.moviereview.exception.NotFoundException;
+import by.innowise.moviereview.exception.UserNotFoundException;
+import by.innowise.moviereview.mapper.RateMapper;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.RatingRepository;
 import by.innowise.moviereview.repository.UserRepository;
@@ -10,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,22 +25,29 @@ public class RatingService {
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
+    private final RateMapper rateMapper;
 
     @Transactional
-    public void saveOrUpdateRating(Long userId, Long movieId, int ratingValue) {
-        Rating existingRating = ratingRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
-        if (existingRating != null) {
-            existingRating.setRating(ratingValue);
-            existingRating.setUpdatedAt(LocalDateTime.now());
-            ratingRepository.save(existingRating);
-            log.info(String.format("User %s's rating for movie %s has been changed to %s",userId,movieId,ratingValue));        } else {
-            Rating newRating = new Rating();
-            newRating.setUser(userRepository.findById(userId).orElseThrow());
-            newRating.setMovie(movieRepository.findById(movieId).orElseThrow());
-            newRating.setRating(ratingValue);
-            newRating.setCreatedAt(LocalDateTime.now());
-            ratingRepository.save(newRating);
-            log.info(String.format("User %s rating for movie %s added with tag %s",userId,movieId,ratingValue));        }
+    public RatingDto saveOrUpdateRating(RateCreateDto rateDto) {
+        Optional<Rating> optionalRating = ratingRepository.findByUserIdAndMovieId(rateDto.getUserId(), rateDto.getMovieId());
+        Rating rating=new Rating();
+        if (optionalRating.isPresent()) {
+            rating = optionalRating.get();
+            rating.setRating(rateDto.getRating());
+            rating.setUpdatedAt(LocalDateTime.now());
+            ratingRepository.save(rating);
+            log.info(String.format("User %s's rating for movie %s has been changed to %s", rateDto.getUserId(), rateDto.getMovieId(), rateDto.getRating()));
+        } else {
+            rating.setUser(userRepository.findById(rateDto.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException("Пользователь не найден")));
+            rating.setMovie(movieRepository.findById(rateDto.getMovieId())
+                    .orElseThrow(() -> new NotFoundException("Фильм не найден")));
+            rating.setRating(rateDto.getRating());
+            rating.setCreatedAt(LocalDateTime.now());
+            ratingRepository.save(rating);
+            log.info(String.format("User %s rating for movie %s added with tag %s", rateDto.getUserId(), rateDto.getMovieId(), rateDto.getRating()));
+        }
+        return rateMapper.toDto(rating);
     }
 
     @Transactional

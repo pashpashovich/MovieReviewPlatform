@@ -1,5 +1,6 @@
 package by.innowise.moviereview.mapper;
 
+import by.innowise.moviereview.dto.PersonCreateDto;
 import by.innowise.moviereview.dto.PersonDto;
 import by.innowise.moviereview.entity.Person;
 import org.mapstruct.Mapper;
@@ -13,4 +14,8 @@ public interface PersonMapper {
 
     @Mapping(target = "movies", ignore = true)
     List<PersonDto> toListDto(List<Person> people);
+
+     @Mapping(target = "movies", ignore = true)
+     @Mapping(target = "id", ignore = true)
+     Person toEntity(PersonCreateDto personCreateDto);
 }

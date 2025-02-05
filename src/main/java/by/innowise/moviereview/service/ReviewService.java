@@ -1,8 +1,11 @@
 package by.innowise.moviereview.service;
 
+import by.innowise.moviereview.dto.ReviewDto;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Review;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.exception.NotFoundException;
+import by.innowise.moviereview.mapper.ReviewMapper;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.ReviewRepository;
 import by.innowise.moviereview.repository.UserRepository;
@@ -23,8 +26,10 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
+    private final ReviewMapper reviewMapper;
 
-    public void addReview(Long userId, Long movieId, String content, int rating) {
+
+    public ReviewDto addReview(Long userId, Long movieId, String content, int rating) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден."));
         Movie movie = movieRepository.findById(movieId)
@@ -36,8 +41,9 @@ public class ReviewService {
         review.setRating(rating);
         review.setStatus(ReviewStatus.PENDING);
         review.setCreatedAt(LocalDateTime.now());
-        reviewRepository.save(review);
-        log.info(String.format("User %s's review of movie %s added", userId, movieId));
+        Review saved = reviewRepository.save(review);
+        log.info("User's {} review of movie {} added", userId, movieId);
+        return reviewMapper.toDto(saved);
     }
 
     @Transactional
@@ -45,12 +51,13 @@ public class ReviewService {
         return reviewRepository.findByStatus(ReviewStatus.PENDING);
     }
 
-    public void updateReviewStatus(Long reviewId, String status) {
+    public ReviewDto updateReviewStatus(Long reviewId, String status) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Рецензия не найдена."));
+                .orElseThrow(() -> new NotFoundException("Рецензия не найдена."));
         review.setStatus(ReviewStatus.valueOf(status));
         reviewRepository.save(review);
         log.info(String.format("Review with ID %s has been changed", reviewId));
+        return reviewMapper.toDto(review);
     }
 
     @Transactional

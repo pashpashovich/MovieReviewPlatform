@@ -1,5 +1,6 @@
 package by.innowise.moviereview.service;
 
+import by.innowise.moviereview.dto.EntityCreateDto;
 import by.innowise.moviereview.dto.EntityDto;
 import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.exception.NotFoundException;
@@ -45,19 +46,20 @@ public class GenreService {
                 .orElseThrow(() -> new NotFoundException(String.format("Сущности с ID %d не найдено", id)));
     }
 
-    public void save(EntityDto entityDto) {
-        Genre genre = genreMapper.toEntity(entityDto);
-        genreRepository.save(genre);
+    public EntityDto save(EntityCreateDto entityCreateDto) {
+        Genre genre = genreMapper.toCreateEntity(entityCreateDto);
+        Genre saved = genreRepository.save(genre);
         log.info(String.format("Genre %s added", genre.getName()));
+        return genreMapper.toDto(saved);
     }
 
-    public void update(EntityDto dto) {
-        Long id = dto.getId();
+    public EntityDto update(Long id, EntityCreateDto dto) {
         Genre genre = genreRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Сущности с ID %d не найдено", id)));
         genre.setName(dto.getName());
-        genreRepository.save(genre);
+        Genre genre1 = genreRepository.save(genre);
         log.info(String.format("Genre ID %s changed to %s", genre.getId(), genre.getName()));
+        return genreMapper.toDto(genre1);
     }
 
     public void delete(Long id) {

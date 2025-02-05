@@ -1,5 +1,6 @@
 package by.innowise.moviereview.service;
 
+import by.innowise.moviereview.dto.PersonCreateDto;
 import by.innowise.moviereview.dto.PersonDto;
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.exception.NotFoundException;
@@ -44,9 +45,11 @@ public class PersonService {
     }
 
 
-    public void addPerson(Person person) {
-        personRepository.save(person);
+    public PersonDto addPerson(PersonCreateDto dto) {
+        Person entity = personMapper.toEntity(dto);
+        Person person = personRepository.save(entity);
         log.info(String.format("Star %s added", person.getFullName()));
+        return personMapper.toDto(person);
     }
 
     public PersonDto getPersonById(Long id) {
@@ -54,14 +57,14 @@ public class PersonService {
                 .orElseThrow(() -> new NotFoundException(String.format("Человек с ID %d не найден", id))));
     }
 
-    public void update(PersonDto person) {
-        Long id = person.getId();
-        Person person1 = personRepository.findById(id)
+    public PersonDto update(Long id, PersonCreateDto dto) {
+        Person entity = personRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Человек с ID %d не найден", id)));
-        person1.setFullName(person.getFullName());
-        person1.setRole(person.getRole());
-        personRepository.save(person1);
-        log.info(String.format("Star with ID %s has been changed", id));
+        entity.setFullName(dto.getFullName());
+        entity.setRole(MovieRole.valueOf(dto.getRole()));
+        PersonDto personDto = personMapper.toDto(personRepository.save(entity));
+        log.info("Star with ID {} has been changed", id);
+        return personDto;
     }
 
     public void deletePersonById(Long id) {

@@ -8,9 +8,30 @@ group = 'by.innowise'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+bootJar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+wrapper {
+    version = "8.5"
+}
+
+tasks.named('bootJar') {
+    destinationDirectory = file("$rootDir/deploy")
+    mainClass.set("by.innowise.moviereview")
+
+}
+
+tasks.named('bootJar') {
+}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 repositories {
@@ -30,6 +51,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+    implementation 'org.postgresql:postgresql:42.7.5'
+
 
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

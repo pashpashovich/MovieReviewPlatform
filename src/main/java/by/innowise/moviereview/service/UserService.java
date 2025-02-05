@@ -44,7 +44,7 @@ public class UserService {
         }
     }
 
-    public void register(UserCreateDto userCreateDto) {
+    public UserDto register(UserCreateDto userCreateDto) {
         if (userRepository.findByUsername(userCreateDto.getUsername()).isPresent()) {
             throw new UserNotFoundException("Username already exists");
         }
@@ -58,7 +58,8 @@ public class UserService {
         User userEntity = userMapper.toEntityCreate(userCreateDto);
         userEntity.setRole(Role.USER);
 
-        userRepository.save(userEntity);
+        User saved = userRepository.save(userEntity);
         log.info("New user registered: " + userEntity);
+        return userMapper.toDto(saved);
     }
 }

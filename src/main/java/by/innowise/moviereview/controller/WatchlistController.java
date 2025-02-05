@@ -2,6 +2,9 @@ package by.innowise.moviereview.controller;
 
 import by.innowise.moviereview.dto.WatchlistDto;
 import by.innowise.moviereview.service.WatchlistService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,61 +14,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/user/watchlist")
+@RequiredArgsConstructor
 public class WatchlistController {
 
     private final WatchlistService watchlistService;
 
-    public WatchlistController(WatchlistService watchlistService) {
-        this.watchlistService = watchlistService;
-    }
-
     @GetMapping("/{userId}")
-    public String getWatchlist(Model model, @PathVariable("userId") Long userId) {
-        try {
-            List<WatchlistDto> watchlist = watchlistService.getWatchlistByUserId(userId);
-            model.addAttribute("watchlist", watchlist);
-            model.addAttribute("userId", userId);
-            return "user/watchlist";
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("error", "Не удалось загрузить список.");
-            return "error";
-        }
+    public ResponseEntity<List<WatchlistDto>> getWatchlist(@PathVariable("userId") Long userId) {
+        List<WatchlistDto> watchlist = watchlistService.getWatchlistByUserId(userId);
+        return ResponseEntity.ok(watchlist);
     }
 
-    @PostMapping("/add")
-    public String addToWatchlist(@RequestParam("movieId") Long movieId, @RequestParam("userId") Long userId, @RequestHeader("Referer") String referer, Model model) throws UnsupportedEncodingException {
-        try {
-            if (watchlistService.isMovieInWatchlist(userId, movieId)) {
-                return "redirect:" + referer + "?error=already_in_watchlist";
-            }
-            watchlistService.addToWatchlist(userId, movieId);
-            return "redirect:" + referer;
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", URLEncoder.encode(e.getMessage(), "UTF-8"));
-            return "redirect:" + referer + "?error=" + URLEncoder.encode(e.getMessage(), "UTF-8");
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("error", "Ошибка добавления в Watchlist.");
-            return "error";
-        }
-    }
+//    @PostMapping("/add")
+//    public String addToWatchlist(@RequestParam("movieId") Long movieId, @RequestParam("userId") Long userId, @RequestHeader("Referer") String referer, Model model) throws UnsupportedEncodingException {
+//        if (watchlistService.isMovieInWatchlist(userId, movieId)) {
+//            return "redirect:" + referer + "?error=already_in_watchlist";
+//        }
+//        watchlistService.addToWatchlist(userId, movieId);
+//        return "redirect:" + referer;
+//    }
 
     @DeleteMapping()
-    public String removeFromWatchlist(@RequestParam("movieId") Long movieId, @RequestParam("userId") Long userId) {
-        try {
-            watchlistService.removeFromWatchlist(userId, movieId);
-            return "redirect:/user/watchlist/"+userId;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
-        }
+    public ResponseEntity<Void> removeFromWatchlist(@RequestParam("movieId") Long movieId, @RequestParam("userId") Long userId) {
+        watchlistService.removeFromWatchlist(userId, movieId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -1,24 +1,23 @@
 package by.innowise.moviereview.controller;
 
 import by.innowise.moviereview.dto.UserCreateDto;
+import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.service.UserService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
-@Controller
+@RestController
 @RequestMapping("/register")
+@RequiredArgsConstructor
 public class RegisterController {
 
     private final UserService userService;
-
-    public RegisterController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public String showRegisterPage() {
@@ -26,22 +25,8 @@ public class RegisterController {
     }
 
     @PostMapping
-    public String registerUser(@RequestParam("username") String username,
-                               @RequestParam("email") String email,
-                               @RequestParam("password") String password,
-                               Model model) {
-        UserCreateDto userDto = UserCreateDto.builder()
-                .username(username)
-                .email(email)
-                .password(password)
-                .build();
-
-        try {
-            userService.register(userDto);
-            return "redirect:/";
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            return "common/register";
-        }
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserCreateDto userCreateDto) {
+        UserDto userDto = userService.register(userCreateDto);
+        return ResponseEntity.ok(userDto);
     }
 }

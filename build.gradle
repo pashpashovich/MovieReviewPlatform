@@ -53,12 +53,17 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
     implementation 'org.postgresql:postgresql:42.7.5'
-
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-common:2.6.0'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
 
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }

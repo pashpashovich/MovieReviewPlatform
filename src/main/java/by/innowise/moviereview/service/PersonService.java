@@ -9,10 +9,9 @@ import by.innowise.moviereview.repository.PersonRepository;
 import by.innowise.moviereview.util.enums.MovieRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,27 +21,29 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final PersonMapper personMapper;
 
-    public List<Person> getAllPeopleWithPagination(int page, int size) {
-        return personRepository.findAll(PageRequest.of(page - 1, size)).getContent();
-    }
+//    public List<Person> getAllPeopleWithPagination(int page, int size) {
+//        return personRepository.findAll(PageRequest.of(page - 1, size)).getContent();
+//    }
 
-    public List<Person> getPeopleWithFiltersAndPagination(int page, int size, String searchQuery, String roleFilter) {
+    public Page<PersonDto> getPeopleWithFiltersAndPagination(int page, int size, String searchQuery, String roleFilter) {
         MovieRole role = roleFilter != null && !roleFilter.isEmpty() ? MovieRole.valueOf(roleFilter) : null;
-        return personRepository.findWithFilters(searchQuery, role, PageRequest.of(page - 1, size)).getContent();
+        Page<Person> personPage = personRepository.findWithFilters(searchQuery, role, PageRequest.of(page - 1, size));
+
+        return personPage.map(personMapper::toDto);
     }
 
-    public long countPeopleWithFilters(String searchQuery, String roleFilter) {
-        MovieRole role = roleFilter != null && !roleFilter.isEmpty() ? MovieRole.valueOf(roleFilter) : null;
-        return personRepository.countWithFilters(searchQuery, role);
-    }
+//    public long countPeopleWithFilters(String searchQuery, String roleFilter) {
+//        MovieRole role = roleFilter != null && !roleFilter.isEmpty() ? MovieRole.valueOf(roleFilter) : null;
+//        return personRepository.countWithFilters(searchQuery, role);
+//    }
 
-    public long countPeople() {
-        return personRepository.findAll().size();
-    }
-
-    public List<PersonDto> getAllPeopleByRole(MovieRole role) {
-        return personMapper.toListDto(personRepository.findAllByRole(role));
-    }
+//    public long countPeople() {
+//        return personRepository.findAll().size();
+//    }
+//
+//    public List<PersonDto> getAllPeopleByRole(MovieRole role) {
+//        return personMapper.toListDto(personRepository.findAllByRole(role));
+//    }
 
 
     public PersonDto addPerson(PersonCreateDto dto) {

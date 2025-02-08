@@ -20,12 +20,7 @@ public class ReviewController {
 
     @PostMapping("/review")
     public ResponseEntity<ReviewDto> addReview(@RequestBody ReviewRequest reviewRequest) {
-        ReviewDto reviewDto = reviewService.addReview(
-                reviewRequest.getUserId(),
-                reviewRequest.getMovieId(),
-                reviewRequest.getContent(),
-                reviewRequest.getRating()
-        );
+        ReviewDto reviewDto = reviewService.addReview(reviewRequest);
         return ResponseEntity.ok(reviewDto);
     }
 

@@ -1,12 +1,13 @@
 package by.innowise.moviereview.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@Getter
 public class EntityDto {
     private Long id;
     private String name;

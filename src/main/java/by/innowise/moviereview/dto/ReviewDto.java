@@ -2,13 +2,15 @@ package by.innowise.moviereview.dto;
 
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.User;
-import by.innowise.moviereview.util.enums.ReviewStatus;
+import by.innowise.moviereview.enums.ReviewStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Setter
+@Builder
+@AllArgsConstructor
 @Getter
 public class ReviewDto {
 
@@ -22,6 +24,7 @@ public class ReviewDto {
 
     private ReviewStatus status;
 
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt;

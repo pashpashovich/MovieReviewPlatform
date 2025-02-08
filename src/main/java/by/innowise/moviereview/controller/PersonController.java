@@ -31,9 +31,7 @@ public class PersonController {
 
     @GetMapping
     public ResponseEntity<Page<PersonDto>> getPeople(@ModelAttribute PersonFilter filter) {
-        Page<PersonDto> peoplePage = personService.getPeopleWithFiltersAndPagination(
-                filter.getPage(), filter.getSize(), filter.getSearch(), filter.getRole()
-        );
+        Page<PersonDto> peoplePage = personService.getPeopleWithFiltersAndPagination(filter);
         return ResponseEntity.ok(peoplePage);
     }
 

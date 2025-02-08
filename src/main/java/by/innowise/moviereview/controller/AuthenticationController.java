@@ -3,7 +3,6 @@ package by.innowise.moviereview.controller;
 import by.innowise.moviereview.dto.AuthenticationRequest;
 import by.innowise.moviereview.dto.AuthenticationResponse;
 import by.innowise.moviereview.service.AuthenticationService;
-import by.innowise.moviereview.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,8 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(service.authenticate(request));
+        AuthenticationResponse authenticationResponse = service.authenticate(request);
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @PostMapping("/logout")
@@ -38,4 +38,3 @@ public class AuthenticationController {
     }
 
 }
-

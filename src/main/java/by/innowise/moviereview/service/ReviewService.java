@@ -1,15 +1,16 @@
 package by.innowise.moviereview.service;
 
 import by.innowise.moviereview.dto.ReviewDto;
+import by.innowise.moviereview.dto.ReviewRequest;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Review;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.enums.ReviewStatus;
 import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.mapper.ReviewMapper;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.ReviewRepository;
 import by.innowise.moviereview.repository.UserRepository;
-import by.innowise.moviereview.util.enums.ReviewStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,20 +30,20 @@ public class ReviewService {
     private final ReviewMapper reviewMapper;
 
 
-    public ReviewDto addReview(Long userId, Long movieId, String content, int rating) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден."));
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new IllegalArgumentException("Фильм не найден."));
-        Review review = new Review();
-        review.setUser(user);
-        review.setMovie(movie);
-        review.setContent(content);
-        review.setRating(rating);
-        review.setStatus(ReviewStatus.PENDING);
-        review.setCreatedAt(LocalDateTime.now());
+    public ReviewDto addReview(ReviewRequest reviewRequest) {
+        User user = userRepository.findById(reviewRequest.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
+        Movie movie = movieRepository.findById(reviewRequest.getMovieId())
+                .orElseThrow(() -> new IllegalArgumentException("Фильм не найден"));
+        Review review = new Review()
+                .setUser(user)
+                .setMovie(movie)
+                .setContent(reviewRequest.getContent())
+                .setRating(reviewRequest.getRating())
+                .setStatus(ReviewStatus.PENDING)
+                .setCreatedAt(LocalDateTime.now());
         Review saved = reviewRepository.save(review);
-        log.info("User's {} review of movie {} added", userId, movieId);
+        log.info("User's {} review of movie {} added", review.getUser().getId(), review.getMovie().getId());
         return reviewMapper.toDto(saved);
     }
 
@@ -56,18 +57,18 @@ public class ReviewService {
                 .orElseThrow(() -> new NotFoundException("Рецензия не найдена."));
         review.setStatus(ReviewStatus.valueOf(status));
         reviewRepository.save(review);
-        log.info(String.format("Review with ID %s has been changed", reviewId));
+        log.info("Review with ID {} has been changed", reviewId);
         return reviewMapper.toDto(review);
     }
 
-    @Transactional
-    public List<Review> findApprovedReviewsByMovieId(Long movieId) {
-        return reviewRepository.findByMovieIdAndStatus(movieId, ReviewStatus.APPROVED);
+    public List<ReviewDto> findApprovedReviewsByMovieId(Long movieId) {
+        List<Review> entities = reviewRepository.findByMovieIdAndStatus(movieId, ReviewStatus.APPROVED);
+        return reviewMapper.toListDto(entities);
     }
 
-    @Transactional
-    public List<Review> findRecentReviewsByUserId(Long userId) {
-        LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
-        return reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
-    }
+//    @Transactional
+//    public List<Review> findRecentReviewsByUserId(Long userId) {
+//        LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
+//        return reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
+//    }
 }

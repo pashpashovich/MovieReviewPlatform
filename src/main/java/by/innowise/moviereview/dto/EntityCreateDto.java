@@ -1,9 +1,11 @@
 package by.innowise.moviereview.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter
+@Builder
+@AllArgsConstructor
 @Getter
 public class EntityCreateDto {
     private String name;

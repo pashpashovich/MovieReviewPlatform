@@ -4,12 +4,12 @@ import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Person;
-import by.innowise.moviereview.util.enums.MovieRole;
-import org.mapstruct.IterableMapping;
+import by.innowise.moviereview.enums.MovieRole;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,17 +18,23 @@ import java.util.stream.Collectors;
 public interface MovieMapper {
 
     @Named("toListDto")
-    @Mapping(target = "genres", source = "genres")
-    @Mapping(target = "actors", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.ACTOR))")
-    @Mapping(target = "directors", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.DIRECTOR))")
-    @Mapping(target = "producers", expression = "java(mapPeopleByRole(movie.getPeople(), MovieRole.PRODUCER))")
+    @Mapping(target = "genres", source = "genres", qualifiedByName = "mapGenresToNames")
+    @Mapping(target = "actors", source = "people", qualifiedByName = "mapPeopleToActors")
+    @Mapping(target = "directors", source = "people", qualifiedByName = "mapPeopleToDirectors")
+    @Mapping(target = "producers", source = "people", qualifiedByName = "mapPeopleToProducers")
     MovieDto toDto(Movie movie);
 
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "actors", ignore = true)
     @Mapping(target = "directors", ignore = true)
     @Mapping(target = "producers", ignore = true)
-    MovieDto toDtoForRecomendations(Movie movie);
+    MovieDto toDtoForRecommendations(Movie movie);
+
+    @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "actors", ignore = true)
+    @Mapping(target = "directors", ignore = true)
+    @Mapping(target = "producers", ignore = true)
+    List<MovieDto> toListDtoForRecommendations(List<Movie> movie);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "people", ignore = true)
@@ -40,18 +46,31 @@ public interface MovieMapper {
     Movie toEntityFromDto(MovieDto movieDto);
 
 
-    @IterableMapping(qualifiedByName = "toListDto")
-    List<MovieDto> toDtoList(List<Movie> movies);
-
+    @Named("mapGenresToNames")
     default Set<String> mapGenresToNames(Set<Genre> genres) {
-        if (genres == null) return null;
+        if (genres == null) return Collections.emptySet();
         return genres.stream()
                 .map(Genre::getName)
                 .collect(Collectors.toSet());
     }
 
+    @Named("mapPeopleToActors")
+    default Set<String> mapPeopleToActors(Set<Person> people) {
+        return mapPeopleByRole(people, MovieRole.ACTOR);
+    }
+
+    @Named("mapPeopleToDirectors")
+    default Set<String> mapPeopleToDirectors(Set<Person> people) {
+        return mapPeopleByRole(people, MovieRole.DIRECTOR);
+    }
+
+    @Named("mapPeopleToProducers")
+    default Set<String> mapPeopleToProducers(Set<Person> people) {
+        return mapPeopleByRole(people, MovieRole.PRODUCER);
+    }
+
     default Set<String> mapPeopleByRole(Set<Person> people, MovieRole role) {
-        if (people == null) return null;
+        if (people == null) return Collections.emptySet();
         return people.stream()
                 .filter(person -> person.getRole() == role)
                 .map(Person::getFullName)

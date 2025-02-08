@@ -1,10 +1,14 @@
 package by.innowise.moviereview.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.Set;
 
-@Data
+@Builder
+@AllArgsConstructor
+@Getter
 public class MovieDto {
     private Long id;
     private String title;

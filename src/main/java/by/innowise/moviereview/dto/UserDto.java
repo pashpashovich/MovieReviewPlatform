@@ -1,13 +1,15 @@
 package by.innowise.moviereview.dto;
 
-import by.innowise.moviereview.util.enums.Role;
+import by.innowise.moviereview.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
+@AllArgsConstructor
+@Getter
 public class UserDto {
     private Long id;
     private String username;

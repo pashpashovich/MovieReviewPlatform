@@ -2,10 +2,11 @@ package by.innowise.moviereview.service;
 
 import by.innowise.moviereview.dto.UserDto;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.enums.Role;
 import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.mapper.UserMapper;
 import by.innowise.moviereview.repository.UserRepository;
-import by.innowise.moviereview.util.enums.Role;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,35 +27,39 @@ public class AdminUserService {
                 .toList();
     }
 
+    @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
         userRepository.delete(user);
-        log.info(String.format("User with id %s deleted", userId));
+        log.info("User with id {} deleted", userId);
     }
 
+    @Transactional
     public void blockUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
         user.setIsBlocked(true);
         userRepository.save(user);
-        log.info(String.format("User with id %s blocked", userId));
+        log.info("User with id {} blocked", userId);
     }
 
+    @Transactional
     public void unblockUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
         user.setIsBlocked(false);
         userRepository.save(user);
-        log.info(String.format("User with id %s is unblocked", userId));
+        log.info("User with id {} is unblocked", userId);
     }
 
+    @Transactional
     public void promoteToAdmin(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
         user.setRole(Role.ADMIN);
         userRepository.save(user);
-        log.info(String.format("User with id %s has been promoted to administrator role", userId));
+        log.info("User with id {} has been promoted to administrator role", userId);
     }
 }
 

@@ -15,6 +15,7 @@ public interface UserMapper {
 
     List<UserDto> toListDto(List<User> users);
 
+    @Mapping(target = "authorities", ignore = true)
     @Mapping(target = "reviews", ignore = true)
     @Mapping(target = "ratings", ignore = true)
     @Mapping(target = "watchlist", ignore = true)

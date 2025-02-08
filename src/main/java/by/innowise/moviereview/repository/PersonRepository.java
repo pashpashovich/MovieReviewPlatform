@@ -1,7 +1,7 @@
 package by.innowise.moviereview.repository;
 
 import by.innowise.moviereview.entity.Person;
-import by.innowise.moviereview.util.enums.MovieRole;
+import by.innowise.moviereview.enums.MovieRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

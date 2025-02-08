@@ -7,8 +7,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 @Getter
-public class AuthenticationResponse {
-    private String token;
-    private String role;
-    private Long id;
+public class RatingUpdateRequest {
+    private Integer rating;
 }

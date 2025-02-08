@@ -1,15 +1,15 @@
 package by.innowise.moviereview.dto;
 
-import by.innowise.moviereview.util.enums.MovieRole;
+import by.innowise.moviereview.enums.MovieRole;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class PersonDto {
     private Long id;
     @NotNull

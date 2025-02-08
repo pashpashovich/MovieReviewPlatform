@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -61,7 +60,7 @@ public class SecurityConfiguration {
                     try {
                         response.getWriter().write("{\"error\": \"Неверный логин или пароль\"}");
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        log.info("Упс");
                     }
                 }
             }

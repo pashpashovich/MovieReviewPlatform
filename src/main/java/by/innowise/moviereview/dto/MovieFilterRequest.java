@@ -1,8 +1,12 @@
 package by.innowise.moviereview.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Builder
+@AllArgsConstructor
+@Getter
 public class MovieFilterRequest {
     private int page;
     private int size;

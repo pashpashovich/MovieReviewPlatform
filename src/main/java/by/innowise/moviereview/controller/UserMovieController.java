@@ -31,26 +31,18 @@ public class UserMovieController {
             @PathVariable Long userId,
             @ModelAttribute MovieFilterRequest filterRequest
     ) {
-        List<MovieDto> moviesPage = movieService.filterMoviesWithPagination(
-                filterRequest.getSearchQuery(),
-                filterRequest.getGenreId(),
-                filterRequest.getLanguage(),
-                filterRequest.getYear(),
-                filterRequest.getDuration(),
-                filterRequest.getPage(),
-                filterRequest.getSize()
-        );
+        List<MovieDto> moviesPage = movieService.filterMoviesWithPagination(filterRequest);
 
         List<EntityDto> genres = genreService.findAll();
         List<MovieDto> recommendations = recommendationService.getRecommendationsForUser(userId);
 
-        MovieResponse response = new MovieResponse(
-                userId,
-                moviesPage,
-                moviesPage.size(),
-                genres,
-                recommendations
-        );
+        MovieResponse response = MovieResponse.builder()
+                .userId(userId)
+                .movies(moviesPage)
+                .totalPages(moviesPage.size())
+                .genres(genres)
+                .recommendations(recommendations)
+                .build();
 
         return ResponseEntity.ok(response);
     }

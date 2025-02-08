@@ -2,6 +2,7 @@ package by.innowise.moviereview.controller;
 
 import by.innowise.moviereview.dto.EntityCreateDto;
 import by.innowise.moviereview.dto.EntityDto;
+import by.innowise.moviereview.dto.GenreFilterDto;
 import by.innowise.moviereview.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,14 +27,13 @@ public class GenreController {
     private final GenreService genreService;
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getGenres(
-            @RequestParam(value = "search", required = false) String searchQuery,
-            @RequestParam(value = "sort", defaultValue = "id") String sortField,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Map<String, Object>> getGenres(@RequestBody GenreFilterDto filter) {
+        List<String> allowedSortFields = List.of("id", "name");
+        if (!allowedSortFields.contains(filter.getSort())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid sort field"));
+        }
 
-        Map<String, Object> result = genreService.getGenresWithFilters(searchQuery, sortField, page, pageSize);
-
+        Map<String, Object> result = genreService.getGenresWithFilters(filter);
         return ResponseEntity.ok(result);
     }
 
@@ -49,8 +49,8 @@ public class GenreController {
         return ResponseEntity.status(HttpStatus.CREATED).body(updated);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteGenre(@RequestParam("id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGenre(@PathVariable("id") Long id) {
         genreService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

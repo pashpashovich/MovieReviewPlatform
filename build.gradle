@@ -16,9 +16,23 @@ bootJar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
 
+compileJava.options.encoding = 'UTF-8'
+javadoc.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 wrapper {
     version = "8.5"
 }
+
+ext {
+    jsonwebtokenVersion = '0.12.6'
+    gsonVersion = '2.11.0'
+}
+
 
 tasks.named('bootJar') {
     destinationDirectory = file("$rootDir/deploy")
@@ -43,6 +57,9 @@ dependencies {
     annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jsonwebtokenVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jsonwebtokenVersion}"
+
     compileOnly 'org.projectlombok:lombok'
 
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
@@ -55,7 +72,8 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.5'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
     implementation 'org.springdoc:springdoc-openapi-starter-common:2.6.0'
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    implementation "io.jsonwebtoken:jjwt-api:${jsonwebtokenVersion}"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
 
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

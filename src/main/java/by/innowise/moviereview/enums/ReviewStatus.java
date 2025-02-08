@@ -1,4 +1,4 @@
-package by.innowise.moviereview.util.enums;
+package by.innowise.moviereview.enums;
 
 public enum ReviewStatus
 {

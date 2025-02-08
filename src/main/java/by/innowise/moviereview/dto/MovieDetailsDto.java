@@ -9,10 +9,12 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @Getter
-public class MovieResponse {
+public class MovieDetailsDto {
     private Long userId;
-    private List<MovieDto> movies;
-    private int totalPages;
-    private List<EntityDto> genres;
-    private List<MovieDto> recommendations;
+    private MovieDto movie;
+    private Double averageRating;
+    private List<ReviewDto> reviews;
+    private boolean isInList;
+    private Integer userRating;
 }
+

@@ -15,9 +15,6 @@ public interface GenreMapper {
 
     List<EntityDto> toListDto(List<Genre> genres);
 
-    @Mapping(target = "movies", ignore = true)
-    Genre toEntity(EntityDto entityDto);
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "movies", ignore = true)
     Genre toCreateEntity(EntityCreateDto entityCreateDto);

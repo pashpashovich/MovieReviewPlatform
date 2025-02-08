@@ -7,8 +7,10 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 @Getter
-public class AuthenticationResponse {
-    private String token;
-    private String role;
-    private Long id;
+public class GenreFilterDto {
+    private String search;
+    private String sort;
+    private int page;
+    private int size;
 }
+

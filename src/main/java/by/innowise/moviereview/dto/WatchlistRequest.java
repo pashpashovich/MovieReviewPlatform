@@ -1,9 +1,12 @@
 package by.innowise.moviereview.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-import lombok.Data;
-
-@Data
+@Builder
+@AllArgsConstructor
+@Getter
 public class WatchlistRequest {
     private Long userId;
     private Long movieId;

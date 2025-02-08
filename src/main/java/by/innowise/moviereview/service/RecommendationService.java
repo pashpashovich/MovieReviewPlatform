@@ -5,7 +5,6 @@ import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.RatingRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +17,9 @@ public class RecommendationService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
-    @Transactional
     public List<MovieDto> getRecommendationsForUser(Long userId) {
         List<Movie> topRatedMovies = movieRepository.findTopRatedMovies();
-        List<MovieDto> topRatedMoviesDto = topRatedMovies.stream()
-                .map(movieMapper::toDtoForRecomendations)
-                .toList();
+        List<MovieDto> topRatedMoviesDto = movieMapper.toListDtoForRecommendations(topRatedMovies);
         if (userId == null) {
             return topRatedMoviesDto;
         }
@@ -34,7 +30,7 @@ public class RecommendationService {
         List<Movie> recommendedMovies = movieRepository.findByGenres(likedGenres);
         return recommendedMovies.stream()
                 .limit(5)
-                .map(movieMapper::toDtoForRecomendations)
+                .map(movieMapper::toDtoForRecommendations)
                 .toList();
     }
 

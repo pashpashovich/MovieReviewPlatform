@@ -1,7 +1,7 @@
 package by.innowise.moviereview.repository;
 
 import by.innowise.moviereview.entity.Review;
-import by.innowise.moviereview.util.enums.ReviewStatus;
+import by.innowise.moviereview.enums.ReviewStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

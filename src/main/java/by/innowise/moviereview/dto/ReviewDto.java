@@ -14,9 +14,11 @@ import java.time.LocalDateTime;
 @Getter
 public class ReviewDto {
 
-    private User user;
+    private Long id;
 
-    private Movie movie;
+    private String username;
+
+    private String movieName;
 
     private String content;
 

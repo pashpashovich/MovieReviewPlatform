@@ -6,7 +6,6 @@ import by.innowise.moviereview.enums.Role;
 import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.mapper.UserMapper;
 import by.innowise.moviereview.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ public class AdminUserService {
                 .toList();
     }
 
-    @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
@@ -35,7 +33,6 @@ public class AdminUserService {
         log.info("User with id {} deleted", userId);
     }
 
-    @Transactional
     public void blockUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
@@ -44,7 +41,6 @@ public class AdminUserService {
         log.info("User with id {} blocked", userId);
     }
 
-    @Transactional
     public void unblockUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));
@@ -53,7 +49,6 @@ public class AdminUserService {
         log.info("User with id {} is unblocked", userId);
     }
 
-    @Transactional
     public void promoteToAdmin(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с ID %s не найден", userId)));

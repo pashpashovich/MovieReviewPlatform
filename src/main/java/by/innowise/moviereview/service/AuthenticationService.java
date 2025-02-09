@@ -4,6 +4,7 @@ package by.innowise.moviereview.service;
 import by.innowise.moviereview.dto.AuthenticationRequest;
 import by.innowise.moviereview.dto.AuthenticationResponse;
 import by.innowise.moviereview.entity.User;
+import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.repository.UserRepository;
 import by.innowise.moviereview.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +27,14 @@ public class AuthenticationService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
+                            request.getUsername(),
                             request.getPassword()
                     )
             );
 
-            var userOptional = userRepository.findByEmail(request.getEmail());
-            User user = userOptional.orElseThrow();
-            if (user.getIsBlocked()) {
+            var userOptional = userRepository.findByUsername(request.getUsername());
+            User user = userOptional.orElseThrow(() -> new NotFoundException(String.format("Пользователь с таким логином %s не найден", request.getUsername())));
+            if (Boolean.TRUE.equals(user.getIsBlocked())) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ваш аккаунт заблокирован. Пожалуйста, свяжитесь с поддержкой.");
             }
 

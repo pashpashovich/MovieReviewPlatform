@@ -23,18 +23,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewService {
+    private static final int LATEST_REVIEWS_DAYS = 5;
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
     private final ReviewMapper reviewMapper;
 
-
+    @Transactional
     public ReviewDto addReview(ReviewRequest reviewRequest) {
         User user = userRepository.findById(reviewRequest.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Movie movie = movieRepository.findById(reviewRequest.getMovieId())
-                .orElseThrow(() -> new IllegalArgumentException("Фильм не найден"));
+                .orElseThrow(() -> new NotFoundException("Фильм не найден"));
         Review review = new Review()
                 .setUser(user)
                 .setMovie(movie)
@@ -47,11 +48,12 @@ public class ReviewService {
         return reviewMapper.toDto(saved);
     }
 
-    @Transactional
-    public List<Review> findAllPendingReviews() {
-        return reviewRepository.findByStatus(ReviewStatus.PENDING);
+    public List<ReviewDto> findAllPendingReviews() {
+        List<Review> entities = reviewRepository.findByStatus(ReviewStatus.PENDING);
+        return reviewMapper.toListDto(entities);
     }
 
+    @Transactional
     public ReviewDto updateReviewStatus(Long reviewId, String status) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NotFoundException("Рецензия не найдена."));
@@ -66,9 +68,9 @@ public class ReviewService {
         return reviewMapper.toListDto(entities);
     }
 
-//    @Transactional
-//    public List<Review> findRecentReviewsByUserId(Long userId) {
-//        LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
-//        return reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
-//    }
+    public List<ReviewDto> findRecentReviewsByUserId(Long userId) {
+        LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(LATEST_REVIEWS_DAYS);
+        List<Review> entities = reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
+        return reviewMapper.toListDto(entities);
+    }
 }

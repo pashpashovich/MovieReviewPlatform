@@ -3,9 +3,11 @@ package by.innowise.moviereview.security;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -22,16 +24,15 @@ import java.io.IOException;
 @Configuration
 @EnableWebSecurity
 @Slf4j
+@RequiredArgsConstructor
 public class SecurityConfiguration {
+
+    private static final String ADMIN_AUTHORITY = "ADMIN";
+    private static final String USER_AUTHORITY = "USER";
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    private AuthenticationProvider authenticationProvider;
-
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthFilter, AuthenticationProvider authenticationProvider) {
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.authenticationProvider = authenticationProvider;
-    }
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,6 +40,17 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api/admin/reviews/**").hasAuthority(ADMIN_AUTHORITY)
+                        .requestMatchers("/api/admin/users/**").hasAuthority(ADMIN_AUTHORITY)
+                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
+                        .requestMatchers("/api/admin/genres/**").hasAuthority(ADMIN_AUTHORITY)
+                        .requestMatchers("/api/admin/movies/**").hasAuthority(ADMIN_AUTHORITY)
+                        .requestMatchers("/api/user/movies/rate/**").hasAuthority(USER_AUTHORITY)
+                        .requestMatchers("/api/admin/people/**").hasAuthority(ADMIN_AUTHORITY)
+                        .requestMatchers("/api/user/movies/**").hasAuthority(USER_AUTHORITY)
+                        .requestMatchers("/api/user/profile/**").hasAuthority(USER_AUTHORITY)
+                        .requestMatchers("/api/user/watchlist/**").hasAuthority(USER_AUTHORITY)
                         .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

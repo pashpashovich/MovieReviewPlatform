@@ -1,4 +1,4 @@
-package by.innowise.moviereview.security;
+package by.innowise.moviereview.config;
 
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;

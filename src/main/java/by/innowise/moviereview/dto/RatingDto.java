@@ -1,7 +1,5 @@
 package by.innowise.moviereview.dto;
 
-import by.innowise.moviereview.entity.Movie;
-import by.innowise.moviereview.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class RatingDto {
-    private User user;
-    private Movie movie;
+    private Long id;
+    private String username;
+    private String movieTitle;
     private Integer rating;
 }

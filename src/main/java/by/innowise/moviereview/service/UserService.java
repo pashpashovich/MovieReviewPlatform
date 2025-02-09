@@ -41,7 +41,7 @@ public class UserService {
                 .setPassword(PasswordUtils.hash(userCreateDto.getPassword()));
 
         User savedUser = userRepository.save(userEntity);
-        log.info("New user registered: " + userEntity);
+        log.info("New user registered: " + userEntity.getUsername());
         return userMapper.toDto(savedUser);
     }
 }

@@ -28,36 +28,15 @@ public class PersonService {
         if (personFilter.getRole() != null && !personFilter.getRole().isEmpty()) {
             role = MovieRole.valueOf(personFilter.getRole());
         } else throw new NotFoundException(String.format("Роли %s не найдено", personFilter.getRole()));
-        System.out.println(personFilter.getSearch());
         Page<Person> personPage = personRepository.findWithFilters(personFilter.getSearch(), role, PageRequest.of(personFilter.getPage() - 1, personFilter.getSize()));
         return personPage.map(personMapper::toDto);
     }
-
-//    public long countPeopleWithFilters(String searchQuery, String roleFilter) {
-//        MovieRole role = roleFilter != null && !roleFilter.isEmpty() ? MovieRole.valueOf(roleFilter) : null;
-//        return personRepository.countWithFilters(searchQuery, role);
-//    }
-
-//    public long countPeople() {
-//        return personRepository.findAll().size();
-//    }
-//
-//    public List<PersonDto> getAllPeopleByRole(MovieRole role) {
-//        return personMapper.toListDto(personRepository.findAllByRole(role));
-//    }
-
 
     public PersonDto addPerson(PersonCreateDto dto) {
         Person entity = personMapper.toEntity(dto);
         Person person = personRepository.save(entity);
         log.info("Star {} added", person.getFullName());
         return personMapper.toDto(person);
-    }
-
-    public PersonDto getPersonById(Long id) {
-        Person entity = personRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("Человек с ID %d не найден", id)));
-        return personMapper.toDto(entity);
     }
 
     public PersonDto update(Long id, PersonCreateDto dto) {

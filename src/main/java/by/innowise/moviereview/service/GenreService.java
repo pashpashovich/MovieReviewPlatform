@@ -7,6 +7,7 @@ import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.exception.NotFoundException;
 import by.innowise.moviereview.mapper.GenreMapper;
 import by.innowise.moviereview.repository.GenreRepository;
+import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,21 +32,19 @@ public class GenreService {
 
     public Map<String, Object> getGenresWithFilters(GenreFilterDto filter) {
         Pageable pageable = PageRequest.of(filter.getPage() - 1, filter.getSize(), Sort.by(filter.getSort()));
-        Page<Genre> genrePage = genreRepository.findAllWithFilters(filter.getSearch(), pageable);
+        Page<Genre> entities = genreRepository.findAllWithFilters(filter.getSearch(), pageable);
+        List<EntityDto> genreList = genreMapper.toListDto(entities.getContent());
 
         return Map.of(
-                "genres", genrePage.getContent(),
-                "totalPages", genrePage.getTotalPages(),
+                "genres", genreList,
+                "totalPages", entities.getTotalPages(),
                 "currentPage", filter.getPage()
         );
     }
 
-    public Genre findById(Long id) {
-        return genreRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("Сущности с ID %d не найдено", id)));
-    }
-
     public EntityDto save(EntityCreateDto entityCreateDto) {
+        if (genreRepository.findByName(entityCreateDto.getName()).isPresent())
+            throw new EntityExistsException("Такой жанр уже существует");
         Genre genre = genreMapper.toCreateEntity(entityCreateDto);
         Genre saved = genreRepository.save(genre);
         log.info("Genre {} added", genre.getName());
@@ -62,7 +61,9 @@ public class GenreService {
     }
 
     public void delete(Long id) {
-        genreRepository.delete(findById(id));
+        Genre genre = genreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Сущности с ID %d не найдено", id)));
+        genreRepository.delete(genre);
         log.info("Genre with ID {} removed", id);
     }
 }

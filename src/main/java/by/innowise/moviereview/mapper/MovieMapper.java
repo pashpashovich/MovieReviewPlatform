@@ -1,5 +1,6 @@
 package by.innowise.moviereview.mapper;
 
+import by.innowise.moviereview.dto.MovieCreateDto;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.entity.Movie;
@@ -36,6 +37,8 @@ public interface MovieMapper {
     @Mapping(target = "producers", ignore = true)
     List<MovieDto> toListDtoForRecommendations(List<Movie> movie);
 
+    @Mapping(target = "avgRating", ignore = true)
+    @Mapping(target = "posterBase64", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "people", ignore = true)
     @Mapping(target = "genres", ignore = true)
@@ -43,7 +46,7 @@ public interface MovieMapper {
     @Mapping(target = "reviews", ignore = true)
     @Mapping(target = "ratings", ignore = true)
     @Mapping(target = "watchlist", ignore = true)
-    Movie toEntityFromDto(MovieDto movieDto);
+    Movie toEntityFromDto(MovieCreateDto movieDto);
 
 
     @Named("mapGenresToNames")

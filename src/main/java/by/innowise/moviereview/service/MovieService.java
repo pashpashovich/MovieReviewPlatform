@@ -1,5 +1,6 @@
 package by.innowise.moviereview.service;
 
+import by.innowise.moviereview.dto.MovieCreateDto;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.dto.MovieFilterRequest;
 import by.innowise.moviereview.entity.Movie;
@@ -49,13 +50,11 @@ public class MovieService {
     }
 
     @Transactional
-    public MovieDto createMovie(MultipartFile posterFile, MovieDto movieDto) throws IOException {
-        String posterBase64 = PosterLoading.processPosterFile(posterFile);
+    public MovieDto createMovie(MovieCreateDto movieDto) {
         Movie movie = movieMapper.toEntityFromDto(movieDto);
         movie
                 .setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())))
-                .setPeople(getPeopleByRoles(movieDto))
-                .setPosterBase64(posterBase64);
+                .setPeople(getPeopleByRoles(movieDto));
         Movie savedMovie = movieRepository.save(movie);
         MovieDto dto = movieMapper.toDto(savedMovie);
         log.info("Movie {} added", movieDto.getTitle());
@@ -63,7 +62,7 @@ public class MovieService {
     }
 
     @Transactional
-    public MovieDto updateMovie(Long id, MultipartFile posterFile, MovieDto movieDto) throws EntityNotFoundException, IOException {
+    public MovieDto updateMovie(Long id, MovieCreateDto movieDto) throws EntityNotFoundException, IOException {
         Movie existingMovie = movieRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Фильм с ID " + id + " не найден."));
         existingMovie.setTitle(movieDto.getTitle())
@@ -73,10 +72,7 @@ public class MovieService {
                 .setLanguage(movieDto.getLanguage())
                 .setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())))
                 .setPeople(getPeopleByRoles(movieDto));
-        if (movieDto.getPosterBase64() != null) {
-            String posterBase64 = PosterLoading.processPosterFile(posterFile);
-            existingMovie.setPosterBase64(posterBase64);
-        }
+
         Movie savedMovie = movieRepository.save(existingMovie);
         log.info("Movie with ID {} has been changed", id);
         return movieMapper.toDto(savedMovie);
@@ -87,13 +83,17 @@ public class MovieService {
         log.info("Movie with ID {} removed", id);
     }
 
-    private Set<Person> getPeopleByRoles(MovieDto movieDto) {
-        Set<Person> people = new HashSet<>();
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
-        return people;
+    public void updateMoviePoster(Long id, MultipartFile posterFile) throws EntityNotFoundException, IOException {
+        Movie existingMovie = movieRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Фильм с ID " + id + " не найден."));
+        if (posterFile != null) {
+            String posterBase64 = PosterLoading.processPosterFile(posterFile);
+            existingMovie.setPosterBase64(posterBase64);
+        }
+        Movie savedMovie = movieRepository.save(existingMovie);
+        log.info("Movie avatar with ID {} has been changed", savedMovie.getId());
     }
+
 
     public List<MovieDto> filterMoviesWithPagination(String searchQuery, int page, int size) {
         Specification<Movie> specification = MovieSpecifications.withFilters(searchQuery);
@@ -113,8 +113,12 @@ public class MovieService {
                 .toList();
     }
 
+    private Set<Person> getPeopleByRoles(MovieCreateDto movieDto) {
+        Set<Person> people = new HashSet<>();
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
+        people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
+        return people;
+    }
 
-//    public long getTotalMoviesCount() {
-//        return movieRepository.count();
-//    }
 }

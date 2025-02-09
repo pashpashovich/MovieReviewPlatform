@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String userEmail;
+        final String username;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.info("Отсутствует заголовок Authorization или он не начинается с 'Bearer '");
@@ -42,26 +42,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("JWT Token: {}", jwt);
 
         try {
-            userEmail = jwtService.extractUsername(jwt);
-            log.info("Извлеченный пользователь из JWT: {}", userEmail);
+            username = jwtService.extractUsername(jwt);
+            log.info("Извлеченный пользователь из JWT: {}", username);
         } catch (JwtException e) {
             log.error("Невалидный JWT токен: {}", e.getMessage());
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            var userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            log.info("User authenticated: {}", userEmail);
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            var userDetails = this.userDetailsService.loadUserByUsername(username);
+            log.info("User authenticated: {}", username);
             log.info("JWT Token validation status: {}", jwtService.isTokenValid(jwt, userDetails));
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 var authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                log.info("Аутентификация успешна: {}", userEmail);
+                log.info("Аутентификация успешна: {}", username);
             } else {
-                log.warn("JWT токен недействителен для пользователя: {}", userEmail);
+                log.warn("JWT токен недействителен для пользователя: {}", username);
             }
         }
 

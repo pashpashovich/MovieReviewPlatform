@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Validated
 @RequestMapping("api/admin/genres")
 @RequiredArgsConstructor
 public class GenreController {

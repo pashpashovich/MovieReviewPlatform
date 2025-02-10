@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +23,6 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/auth")
-@Validated
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationController {
@@ -40,7 +37,7 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody @Valid AuthenticationRequest request) {
+            @Valid @RequestBody AuthenticationRequest request) {
         AuthenticationResponse authenticationResponse = service.authenticate(request);
         return ResponseEntity.ok(authenticationResponse);
     }

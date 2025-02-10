@@ -3,6 +3,7 @@ package by.innowise.moviereview.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,12 +15,10 @@ import java.util.Set;
 @Getter
 public class MovieCreateDto {
     @NotNull
-    @Min(1)
-    @Max(50)
+    @Size(min = 1, max = 50)
     private String title;
     @NotNull
-    @Min(5)
-    @Max(150)
+    @Size(min = 5, max = 150)
     private String description;
     @NotNull
     @Min(1895)

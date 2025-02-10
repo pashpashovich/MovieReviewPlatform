@@ -1,5 +1,8 @@
 package by.innowise.moviereview.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,5 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class RatingUpdateRequest {
+    @NotNull
+    @Min(0)
+    @Max(5)
     private Integer rating;
 }

@@ -1,5 +1,7 @@
 package by.innowise.moviereview.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,10 +10,16 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class PersonFilter {
+    @NotNull
     @Builder.Default
     private int page = 0;
+    @NotNull
     @Builder.Default
     private int size = 10;
+    @NotNull
+    @NotEmpty
     private String search;
+    @NotNull
+    @NotEmpty
     private String role;
 }

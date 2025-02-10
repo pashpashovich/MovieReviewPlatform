@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/changeset-create-tables.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="postgres">
+        <createTable tableName="genres">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="postgres">
+        <createTable tableName="movies">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="avg_rating" type="numeric(3,2)"/>
+            <column name="created_at" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="duration" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="language" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="poster" type="text"/>
+            <column name="release_year" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="postgres">
+        <createTable tableName="movie_genre">
+            <column name="movie_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_movie_genre_movie" referencedTableName="movies"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="genre_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_movie_genre_genre" referencedTableName="genres"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="postgres">
+        <createTable tableName="people">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="full_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="postgres">
+        <createTable tableName="movie_person">
+            <column name="person_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_movie_person_person" referencedTableName="people"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="movie_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_movie_person_movie" referencedTableName="movies"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="6" author="postgres">
+        <createTable tableName="users">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="is_blocked" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="postgres">
+        <createTable tableName="ratings">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_ratings_user" referencedTableName="users"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="movie_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_ratings_movie" referencedTableName="movies"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="rating" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="8" author="postgres">
+        <createTable tableName="reviews">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_reviews_user" referencedTableName="users"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="movie_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_reviews_movie" referencedTableName="movies"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="content" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

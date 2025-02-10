@@ -13,8 +13,6 @@ import java.util.Set;
 
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
-    List<Person> findAllByRole(MovieRole role);
-
     @Query("SELECT p FROM Person p WHERE " +
             "(:searchQuery IS NULL OR LOWER(p.fullName) LIKE LOWER(CONCAT('%', :searchQuery, '%'))) AND " +
             "(:roleFilter IS NULL OR p.role = :roleFilter)")

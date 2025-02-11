@@ -3,6 +3,7 @@ package by.innowise.moviereview.service;
 import by.innowise.moviereview.dto.MovieCreateDto;
 import by.innowise.moviereview.dto.MovieDto;
 import by.innowise.moviereview.dto.MovieFilterRequest;
+import by.innowise.moviereview.entity.Genre;
 import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.entity.Person;
 import by.innowise.moviereview.enums.MovieRole;
@@ -62,15 +63,16 @@ public class MovieService {
     }
 
     @Transactional
-    public MovieDto updateMovie(Long id, MovieCreateDto movieDto) throws EntityNotFoundException, IOException {
+    public MovieDto updateMovie(Long id, MovieCreateDto movieDto) throws EntityNotFoundException {
         Movie existingMovie = movieRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Фильм с ID " + id + " не найден."));
+        Set<Genre> genres = genreRepository.findAllByName(movieDto.getGenres());
         existingMovie.setTitle(movieDto.getTitle())
                 .setDescription(movieDto.getDescription())
                 .setReleaseYear(movieDto.getReleaseYear())
                 .setDuration(movieDto.getDuration())
                 .setLanguage(movieDto.getLanguage())
-                .setGenres(new HashSet<>(genreRepository.findAllByName(movieDto.getGenres())))
+                .setGenres(new HashSet<>(genres))
                 .setPeople(getPeopleByRoles(movieDto));
 
         Movie savedMovie = movieRepository.save(existingMovie);
@@ -114,10 +116,12 @@ public class MovieService {
     }
 
     private Set<Person> getPeopleByRoles(MovieCreateDto movieDto) {
-        Set<Person> people = new HashSet<>();
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR));
-        people.addAll(personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER));
+        List<Person> actors = personRepository.findAllByNameAndRole(movieDto.getActors(), MovieRole.ACTOR);
+        Set<Person> people = new HashSet<>(actors);
+        List<Person> directors = personRepository.findAllByNameAndRole(movieDto.getDirectors(), MovieRole.DIRECTOR);
+        people.addAll(directors);
+        List<Person> producers = personRepository.findAllByNameAndRole(movieDto.getProducers(), MovieRole.PRODUCER);
+        people.addAll(producers);
         return people;
     }
 

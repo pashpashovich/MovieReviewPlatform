@@ -26,13 +26,18 @@ public class PersonService {
     public Page<PersonDto> getPeopleWithFiltersAndPagination(PersonFilter personFilter) {
         MovieRole role;
         if (personFilter.getRole() != null && !personFilter.getRole().isEmpty()) {
-            role = MovieRole.valueOf(personFilter.getRole());
+            try {
+                role = MovieRole.valueOf(personFilter.getRole());
+            } catch (IllegalArgumentException e) {
+                throw new NotFoundException(String.format("Роли %s не найдено", personFilter.getRole()));
+            }
         } else throw new NotFoundException(String.format("Роли %s не найдено", personFilter.getRole()));
         Page<Person> personPage = personRepository.findWithFilters(personFilter.getSearch(), role, PageRequest.of(personFilter.getPage() - 1, personFilter.getSize()));
         return personPage.map(personMapper::toDto);
     }
 
     public PersonDto addPerson(PersonCreateDto dto) {
+        chechRole(dto);
         Person entity = personMapper.toEntity(dto);
         Person person = personRepository.save(entity);
         log.info("Star {} added", person.getFullName());
@@ -40,10 +45,14 @@ public class PersonService {
     }
 
     public PersonDto update(Long id, PersonCreateDto dto) {
+        chechRole(dto);
         Person entity = personRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Человек с ID %d не найден", id)));
-        entity.setFullName(dto.getFullName()).setRole(MovieRole.valueOf(dto.getRole()));
-        PersonDto personDto = personMapper.toDto(personRepository.save(entity));
+        entity
+                .setFullName(dto.getFullName())
+                .setRole(MovieRole.valueOf(dto.getRole()));
+        Person person = personRepository.save(entity);
+        PersonDto personDto = personMapper.toDto(person);
         log.info("Star with ID {} has been changed", id);
         return personDto;
     }
@@ -53,5 +62,16 @@ public class PersonService {
                 .orElseThrow(() -> new NotFoundException(String.format("Человек с ID %d не найден", id)));
         personRepository.delete(person);
         log.info("Star with ID {} has been deleted", id);
+    }
+
+    private void chechRole(PersonCreateDto dto) {
+        if (!dto.getRole().isEmpty()) {
+            try {
+                MovieRole.valueOf(dto.getRole());
+            } catch (IllegalArgumentException e) {
+                throw new NotFoundException(String.format("Роли %s не найдено", dto.getRole()));
+            }
+        } else throw new NotFoundException(String.format("Роли %s не найдено", dto.getRole()));
+
     }
 }

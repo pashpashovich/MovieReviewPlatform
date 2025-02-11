@@ -44,13 +44,11 @@ public class WatchlistService {
     }
 
 
-    @Transactional
     public List<WatchlistDto> getWatchlistByUserId(Long userId) {
         List<Watchlist> watchlist = watchlistRepository.findByUserId(userId);
         return watchlistMapper.toListDto(watchlist);
     }
 
-    @Transactional
     public void removeFromWatchlist(Long userId, Long movieId) {
         Watchlist watchlist = watchlistRepository.findByUserIdAndMovieId(userId, movieId)
                 .orElseThrow(() -> new NotFoundException(String.format("Фильм с таким id %d не найден.", movieId)));
@@ -58,7 +56,6 @@ public class WatchlistService {
         log.info("Movie {} removed from want to watch", movieId);
     }
 
-    @Transactional
     public boolean isMovieInWatchlist(Long userId, Long movieId) {
         return watchlistRepository.findByUserIdAndMovieId(userId, movieId).isPresent();
     }

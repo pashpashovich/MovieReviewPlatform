@@ -18,20 +18,17 @@ public class RecommendationService {
     private final MovieMapper movieMapper;
 
     public List<MovieDto> getRecommendationsForUser(Long userId) {
-        List<Movie> topRatedMovies = movieRepository.findTopRatedMovies();
-        List<MovieDto> topRatedMoviesDto = movieMapper.toListDtoForRecommendations(topRatedMovies);
-        if (userId == null) {
-            return topRatedMoviesDto;
-        }
         List<Long> likedGenres = ratingRepository.findGenresByUserPreferences(userId);
-        if (likedGenres.isEmpty()) {
-            return topRatedMoviesDto;
+        if (userId == null || likedGenres.isEmpty()) {
+            List<Movie> topRatedMovies = movieRepository.findTopRatedMovies();
+            return movieMapper.toListDtoForRecommendations(topRatedMovies);
+        } else {
+            List<Movie> recommendedMovies = movieRepository.findByGenres(likedGenres);
+            return recommendedMovies.stream()
+                    .limit(5)
+                    .map(movieMapper::toDtoForRecommendations)
+                    .toList();
         }
-        List<Movie> recommendedMovies = movieRepository.findByGenres(likedGenres);
-        return recommendedMovies.stream()
-                .limit(5)
-                .map(movieMapper::toDtoForRecommendations)
-                .toList();
     }
 
 }

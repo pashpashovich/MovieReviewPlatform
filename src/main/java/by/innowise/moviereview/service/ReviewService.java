@@ -11,7 +11,6 @@ import by.innowise.moviereview.mapper.ReviewMapper;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.ReviewRepository;
 import by.innowise.moviereview.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,6 @@ public class ReviewService {
     private final MovieRepository movieRepository;
     private final ReviewMapper reviewMapper;
 
-    @Transactional
     public ReviewDto addReview(ReviewRequest reviewRequest) {
         User user = userRepository.findById(reviewRequest.getUserId())
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -53,7 +51,6 @@ public class ReviewService {
         return reviewMapper.toListDto(entities);
     }
 
-    @Transactional
     public ReviewDto updateReviewStatus(Long reviewId, String status) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NotFoundException("Рецензия не найдена."));

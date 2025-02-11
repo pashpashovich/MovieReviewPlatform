@@ -15,4 +15,5 @@ public interface WatchlistMapper {
     @Mapping(target = "addedAt", source = "addedAt")
     WatchlistDto toDto(Watchlist watchlist);
 
-    List<WatchlistDto> toListDto(List<Watchlist> watchlist);}
+    List<WatchlistDto> toListDto(List<Watchlist> watchlist);
+}

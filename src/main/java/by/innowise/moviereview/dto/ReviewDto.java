@@ -1,7 +1,5 @@
 package by.innowise.moviereview.dto;
 
-import by.innowise.moviereview.entity.Movie;
-import by.innowise.moviereview.entity.User;
 import by.innowise.moviereview.enums.ReviewStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

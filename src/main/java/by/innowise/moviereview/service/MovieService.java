@@ -106,6 +106,7 @@ public class MovieService {
                 .toList();
     }
 
+    @Transactional
     public List<MovieDto> filterMoviesWithPagination(MovieFilterRequest movieFilterRequest) {
         Specification<Movie> specification = MovieSpecifications.withFilters(movieFilterRequest.getSearchQuery(), movieFilterRequest.getGenreId(), movieFilterRequest.getLanguage(), movieFilterRequest.getYear(), movieFilterRequest.getDuration());
         Page<Movie> moviePage = movieRepository.findAll(specification, PageRequest.of(movieFilterRequest.getPage() - 1, movieFilterRequest.getSize()));

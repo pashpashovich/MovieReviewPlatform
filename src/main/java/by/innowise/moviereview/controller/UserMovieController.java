@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/user/movies")
 @RequiredArgsConstructor
 public class UserMovieController {
-    private UserMovieFacade userMovieFacade;
+
+    private final UserMovieFacade userMovieFacade;
 
     @GetMapping("/{userId}")
     public ResponseEntity<MovieResponse> getMovies(

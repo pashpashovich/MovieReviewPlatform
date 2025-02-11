@@ -1,5 +1,6 @@
 package by.innowise.moviereview.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,9 +25,11 @@ public class MovieFilterRequest {
     @NotNull
     private String language;
     @NotNull
-    @Size(min = 1895, max = 2030)
+    @Min(1890)
+    @Max(2030)
     private String year;
     @NotNull
-    @Size(min = 10, max = 600)
+    @Min(10)
+    @Max(600)
     private String duration;
 }

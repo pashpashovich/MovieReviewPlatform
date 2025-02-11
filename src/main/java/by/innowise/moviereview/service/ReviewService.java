@@ -11,6 +11,7 @@ import by.innowise.moviereview.mapper.ReviewMapper;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.ReviewRepository;
 import by.innowise.moviereview.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,7 +66,10 @@ public class ReviewService {
         return reviewMapper.toListDto(entities);
     }
 
+    @Transactional
     public List<ReviewDto> findRecentReviewsByUserId(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(LATEST_REVIEWS_DAYS);
         List<Review> entities = reviewRepository.findByUserIdAndCreatedAtAfter(userId, fiveDaysAgo);
         return reviewMapper.toListDto(entities);

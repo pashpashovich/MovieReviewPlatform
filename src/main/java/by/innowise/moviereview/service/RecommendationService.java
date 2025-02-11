@@ -5,6 +5,7 @@ import by.innowise.moviereview.entity.Movie;
 import by.innowise.moviereview.mapper.MovieMapper;
 import by.innowise.moviereview.repository.MovieRepository;
 import by.innowise.moviereview.repository.RatingRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class RecommendationService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
+    @Transactional
     public List<MovieDto> getRecommendationsForUser(Long userId) {
         List<Long> likedGenres = ratingRepository.findGenresByUserPreferences(userId);
         if (userId == null || likedGenres.isEmpty()) {

@@ -22,6 +22,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
+//Советую использовать @Order и @DisplayName для большей информативности
+
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc

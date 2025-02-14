@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+//Нет проверки на удаления,бана и т.д. самого себя
+
 @RestController
 @RequestMapping("api/admin/users")
 @RequiredArgsConstructor

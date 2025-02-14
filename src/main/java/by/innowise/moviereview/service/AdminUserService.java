@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+//В сервисах нужно использовать интерфейсы
+
 @Service
 @RequiredArgsConstructor
 @Slf4j

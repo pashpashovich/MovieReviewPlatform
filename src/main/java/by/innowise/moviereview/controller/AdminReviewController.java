@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+//В контроллерах советую использовать анатации @Tag и @Operation
+//для большей информативности в Swagger документации
+
 @RestController
 @RequestMapping("api/admin/reviews")
 @RequiredArgsConstructor

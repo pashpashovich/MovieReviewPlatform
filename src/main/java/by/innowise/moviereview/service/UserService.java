@@ -27,6 +27,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    // Исключение UserNotFoundException не подходит по логике, советую создать новое
     public UserDto register(UserCreateDto userCreateDto) {
         if (userRepository.findByUsername(userCreateDto.getUsername()).isPresent()) {
             throw new UserNotFoundException("Username already exists");

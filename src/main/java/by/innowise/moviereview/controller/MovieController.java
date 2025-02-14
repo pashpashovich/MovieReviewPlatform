@@ -43,6 +43,7 @@ public class MovieController {
                 .body(new ErrorResponseImpl(ex.getMessage(), HttpStatus.NOT_FOUND, LocalDateTime.now()));
     }
 
+//  Здесь доделай пагинацию
     @GetMapping
     public ResponseEntity<List<MovieDto>> getMovies(
             @RequestParam(value = "page", defaultValue = "1") @NotNull int page,

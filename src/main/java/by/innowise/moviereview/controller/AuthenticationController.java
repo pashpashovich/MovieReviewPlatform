@@ -21,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
+//Желательно доделать refresh token
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
